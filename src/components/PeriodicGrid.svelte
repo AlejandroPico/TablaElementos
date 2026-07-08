@@ -21,10 +21,10 @@
 <section class="periodic-card" aria-label="Tabla periódica de muestra">
   <div class="periodic-header">
     <div>
-      <p class="eyebrow">Muestra V1</p>
-      <h2>Elementos disponibles</h2>
+      <p class="eyebrow">Vista principal</p>
+      <h1>Tabla periódica espectral</h1>
     </div>
-    <span>{elements.length} elementos</span>
+    <span>{elements.length} elementos disponibles</span>
   </div>
 
   <div class="periodic-grid">
@@ -36,21 +36,22 @@
         style={`grid-column:${element.group};grid-row:${element.period};`}
         type="button"
         on:click={() => dispatch('select', element.symbol)}
-        aria-label={`Seleccionar ${element.name_es}`}
+        aria-label={`Abrir ficha de ${element.name_es}`}
       >
         <span class="atomic-number">{element.atomic_number}</span>
         <strong>{element.symbol}</strong>
         <small>{element.name_es}</small>
-        <em>{countVisibleLines(element.lines)} visibles</em>
-        <span class="compare-dot" on:click={(event) => handleCompare(event, element.symbol)} title="Añadir o quitar del comparador">
-          +
-        </span>
+        <em>{countVisibleLines(element.lines)} líneas visibles</em>
+        <button
+          class="compare-dot"
+          type="button"
+          on:click={(event) => handleCompare(event, element.symbol)}
+          title="Añadir o quitar del comparador"
+          aria-label={`Añadir o quitar ${element.name_es} del comparador`}
+        >
+          {comparedSymbols.includes(element.symbol) ? '✓' : '+'}
+        </button>
       </button>
     {/each}
   </div>
-
-  <p class="periodic-note">
-    Esta tabla todavía es una muestra reducida. La arquitectura ya permite incorporar los 118 elementos y datasets
-    mucho más grandes sin cambiar el modelo visual base.
-  </p>
 </section>
