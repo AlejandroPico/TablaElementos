@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="Espectros Atómicos">
+  <defs>
+    <radialGradient id="bg" cx="34%" cy="22%" r="78%">
+      <stop offset="0" stop-color="#253bff" />
+      <stop offset="0.46" stop-color="#101a3d" />
+      <stop offset="1" stop-color="#050712" />
+    </radialGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="1.4" result="blur" />
+      <feMerge>
+        <feMergeNode in="blur" />
+        <feMergeNode in="SourceGraphic" />
+      </feMerge>
+    </filter>
+  </defs>
+  <rect width="64" height="64" rx="16" fill="url(#bg)" />
+  <path d="M11 45h42" stroke="#7ee7ff" stroke-width="2" stroke-linecap="round" opacity="0.35" />
+  <g filter="url(#glow)" stroke-linecap="round">
+    <path d="M16 18v30" stroke="#8c5cff" stroke-width="3" />
+    <path d="M24 12v40" stroke="#00d4ff" stroke-width="3" />
+    <path d="M33 20v29" stroke="#39ff88" stroke-width="3" />
+    <path d="M42 10v43" stroke="#fff164" stroke-width="3" />
+    <path d="M50 17v31" stroke="#ff4b4b" stroke-width="3" />
+  </g>
+  <circle cx="32" cy="32" r="24" fill="none" stroke="#ffffff" stroke-opacity="0.12" stroke-width="1" />
+</svg>
