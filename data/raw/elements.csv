@@ -1,0 +1,12 @@
+symbol,name_es,name_en,atomic_number,group,period,category,summary
+H,Hidrógeno,Hydrogen,1,1,1,no metal,El elemento más ligero; sus líneas Balmer son una referencia clásica en espectroscopía.
+He,Helio,Helium,2,18,1,gas noble,Gas noble con líneas visibles intensas; clave histórica en espectros solares.
+Li,Litio,Lithium,3,1,2,metal alcalino,Metal alcalino con líneas rojas características.
+C,Carbono,Carbon,6,14,2,no metal,Elemento esencial en química orgánica y astrofísica molecular.
+N,Nitrógeno,Nitrogen,7,15,2,no metal,Componente mayoritario de la atmósfera terrestre.
+O,Oxígeno,Oxygen,8,16,2,no metal,Elemento clave en atmósferas, nebulosas y plasmas.
+Ne,Neón,Neon,10,18,2,gas noble,Gas noble famoso por sus líneas rojo-anaranjadas en iluminación.
+Na,Sodio,Sodium,11,1,3,metal alcalino,Presenta el doblete D amarillo, una de las firmas espectrales más conocidas.
+Mg,Magnesio,Magnesium,12,2,3,metal alcalinotérreo,Metal ligero con líneas visibles y UV relevantes.
+Fe,Hierro,Iron,26,8,4,metal de transición,Elemento dominante en muchas firmas estelares y espectros complejos.
+Hg,Mercurio,Mercury,80,12,6,metal de transición,Metal pesado con líneas intensas usadas en lámparas de descarga.

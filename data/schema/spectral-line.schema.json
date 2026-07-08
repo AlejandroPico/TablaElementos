@@ -1,0 +1,29 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/AlejandroPico/EspectrosAtomicos/data/schema/spectral-line.schema.json",
+  "title": "SpectralLine",
+  "type": "object",
+  "required": [
+    "element",
+    "species",
+    "wavelength_nm",
+    "intensity",
+    "kind",
+    "lower_level_ev",
+    "upper_level_ev",
+    "transition",
+    "label"
+  ],
+  "properties": {
+    "element": { "type": "string" },
+    "species": { "type": "string" },
+    "wavelength_nm": { "type": "number" },
+    "intensity": { "type": "number", "minimum": 0 },
+    "kind": { "type": "string", "enum": ["emission", "absorption"] },
+    "lower_level_ev": { "type": "number" },
+    "upper_level_ev": { "type": "number" },
+    "transition": { "type": "string" },
+    "label": { "type": "string" },
+    "source_note": { "type": "string" }
+  }
+}
