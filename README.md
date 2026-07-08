@@ -2,7 +2,7 @@
 
 Aplicación científica estática para explorar la huella luminosa de los elementos: líneas de emisión, absorción, longitud de onda, color visible aproximado, niveles de energía y comparación entre elementos.
 
-> Estado: **V1 funcional inicial**.  
+> Estado: **V1.1 funcional**.  
 > Tecnología: **Python + Svelte + TypeScript + Vite + D3**.  
 > Despliegue: **GitHub Pages mediante GitHub Actions**.  
 > Ejecución: **100% estática**, sin servidor externo y sin consultas remotas en tiempo de uso.
@@ -11,16 +11,14 @@ Aplicación científica estática para explorar la huella luminosa de los elemen
 
 El objetivo de **Espectros Atómicos** es construir una interfaz visual y educativa donde cada elemento químico pueda consultarse como una firma espectral: una serie de líneas que aparecen en posiciones concretas del espectro electromagnético.
 
-La V1 se centra en una muestra pequeña pero completa para validar la arquitectura:
+La V1.1 reorganiza la interfaz para que la tabla periódica sea el elemento principal de la pantalla. Al pulsar un elemento se abre una ficha flotante con pestañas:
 
-- tabla periódica interactiva mínima;
-- selector de elemento;
-- visor de líneas espectrales;
-- modo emisión y modo absorción;
-- comparación entre varios elementos;
-- diagrama simplificado de niveles de energía;
-- datos locales procesados mediante Python;
-- publicación automática en GitHub Pages.
+- longitudes de onda, con interruptor interno de emisión/absorción;
+- niveles de energía;
+- información del elemento;
+- tabla técnica de líneas espectrales.
+
+También se mantiene un comparador multielemento con una fila final de fusión espectral, que suma visualmente las líneas de los elementos seleccionados.
 
 ## Arquitectura
 
@@ -46,8 +44,9 @@ GitHub Actions → build y despliegue automático
 │  └─ schema/
 │     └─ spectral-line.schema.json
 ├─ public/
-│  └─ data/
-│     └─ spectra.sample.json
+│  ├─ data/
+│  │  └─ spectra.sample.json
+│  └─ favicon.svg
 ├─ scripts/
 │  └─ build_data.py
 ├─ src/
@@ -66,7 +65,7 @@ GitHub Actions → build y despliegue automático
 
 ## Datos
 
-Esta V1 no hace llamadas externas. Los datos de muestra están dentro del repositorio en `data/raw/`.
+Esta V1.1 no hace llamadas externas. Los datos de muestra están dentro del repositorio en `data/raw/`.
 
 El script `scripts/build_data.py`:
 
@@ -118,18 +117,16 @@ En GitHub, revisa:
 Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-## Funcionalidades V1
+## Funcionalidades V1.1
 
-- Vista principal tipo laboratorio visual.
-- Tabla periódica mínima con elementos de muestra.
-- Ficha de elemento seleccionado.
-- Espectro visible entre 380 y 750 nm.
-- Líneas UV/IR marcadas fuera del rango visible cuando proceda.
-- Cambio entre modo emisión y absorción.
-- Comparador multielemento.
-- Diagrama educativo de niveles de energía.
-- Panel de datos técnicos por línea espectral.
-- Preparado para ampliar dataset sin cambiar la interfaz base.
+- Tabla periódica espectral como vista principal.
+- Ficha flotante por elemento.
+- Pestañas internas: longitudes de onda, niveles de energía, elemento y datos técnicos.
+- Interruptor emisión/absorción dentro de la pestaña de longitudes de onda.
+- Comparador multielemento sin límite artificial de 4 elementos.
+- Fila Σ de fusión espectral en el comparador.
+- Favicon SVG propio.
+- Dataset local y estático.
 
 ## Licencia
 
