@@ -15,6 +15,15 @@
     event.stopPropagation();
     dispatch('compare', symbol);
   }
+
+  function categoryClass(category: string): string {
+    return category
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/^metal-de-transicion$/, 'metal-transicion')
+      .toLowerCase();
+  }
 </script>
 
 <section class="periodic-card" aria-label="Tabla periódica de espectros atómicos">
@@ -23,7 +32,7 @@
       <article
         class:active={selectedSymbol === element.symbol}
         class:compared={comparedSymbols.includes(element.symbol)}
-        class="element-cell category-{element.category.replaceAll(' ', '-')}"
+        class={`element-cell ${categoryClass(element.category)}`}
         style={`grid-column:${element.group};grid-row:${element.period};`}
         title={`${element.name_es} (${element.symbol})`}
       >
@@ -35,6 +44,7 @@
         >
           <span class="atomic-number">{element.atomic_number}</span>
           <strong>{element.symbol}</strong>
+          <span class="element-name">{element.name_es}</span>
         </button>
 
         <button
