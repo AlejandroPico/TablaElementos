@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
-"""Genera el dataset estático de la tabla periódica ampliada.
+"""Genera el dataset estático de Tabla elementos.
 
-La aplicación final no consulta servicios externos. Este script trabaja solo con
-CSV locales versionados en el repositorio y produce un JSON optimizado para la web.
+La aplicación no consulta servicios externos en tiempo de ejecución. Este script
+lee datos locales versionados y genera el JSON que consume el frontend.
 """
 
 from __future__ import annotations
@@ -13,7 +13,6 @@ import re
 from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
-
 
 ROOT = Path(__file__).resolve().parents[1]
 RAW_DIR = ROOT / "data" / "raw"
@@ -41,7 +40,15 @@ CATEGORY_ES = {
     "unknown": "desconocido",
 }
 
-NIST_FILENAME_RE = re.compile(r"^(?P<number>\d{3})_(?P<symbol>[A-Z][a-z]?)_(?P<kind>espectro|niveles)\.csv$")
+CANONICAL_NIST_FILES = {
+    "espectro": "spectra_nist_lines.csv",
+    "niveles": "spectra_nist_levels.csv",
+}
+
+LEGACY_NIST_FILES = {
+    "espectro": "{atomic_number:03d}_{symbol}_espectro.csv",
+    "niveles": "{atomic_number:03d}_{symbol}_niveles.csv",
+}
 
 
 @dataclass(frozen=True)
@@ -147,8 +154,6 @@ def normalize_category(category: str) -> str:
 
 
 def display_position(atomic_number: int, group: int, period: int) -> tuple[int, int]:
-    """Coloca lantánidos y actínidos en filas separadas para que sean visibles."""
-
     if 58 <= atomic_number <= 71:
         return atomic_number - 54, 8
     if 90 <= atomic_number <= 103:
@@ -245,17 +250,24 @@ def load_sample_lines(elements: dict[str, Element]) -> list[SpectralLine]:
     return lines
 
 
-def expected_nist_filename(element: Element, kind: str) -> str:
-    return f"{element.atomic_number:03d}_{element.symbol}_{kind}.csv"
+def element_folder(element: Element) -> Path:
+    return ELEMENTS_DIR / f"{element.atomic_number:03d}-{element.symbol}-{element.name_en.lower()}"
+
+
+def nist_filename(element: Element, kind: str, legacy: bool = False) -> str:
+    if legacy:
+        return LEGACY_NIST_FILES[kind].format(atomic_number=element.atomic_number, symbol=element.symbol)
+    return CANONICAL_NIST_FILES[kind]
 
 
 def find_nist_file(element: Element, kind: str) -> Path | None:
-    filename = expected_nist_filename(element, kind)
-    element_folder = ELEMENTS_DIR / f"{element.atomic_number:03d}-{element.symbol}-{element.name_en.lower()}"
+    legacy_name = nist_filename(element, kind, legacy=True)
+    canonical_name = nist_filename(element, kind)
 
     candidates = [
-        element_folder / filename,
-        IMPORT_NIST_DIR / filename,
+        element_folder(element) / canonical_name,
+        element_folder(element) / legacy_name,
+        IMPORT_NIST_DIR / legacy_name,
     ]
 
     for candidate in candidates:
@@ -295,7 +307,6 @@ def analyze_csv(path: Path | None, expected_name: str) -> NistFileStatus:
                 row_count = index
                 if not preview and row:
                     preview = " | ".join(cell[:160] for cell in row[:4])[:500]
-
     except csv.Error as error:
         status = "csv_error"
         table_like = False
@@ -362,11 +373,8 @@ def parse_nist_spectral_lines(element: Element, path: Path | None, status: NistF
                     intensity = min(1.0, intensity / 1000 if intensity > 100 else intensity / 100)
                 intensity = max(0.08, min(1.0, intensity))
 
-                lower_raw = pick_value(row, ["lower", "ei"])
-                upper_raw = pick_value(row, ["upper", "ek"])
-                lower = parse_float(lower_raw) or 0.0
-                upper = parse_float(upper_raw) or 0.0
-
+                lower = parse_float(pick_value(row, ["lower", "ei"])) or 0.0
+                upper = parse_float(pick_value(row, ["upper", "ek"])) or 0.0
                 transition = pick_value(row, ["transition", "term", "config"]) or "Transición NIST"
                 species = pick_value(row, ["spectrum", "species", "sp"]) or f"{element.symbol} I"
 
@@ -397,13 +405,11 @@ def parse_nist_spectral_lines(element: Element, path: Path | None, status: NistF
 
 
 def analyze_nist_for_element(element: Element) -> tuple[NistElementStatus, list[SpectralLine]]:
-    spectrum_name = expected_nist_filename(element, "espectro")
-    levels_name = expected_nist_filename(element, "niveles")
     spectrum_path = find_nist_file(element, "espectro")
     levels_path = find_nist_file(element, "niveles")
 
-    spectrum_status = analyze_csv(spectrum_path, spectrum_name)
-    levels_status = analyze_csv(levels_path, levels_name)
+    spectrum_status = analyze_csv(spectrum_path, CANONICAL_NIST_FILES["espectro"])
+    levels_status = analyze_csv(levels_path, CANONICAL_NIST_FILES["niveles"])
     imported_lines = parse_nist_spectral_lines(element, spectrum_path, spectrum_status)
 
     return (
@@ -441,8 +447,6 @@ def build_payload() -> dict[str, Any]:
         for line in imported_lines:
             grouped_lines[element.symbol].append(asdict(line))
 
-    # Mantiene el dataset de muestra como respaldo visual mientras los CSV de NIST
-    # no estén normalizados a una tabla limpia.
     for line in sorted(sample_lines, key=lambda item: (item.element, item.wavelength_nm)):
         if not grouped_lines[line.element]:
             grouped_lines[line.element].append(asdict(line))
@@ -451,13 +455,13 @@ def build_payload() -> dict[str, Any]:
 
     return {
         "metadata": {
-            "project": "Tabla periódica ampliada",
-            "dataset": "elements-v2-nist-staging",
-            "description": "Dataset local con 118 elementos, estado de importación NIST y líneas de muestra como respaldo visual.",
+            "project": "Tabla elementos",
+            "dataset": "elements-v3-nist-by-element",
+            "description": "Dataset local con 118 elementos y datos NIST buscados dentro de data/elements/<elemento>/.",
             "external_runtime_requests": False,
             "visible_range_nm": [VISIBLE_MIN_NM, VISIBLE_MAX_NM],
             "generated_by": "scripts/build_data.py",
-            "source_layout": "data/elements + data/import/nist",
+            "source_layout": "data/elements/<elemento>/",
             "nist_files_present": present_files,
             "nist_files_malformed_or_non_tabular": malformed_files,
             "nist_imported_spectral_lines": imported_total,
