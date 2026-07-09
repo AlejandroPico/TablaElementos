@@ -1,0 +1,140 @@
+:root {
+  --cell-size: clamp(48px, 4.25vw, 76px);
+  --cell-gap: clamp(3px, 0.34vw, 6px);
+}
+
+.periodic-grid {
+  grid-template-rows: repeat(9, var(--cell-size));
+}
+
+.element-open-button {
+  padding: 5px 5px 6px;
+}
+
+.element-open-button strong {
+  font-size: clamp(1.14rem, 1.86vw, 2.15rem);
+}
+
+.atomic-number,
+.element-name {
+  font-size: clamp(0.5rem, 0.58vw, 0.68rem);
+}
+
+.element-cell.metaloide {
+  background: linear-gradient(180deg, #738f64, #526f49);
+}
+
+.element-cell.halogeno {
+  background: linear-gradient(180deg, #7e7aaa, #5f5c8d);
+}
+
+.element-cell.metal-post-transicion {
+  background: linear-gradient(180deg, #7d8895, #5b6572);
+}
+
+.element-cell.lantanido {
+  background: linear-gradient(180deg, #866c9f, #65507d);
+}
+
+.element-cell.actinido {
+  background: linear-gradient(180deg, #9a677a, #764d5d);
+}
+
+.element-cell.desconocido {
+  background: linear-gradient(180deg, #555b66, #3e434c);
+}
+
+.nist-panel {
+  display: grid;
+  gap: 14px;
+}
+
+.nist-status-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.nist-status-card {
+  border: 1px solid rgba(126, 231, 255, 0.22);
+  background: rgba(4, 9, 22, 0.42);
+  padding: 14px;
+  min-width: 0;
+}
+
+.nist-status-card.problem {
+  border-color: rgba(255, 209, 102, 0.44);
+  background: rgba(48, 33, 6, 0.28);
+}
+
+.nist-status-card header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.nist-status-card header strong {
+  font-size: 1rem;
+}
+
+.nist-status-card header span {
+  border: 1px solid rgba(255, 255, 255, 0.16);
+  padding: 4px 8px;
+  color: var(--accent);
+  font-size: 0.74rem;
+  white-space: nowrap;
+}
+
+.nist-status-card dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 12px;
+}
+
+.nist-status-card dt {
+  color: var(--text-soft);
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.nist-status-card dd {
+  margin: 2px 0 0;
+  color: #e8f2ff;
+  font-size: 0.82rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.nist-status-card p {
+  margin: 0;
+  color: #d9e5f5;
+}
+
+.nist-status-card pre {
+  max-height: 160px;
+  overflow: auto;
+  margin: 12px 0 0;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(0, 0, 0, 0.26);
+  color: #cfe7ff;
+  padding: 10px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  font-size: 0.72rem;
+}
+
+@media (max-width: 900px) {
+  :root {
+    --cell-size: 58px;
+  }
+
+  .nist-status-grid,
+  .nist-status-card dl {
+    grid-template-columns: 1fr;
+  }
+}
