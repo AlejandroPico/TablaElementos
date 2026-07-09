@@ -2,7 +2,7 @@
 
 Tabla periódica ampliada y estática para explorar elementos químicos, espectros, niveles electrónicos, propiedades físicas, química, isótopos, materiales, usos, historia y futuros bloques de datos científicos.
 
-> Estado: **V1.9 zoom de inspección**.  
+> Estado: **V1.10 encaje vertical completo**.  
 > Tecnología: **Python + Svelte + TypeScript + Vite + D3**.  
 > Despliegue: **GitHub Pages mediante GitHub Actions**.  
 > Ejecución: **100% estática**, sin servidor externo y sin consultas remotas en tiempo de uso.
@@ -11,7 +11,7 @@ Tabla periódica ampliada y estática para explorar elementos químicos, espectr
 
 **Tabla elementos** nace como una tabla periódica ampliada: una interfaz visual y educativa donde cada elemento químico pueda consultarse como una ficha científica completa.
 
-El proyecto empezó centrado en espectros atómicos, pero ahora queda preparado para crecer hacia una tabla periódica total. La V1.9 amplía el canvas interactivo: la tabla ocupa más pantalla en la vista inicial, el zoom máximo llega hasta modo inspección y una ficha puede acercarse lo suficiente como para ocupar prácticamente toda la pantalla.
+El proyecto empezó centrado en espectros atómicos, pero ahora queda preparado para crecer hacia una tabla periódica total. La V1.10 corrige el encaje vertical de la vista inicial para que las 9 filas de la tabla, incluidos lantánidos y actínidos, entren completas al cargar la página.
 
 Cada ficha de la tabla muestra de base:
 
@@ -247,18 +247,21 @@ La base pública configurada para Vite es:
 /TablaElementos/
 ```
 
-## Funcionalidades V1.9
+## Funcionalidades V1.10
 
-- Tabla inicial más grande, calculada según ancho y alto de pantalla.
-- Zoom máximo ampliado de `3.2` a `14`.
-- Pasos de zoom más potentes con rueda del ratón.
+- Encaje vertical corregido para que las 9 filas entren completas al cargar.
+- Actínidos visibles completos en la vista inicial.
+- Cálculo de celda ajustado para descontar padding, gaps y margen del canvas.
+- Padding interno reducido en `periodic-card` y `periodic-grid`.
+- Tabla inicial calculada según ancho y alto de pantalla.
+- Zoom máximo ampliado a `14`.
+- Pasos de zoom potentes con rueda del ratón.
 - Modo `zoom-inspect` para inspección profunda de una ficha.
 - Tipografía interna ajustada para soportar más datos dentro de cada celda.
 - Detalles progresivos: categoría, grupo/periodo y líneas espectrales.
 - Canvas interactivo para la tabla periódica.
 - Reset de vista con doble clic.
 - Margen invisible y `overflow` controlado para evitar microbarras laterales.
-- Eliminado el botón `+` de las celdas de la tabla.
 - Comparador gestionado desde la ficha del elemento.
 - Comparador con eliminación individual y limpieza completa.
 - Tabla periódica con los 118 elementos desde `data/elements/elements.manifest.csv`.
