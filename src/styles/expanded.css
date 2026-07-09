@@ -1,10 +1,10 @@
 :root {
-  --cell-size: clamp(48px, 4.25vw, 76px);
-  --cell-gap: clamp(3px, 0.34vw, 6px);
+  --cell-size: clamp(58px, min(calc((100vw - 64px) / 18), calc((100vh - 72px) / 9)), 102px);
+  --cell-gap: clamp(3px, 0.32vw, 7px);
 }
 
 .periodic-card {
-  padding: clamp(18px, 2.6vw, 42px);
+  padding: clamp(8px, 1.35vw, 24px);
   overflow: hidden;
 }
 
@@ -26,7 +26,7 @@
 .periodic-viewport::before {
   content: "";
   position: absolute;
-  inset: clamp(10px, 1.6vw, 26px);
+  inset: clamp(8px, 1.2vw, 22px);
   pointer-events: none;
   background:
     linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -40,10 +40,10 @@
   max-width: none;
   max-height: none;
   overflow: visible;
-  padding: clamp(14px, 1.9vw, 34px);
+  padding: clamp(8px, 1.15vw, 24px);
   transform-origin: center center;
   will-change: transform;
-  transition: transform 80ms linear;
+  transition: transform 65ms linear;
   scrollbar-width: none;
 }
 
@@ -70,18 +70,21 @@
 }
 
 .element-open-button {
-  grid-template-rows: auto 1fr auto auto auto;
-  padding: 5px 5px 6px;
+  grid-template-rows: auto 1fr auto auto auto auto;
+  padding: clamp(5px, calc(var(--zoom, 1) * 0.28px + 4px), 13px);
 }
 
 .element-open-button strong {
-  font-size: clamp(1.14rem, 1.86vw, 2.15rem);
+  font-size: clamp(1.34rem, min(2.22vw, 3.4vh), 2.75rem);
   letter-spacing: -0.06em;
 }
 
-.atomic-number,
+.atomic-number {
+  font-size: clamp(0.58rem, min(0.76vw, 1.05vh), 0.92rem);
+}
+
 .element-name {
-  font-size: clamp(0.5rem, 0.58vw, 0.68rem);
+  font-size: clamp(0.6rem, min(0.76vw, 1.05vh), 0.95rem);
 }
 
 .element-detail {
@@ -89,21 +92,33 @@
   min-width: 0;
   overflow: hidden;
   color: rgba(255, 255, 255, 0.72);
-  font-size: clamp(0.42rem, 0.48vw, 0.58rem);
+  font-size: clamp(0.48rem, min(0.62vw, 0.86vh), 0.82rem);
   font-weight: 650;
-  line-height: 1.1;
+  line-height: 1.12;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .zoom-medium .detail-medium,
 .zoom-deep .detail-medium,
-.zoom-deep .detail-deep {
+.zoom-deep .detail-deep,
+.zoom-inspect .detail-medium,
+.zoom-inspect .detail-deep,
+.zoom-inspect .detail-inspect {
   display: block;
 }
 
-.zoom-deep .element-open-button strong {
+.zoom-deep .element-open-button strong,
+.zoom-inspect .element-open-button strong {
   align-self: end;
+}
+
+.zoom-inspect .element-open-button {
+  gap: 1px;
+}
+
+.zoom-inspect .element-open-button strong {
+  font-size: clamp(1.42rem, min(2.4vw, 3.7vh), 3rem);
 }
 
 .compare-dot {
@@ -279,11 +294,11 @@
 
 @media (max-width: 900px) {
   :root {
-    --cell-size: 58px;
+    --cell-size: clamp(54px, min(calc((100vw - 30px) / 9), calc((100vh - 36px) / 9)), 70px);
   }
 
   .periodic-card {
-    padding: 10px;
+    padding: 6px;
   }
 
   .nist-status-grid,
