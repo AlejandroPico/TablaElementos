@@ -2,16 +2,16 @@
 
 Aplicación científica estática para explorar la huella luminosa de los elementos: líneas de emisión, absorción, longitud de onda, color visible aproximado, niveles de energía y comparación entre elementos.
 
-> Estado: **V1.3 funcional**.  
+> Estado: **V1.4 estructural**.  
 > Tecnología: **Python + Svelte + TypeScript + Vite + D3**.  
 > Despliegue: **GitHub Pages mediante GitHub Actions**.  
 > Ejecución: **100% estática**, sin servidor externo y sin consultas remotas en tiempo de uso.
 
 ## Objetivo del proyecto
 
-El objetivo de **Espectros Atómicos** es construir una interfaz visual y educativa donde cada elemento químico pueda consultarse como una firma espectral: una serie de líneas que aparecen en posiciones concretas del espectro electromagnético.
+El objetivo de **Espectros Atómicos** evoluciona hacia una tabla periódica ampliada: una interfaz visual y educativa donde cada elemento químico pueda consultarse como una ficha científica completa.
 
-La V1.3 ajusta la estética de la tabla principal hacia un sistema de fichas cuadradas, anguladas y coloreadas por categoría. La pantalla inicial queda reducida a la propia tabla, sin contenedores visibles ni texto explicativo en primer plano.
+La V1.3 ajustó la estética de la tabla principal hacia un sistema de fichas cuadradas, anguladas y coloreadas por categoría. La V1.4 añade la primera estructura de datos para convertir el proyecto en una tabla periódica total, preparada para almacenar por elemento espectros, isótopos, propiedades físicas, química, materiales, historia, industria y otros dominios.
 
 Cada ficha muestra:
 
@@ -31,11 +31,11 @@ El comparador aparece solo cuando se añaden elementos con el botón `+`. Se mue
 ## Arquitectura
 
 ```txt
-Python        → procesa datos locales CSV y genera JSON público
-TypeScript    → modelado tipado de elementos, líneas y transiciones
-Svelte        → componentes visuales de la interfaz
-Vite          → build estático para GitHub Pages
-D3            → escalas científicas, ejes y representación espectral
+Python         → procesa datos locales CSV y genera JSON público
+TypeScript     → modelado tipado de elementos, líneas y transiciones
+Svelte         → componentes visuales de la interfaz
+Vite           → build estático para GitHub Pages
+D3             → escalas científicas, ejes y representación espectral
 GitHub Actions → build y despliegue automático
 ```
 
@@ -44,6 +44,9 @@ GitHub Actions → build y despliegue automático
 ```txt
 .
 ├─ data/
+│  ├─ elements/
+│  │  ├─ README.md
+│  │  └─ elements.manifest.csv
 │  ├─ raw/
 │  │  ├─ elements.csv
 │  │  └─ sample-lines.csv
@@ -56,7 +59,8 @@ GitHub Actions → build y despliegue automático
 │  │  └─ spectra.sample.json
 │  └─ favicon.svg
 ├─ scripts/
-│  └─ build_data.py
+│  ├─ build_data.py
+│  └─ init_elements_structure.py
 ├─ src/
 │  ├─ app/
 │  ├─ components/
@@ -73,17 +77,29 @@ GitHub Actions → build y despliegue automático
 
 ## Datos
 
-Esta V1.3 no hace llamadas externas. Los datos de muestra están dentro del repositorio en `data/raw/`.
+Esta V1.4 no hace llamadas externas. Los datos de muestra antiguos siguen dentro de `data/raw/` por compatibilidad con la V1 actual.
 
-El script `scripts/build_data.py`:
+La nueva estructura de datos vive en:
 
-1. lee los CSV locales;
-2. agrupa las líneas por elemento;
-3. calcula el color visible aproximado de cada longitud de onda;
-4. genera un JSON de trabajo en `data/processed/`;
-5. copia el JSON final a `public/data/`, que es lo que consume la web.
+```txt
+data/elements/
+```
 
-Más adelante se podrán añadir datos procedentes de fuentes abiertas como NIST Atomic Spectra Database, siempre descargados y versionados localmente en el repositorio.
+Contiene:
+
+- `elements.manifest.csv`: manifiesto maestro con los 118 elementos y la carpeta prevista para cada uno;
+- `README.md`: reglas de estructura, nombres de CSVs y dominios científicos previstos;
+- `scripts/init_elements_structure.py`: generador local de las 118 carpetas de elementos y sus plantillas CSV.
+
+Para generar localmente todas las carpetas:
+
+```bash
+npm run init:elements
+```
+
+Git no conserva carpetas vacías, por eso las subcarpetas se generan mediante script antes de empezar a cargar datos reales.
+
+El script actual `scripts/build_data.py` todavía alimenta la web desde `data/raw/` y `public/data/`. La migración a `data/elements/` se hará en una fase posterior para no romper el despliegue existente.
 
 ## Instalación local
 
@@ -97,10 +113,16 @@ npm install
 npm run dev
 ```
 
-## Generar datos
+## Generar datos actuales de la aplicación
 
 ```bash
 npm run build:data
+```
+
+## Inicializar estructura ampliada de elementos
+
+```bash
+npm run init:elements
 ```
 
 ## Build de producción
@@ -125,7 +147,7 @@ En GitHub, revisa:
 Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-## Funcionalidades V1.3
+## Funcionalidades V1.4
 
 - Pantalla principal sin cabeceras, subtítulos ni textos guía.
 - Tabla periódica como elemento visual dominante.
@@ -139,7 +161,9 @@ Settings → Pages → Build and deployment → Source → GitHub Actions
 - Interruptor emisión/absorción dentro de la pestaña de longitudes de onda.
 - Comparador inferior tipo bandeja deslizable.
 - Fila Σ de fusión espectral en el comparador.
-- Favicon SVG propio.
+- Nueva estructura `data/elements/` para 118 elementos.
+- Manifiesto maestro `data/elements/elements.manifest.csv`.
+- Generador `npm run init:elements` para crear carpetas y CSVs por elemento.
 - Dataset local y estático.
 
 ## Licencia
