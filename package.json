@@ -8,7 +8,7 @@
     "dev": "npm run build:data && vite --host 0.0.0.0",
     "build:data": "python scripts/build_data.py",
     "init:elements": "python scripts/init_elements_structure.py",
-    "import:nist": "python scripts/import_nist_exports.py",
+    "import:nist": "python scripts/import_nist_exports.py --move --overwrite",
     "import:nist:dry": "python scripts/import_nist_exports.py --dry-run",
     "build": "npm run build:data && vite build",
     "preview": "vite preview",

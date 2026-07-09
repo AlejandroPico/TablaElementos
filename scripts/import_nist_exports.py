@@ -17,6 +17,11 @@ NIST_FILE_RE = re.compile(
     re.IGNORECASE,
 )
 
+CANONICAL_FILENAMES = {
+    "espectro": "spectra_nist_lines.csv",
+    "niveles": "spectra_nist_levels.csv",
+}
+
 
 @dataclass(frozen=True)
 class ElementTarget:
@@ -58,24 +63,24 @@ def classify_file(path: Path) -> tuple[str, str, str] | None:
     return atomic_number, symbol, kind
 
 
-def import_file(source: Path, target: ElementTarget, *, move: bool, overwrite: bool) -> str:
+def import_file(source: Path, target: ElementTarget, kind: str, *, move: bool, overwrite: bool) -> tuple[str, Path]:
     target.folder.mkdir(parents=True, exist_ok=True)
-    destination = target.folder / source.name
+    destination = target.folder / CANONICAL_FILENAMES[kind]
 
     if destination.exists() and not overwrite:
-        return "skipped"
+        return "skipped", destination
 
     if move:
         shutil.move(str(source), str(destination))
     else:
         shutil.copy2(source, destination)
 
-    return "moved" if move else "copied"
+    return ("moved" if move else "copied"), destination
 
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(
-        description="Importa CSVs exportados desde NIST ASD a las carpetas data/elements/<elemento>/.",
+        description="Mueve o copia CSVs exportados desde NIST ASD a data/elements/<elemento>/ con nombres canónicos.",
     )
     parser.add_argument(
         "--source",
@@ -86,7 +91,7 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--move",
         action="store_true",
-        help="Mover archivos en vez de copiarlos. Por defecto se copian.",
+        help="Mover archivos en vez de copiarlos.",
     )
     parser.add_argument(
         "--overwrite",
@@ -131,12 +136,12 @@ def main() -> None:
             print(f"[SIN ELEMENTO] {source.name} no coincide con el manifiesto")
             continue
 
-        destination = target.folder / source.name
+        destination = target.folder / CANONICAL_FILENAMES[kind]
         if args.dry_run:
-            print(f"[DRY] {source.name} -> {destination.relative_to(ROOT)} ({kind})")
+            print(f"[DRY] {source.name} -> {destination.relative_to(ROOT)}")
             continue
 
-        result = import_file(source, target, move=args.move, overwrite=args.overwrite)
+        result, destination = import_file(source, target, kind, move=args.move, overwrite=args.overwrite)
         if result == "copied":
             copied += 1
             print(f"[COPIADO] {source.name} -> {destination.relative_to(ROOT)}")
