@@ -2,7 +2,7 @@
 
 Tabla periódica ampliada y estática para explorar elementos químicos, espectros, niveles electrónicos, propiedades físicas, química, isótopos, materiales, usos, historia y futuros bloques de datos científicos.
 
-> Estado: **V1.7 renombrado estructural**.  
+> Estado: **V1.8 canvas interactivo**.  
 > Tecnología: **Python + Svelte + TypeScript + Vite + D3**.  
 > Despliegue: **GitHub Pages mediante GitHub Actions**.  
 > Ejecución: **100% estática**, sin servidor externo y sin consultas remotas en tiempo de uso.
@@ -11,13 +11,15 @@ Tabla periódica ampliada y estática para explorar elementos químicos, espectr
 
 **Tabla elementos** nace como una tabla periódica ampliada: una interfaz visual y educativa donde cada elemento químico pueda consultarse como una ficha científica completa.
 
-El proyecto empezó centrado en espectros atómicos, pero ahora queda preparado para crecer hacia una tabla periódica total. La V1.6 cargó los 118 elementos desde el manifiesto maestro, mantuvo la visualización espectral de muestra como respaldo y añadió un diagnóstico NIST provisional dentro de cada ficha. La V1.7 consolida el nuevo nombre del proyecto y actualiza las referencias internas principales.
+El proyecto empezó centrado en espectros atómicos, pero ahora queda preparado para crecer hacia una tabla periódica total. La V1.8 introduce una primera versión de canvas interactivo: la tabla se visualiza dentro de un viewport sin barras laterales, permite zoom con la rueda del ratón, restablece la vista con doble clic y prepara niveles de detalle progresivos dentro de cada ficha.
 
-Cada ficha de la tabla muestra:
+Cada ficha de la tabla muestra de base:
 
 - número atómico;
 - símbolo;
 - nombre del elemento.
+
+Al hacer zoom empiezan a aparecer detalles adicionales provisionales, como categoría y recuento de líneas espectrales disponibles. Esta capa está pensada para ir incorporando más datos conforme avance el dataset.
 
 Al pulsar un elemento se abre una ficha flotante con pestañas:
 
@@ -27,7 +29,7 @@ Al pulsar un elemento se abre una ficha flotante con pestañas:
 - información del elemento;
 - tabla técnica de líneas espectrales.
 
-El comparador aparece solo cuando se añaden elementos con el botón `+`. Se muestra como una bandeja inferior que ocupa parte de la pantalla sin superponerse a la tabla.
+El comparador se gestiona desde la ficha de cada elemento. La tabla principal queda limpia, sin icono `+` en cada celda. El comparador permite quitar elementos individualmente o limpiar toda la selección.
 
 ## Arquitectura
 
@@ -182,6 +184,14 @@ python scripts/import_nist_exports.py --move
 
 Si los CSV no son tablas limpias, el build no falla: lo marca como diagnóstico para poder corregir la exportación.
 
+## Interacción de la tabla
+
+- Rueda del ratón: zoom sobre el canvas.
+- Doble clic: restablece zoom y posición.
+- Clic sobre un elemento: abre ficha completa.
+- Añadir al comparador: desde la ficha del elemento.
+- Quitar del comparador: desde la bandeja inferior.
+
 ## Instalación local
 
 Requisitos:
@@ -236,24 +246,21 @@ La base pública configurada para Vite es:
 /TablaElementos/
 ```
 
-## Funcionalidades V1.7
+## Funcionalidades V1.8
 
-- Proyecto renombrado internamente a **Tabla elementos**.
-- Título HTML y título Svelte actualizados a `Tabla elementos`.
-- Base de GitHub Pages actualizada a `/TablaElementos/`.
-- Favicon SVG nuevo basado en una tabla periódica estilizada.
+- Canvas interactivo para la tabla periódica.
+- Zoom con rueda de ratón.
+- Reset de vista con doble clic.
+- Margen invisible y `overflow` controlado para evitar microbarras laterales al pasar el ratón por los elementos del borde derecho.
+- Eliminado el botón `+` de las celdas de la tabla.
+- Comparador gestionado desde la ficha del elemento.
+- Comparador con eliminación individual y limpieza completa.
+- Detalles progresivos dentro de las celdas según nivel de zoom.
 - Tabla periódica con los 118 elementos desde `data/elements/elements.manifest.csv`.
 - Lantánidos y actínidos visibles en filas separadas.
-- Pantalla principal sin cabeceras, subtítulos ni textos guía.
-- Tabla periódica como elemento visual dominante.
 - Fichas cuadradas con ángulos de 90 grados.
-- Celdas con número atómico, símbolo y nombre.
-- Coloración por categoría química.
-- Ficha flotante por elemento al pulsar la celda.
 - Pestañas internas: longitudes de onda, niveles de energía, NIST, elemento y datos técnicos.
 - Diagnóstico provisional de archivos NIST por elemento.
-- Bandeja `data/import/nist/` para subir CSVs planos de NIST.
-- Importador `npm run import:nist` para repartir espectros y niveles por elemento.
 - Dataset local y estático.
 
 ## Licencia
