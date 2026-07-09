@@ -2,14 +2,13 @@
   import CompareElements from '../components/CompareElements.svelte';
   import ElementModal from '../components/ElementModal.svelte';
   import PeriodicGrid from '../components/PeriodicGrid.svelte';
-  import type { ElementWithLines, SpectraDataset } from '../lib/atomicTypes';
+  import type { ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
 
-  let dataset: SpectraDataset | null = null;
   let elements: ElementWithLines[] = [];
   let selectedSymbol = '';
   let modalElement: ElementWithLines | null = null;
-  let comparedSymbols: string[] = ['H', 'Na', 'Hg', 'O'];
+  let comparedSymbols: string[] = [];
   let loading = true;
   let errorMessage = '';
 
@@ -19,7 +18,7 @@
 
   async function init(): Promise<void> {
     try {
-      dataset = await loadSpectraDataset();
+      const dataset = await loadSpectraDataset();
       elements = hydrateElements(dataset);
       selectedSymbol = elements[0]?.symbol ?? '';
     } catch (error) {
@@ -51,14 +50,13 @@
 </script>
 
 <svelte:head>
-  <title>Espectros Atómicos · V1.1</title>
+  <title>Espectros Atómicos</title>
 </svelte:head>
 
-<main class="app-shell">
+<main class:with-comparator={comparedElements.length > 0} class="app-shell">
   {#if loading}
     <section class="state-card">
       <h2>Cargando dataset local…</h2>
-      <p>La aplicación está leyendo el JSON publicado en <code>public/data/</code>.</p>
     </section>
   {:else if errorMessage}
     <section class="state-card error">
@@ -66,25 +64,19 @@
       <p>{errorMessage}</p>
     </section>
   {:else}
-    <header class="compact-header">
-      <div>
-        <strong>Espectros Atómicos</strong>
-        <span>{elements.length} elementos de muestra · {dataset?.metadata.dataset}</span>
-      </div>
-      <p>Tabla periódica como punto de entrada. Pulsa un elemento para abrir su ficha espectral.</p>
-    </header>
+    <PeriodicGrid
+      {elements}
+      {selectedSymbol}
+      {comparedSymbols}
+      on:select={(event) => openElement(event.detail)}
+      on:compare={(event) => toggleCompared(event.detail)}
+    />
 
-    <section class="main-grid">
-      <PeriodicGrid
-        {elements}
-        {selectedSymbol}
-        {comparedSymbols}
-        on:select={(event) => openElement(event.detail)}
-        on:compare={(event) => toggleCompared(event.detail)}
-      />
-
-      <CompareElements selected={comparedElements} />
-    </section>
+    {#if comparedElements.length > 0}
+      <aside class="comparison-drawer" aria-label="Comparador espectral">
+        <CompareElements selected={comparedElements} />
+      </aside>
+    {/if}
 
     <ElementModal
       element={modalElement}
