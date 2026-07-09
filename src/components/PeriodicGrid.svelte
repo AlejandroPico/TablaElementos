@@ -1,7 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import type { ElementWithLines } from '../lib/atomicTypes';
-  import { countVisibleLines } from '../lib/filters';
 
   export let elements: ElementWithLines[] = [];
   export let selectedSymbol = '';
@@ -18,15 +17,7 @@
   }
 </script>
 
-<section class="periodic-card" aria-label="Tabla periódica de muestra">
-  <div class="periodic-header">
-    <div>
-      <p class="eyebrow">Vista principal</p>
-      <h1>Tabla periódica espectral</h1>
-    </div>
-    <span>{elements.length} elementos disponibles</span>
-  </div>
-
+<section class="periodic-card" aria-label="Tabla periódica de espectros atómicos">
   <div class="periodic-grid">
     {#each elements as element}
       <article
@@ -34,6 +25,7 @@
         class:compared={comparedSymbols.includes(element.symbol)}
         class="element-cell category-{element.category.replaceAll(' ', '-')}"
         style={`grid-column:${element.group};grid-row:${element.period};`}
+        title={`${element.name_es} (${element.symbol})`}
       >
         <button
           class="element-open-button"
@@ -43,8 +35,6 @@
         >
           <span class="atomic-number">{element.atomic_number}</span>
           <strong>{element.symbol}</strong>
-          <small>{element.name_es}</small>
-          <em>{countVisibleLines(element.lines)} líneas visibles</em>
         </button>
 
         <button
@@ -54,7 +44,7 @@
           title="Añadir o quitar del comparador"
           aria-label={`Añadir o quitar ${element.name_es} del comparador`}
         >
-          {comparedSymbols.includes(element.symbol) ? '✓' : '+'}
+          {comparedSymbols.includes(element.symbol) ? '−' : '+'}
         </button>
       </article>
     {/each}
