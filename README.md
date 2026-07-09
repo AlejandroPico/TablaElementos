@@ -2,7 +2,7 @@
 
 Aplicación científica estática para explorar la huella luminosa de los elementos: líneas de emisión, absorción, longitud de onda, color visible aproximado, niveles de energía y comparación entre elementos.
 
-> Estado: **V1.5 estructural**.  
+> Estado: **V1.6 estructural**.  
 > Tecnología: **Python + Svelte + TypeScript + Vite + D3**.  
 > Despliegue: **GitHub Pages mediante GitHub Actions**.  
 > Ejecución: **100% estática**, sin servidor externo y sin consultas remotas en tiempo de uso.
@@ -11,7 +11,7 @@ Aplicación científica estática para explorar la huella luminosa de los elemen
 
 El objetivo de **Espectros Atómicos** evoluciona hacia una tabla periódica ampliada: una interfaz visual y educativa donde cada elemento químico pueda consultarse como una ficha científica completa.
 
-La V1.3 ajustó la estética de la tabla principal hacia un sistema de fichas cuadradas, anguladas y coloreadas por categoría. La V1.4 añadió la primera estructura de datos para convertir el proyecto en una tabla periódica total. La V1.5 añade una bandeja de importación para CSVs descargados desde NIST ASD y un script para repartirlos automáticamente por elemento.
+La V1.6 carga ya los 118 elementos desde el manifiesto maestro, mantiene la visualización espectral de muestra como respaldo y añade un diagnóstico NIST provisional dentro de cada ficha. El generador analiza si los CSV de `data/import/nist/` son tablas legibles o si parecen exportaciones no tabulares, HTML o JavaScript guardado como CSV.
 
 Cada ficha muestra:
 
@@ -23,6 +23,7 @@ Al pulsar un elemento se abre una ficha flotante con pestañas:
 
 - longitudes de onda, con interruptor interno de emisión/absorción;
 - niveles de energía;
+- NIST, con diagnóstico provisional de archivos importados;
 - información del elemento;
 - tabla técnica de líneas espectrales.
 
@@ -32,7 +33,7 @@ El comparador aparece solo cuando se añaden elementos con el botón `+`. Se mue
 
 ```txt
 Python         → procesa datos locales CSV y genera JSON público
-TypeScript     → modelado tipado de elementos, líneas y transiciones
+TypeScript     → modelado tipado de elementos, líneas, transiciones y estado NIST
 Svelte         → componentes visuales de la interfaz
 Vite           → build estático para GitHub Pages
 D3             → escalas científicas, ejes y representación espectral
@@ -71,6 +72,8 @@ GitHub Actions → build y despliegue automático
 │  ├─ components/
 │  ├─ lib/
 │  ├─ styles/
+│  │  ├─ expanded.css
+│  │  └─ global.css
 │  └─ main.ts
 ├─ .github/
 │  └─ workflows/
@@ -82,7 +85,11 @@ GitHub Actions → build y despliegue automático
 
 ## Datos
 
-Esta V1.5 no hace llamadas externas. Los datos de muestra antiguos siguen dentro de `data/raw/` por compatibilidad con la V1 actual.
+Esta V1.6 no hace llamadas externas. Los datos de muestra antiguos siguen dentro de `data/raw/` por compatibilidad visual, pero la tabla principal se genera desde:
+
+```txt
+data/elements/elements.manifest.csv
+```
 
 La nueva estructura de datos vive en:
 
@@ -160,7 +167,18 @@ Por defecto copia los archivos y conserva la bandeja de entrada. Para moverlos e
 python scripts/import_nist_exports.py --move
 ```
 
-El script actual `scripts/build_data.py` todavía alimenta la web desde `data/raw/` y `public/data/`. La migración a `data/elements/` se hará en una fase posterior para no romper el despliegue existente.
+## Diagnóstico NIST provisional
+
+`scripts/build_data.py` analiza los archivos NIST en cada build y añade un bloque `nist_by_element` al JSON público. La pestaña **NIST** de cada ficha muestra:
+
+- si existe el archivo de espectro;
+- si existe el archivo de niveles;
+- columnas detectadas;
+- número de filas;
+- ruta del archivo;
+- advertencia si el CSV parece HTML, JavaScript o una sola columna no tabular.
+
+Si los CSV no son tablas limpias, el build no falla: lo marca como diagnóstico para poder corregir la exportación.
 
 ## Instalación local
 
@@ -208,8 +226,10 @@ En GitHub, revisa:
 Settings → Pages → Build and deployment → Source → GitHub Actions
 ```
 
-## Funcionalidades V1.5
+## Funcionalidades V1.6
 
+- Tabla periódica con los 118 elementos desde `data/elements/elements.manifest.csv`.
+- Lantánidos y actínidos visibles en filas separadas.
 - Pantalla principal sin cabeceras, subtítulos ni textos guía.
 - Tabla periódica como elemento visual dominante.
 - Contenedor visual de la tabla eliminado: solo se ven las fichas.
@@ -218,13 +238,12 @@ Settings → Pages → Build and deployment → Source → GitHub Actions
 - Coloración por categoría química.
 - Botón `+` por elemento para activar el comparador.
 - Ficha flotante por elemento al pulsar la celda.
-- Pestañas internas: longitudes de onda, niveles de energía, elemento y datos técnicos.
+- Pestañas internas: longitudes de onda, niveles de energía, NIST, elemento y datos técnicos.
+- Diagnóstico provisional de archivos NIST por elemento.
 - Interruptor emisión/absorción dentro de la pestaña de longitudes de onda.
 - Comparador inferior tipo bandeja deslizable.
 - Fila Σ de fusión espectral en el comparador.
 - Nueva estructura `data/elements/` para 118 elementos.
-- Manifiesto maestro `data/elements/elements.manifest.csv`.
-- Generador `npm run init:elements` para crear carpetas y CSVs por elemento.
 - Bandeja `data/import/nist/` para subir CSVs planos de NIST.
 - Importador `npm run import:nist` para repartir espectros y niveles por elemento.
 - Dataset local y estático.
