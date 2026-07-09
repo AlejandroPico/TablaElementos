@@ -7,6 +7,7 @@
   "scripts": {
     "dev": "npm run build:data && vite --host 0.0.0.0",
     "build:data": "python scripts/build_data.py",
+    "init:elements": "python scripts/init_elements_structure.py",
     "build": "npm run build:data && vite build",
     "preview": "vite preview",
     "check": "svelte-check --tsconfig ./tsconfig.json"
