@@ -50,7 +50,7 @@
 </script>
 
 <svelte:head>
-  <title>Espectros Atómicos</title>
+  <title>Tabla elementos</title>
 </svelte:head>
 
 <main class:with-comparator={comparedElements.length > 0} class="app-shell">
