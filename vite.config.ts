@@ -1,7 +1,7 @@
 import { defineConfig } from 'vite';
 import { svelte } from '@sveltejs/vite-plugin-svelte';
 
-const repositoryBase = process.env.GITHUB_ACTIONS ? '/EspectrosAtomicos/' : './';
+const repositoryBase = process.env.GITHUB_ACTIONS ? '/TablaElementos/' : './';
 
 export default defineConfig({
   plugins: [svelte()],
