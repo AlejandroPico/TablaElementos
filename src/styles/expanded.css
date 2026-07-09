@@ -1,10 +1,10 @@
 :root {
-  --cell-size: clamp(58px, min(calc((100vw - 64px) / 18), calc((100vh - 72px) / 9)), 102px);
-  --cell-gap: clamp(3px, 0.32vw, 7px);
+  --cell-size: clamp(50px, min(calc((100vw - 96px) / 18), calc((100vh - 160px) / 9)), 98px);
+  --cell-gap: clamp(3px, 0.28vw, 6px);
 }
 
 .periodic-card {
-  padding: clamp(8px, 1.35vw, 24px);
+  padding: clamp(6px, 1vw, 18px);
   overflow: hidden;
 }
 
@@ -26,7 +26,7 @@
 .periodic-viewport::before {
   content: "";
   position: absolute;
-  inset: clamp(8px, 1.2vw, 22px);
+  inset: clamp(6px, 1vw, 18px);
   pointer-events: none;
   background:
     linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
@@ -40,7 +40,7 @@
   max-width: none;
   max-height: none;
   overflow: visible;
-  padding: clamp(8px, 1.15vw, 24px);
+  padding: clamp(6px, 0.9vw, 18px);
   transform-origin: center center;
   will-change: transform;
   transition: transform 65ms linear;
@@ -294,11 +294,15 @@
 
 @media (max-width: 900px) {
   :root {
-    --cell-size: clamp(54px, min(calc((100vw - 30px) / 9), calc((100vh - 36px) / 9)), 70px);
+    --cell-size: clamp(46px, min(calc((100vw - 28px) / 9), calc((100vh - 118px) / 9)), 68px);
   }
 
   .periodic-card {
-    padding: 6px;
+    padding: 4px;
+  }
+
+  .periodic-grid {
+    padding: 4px;
   }
 
   .nist-status-grid,
