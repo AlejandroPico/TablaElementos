@@ -1,0 +1,49 @@
+name: Migrar CSV NIST a elementos
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/workflows/migrate-nist.yml'
+      - 'data/import/nist/**'
+      - 'scripts/import_nist_exports.py'
+      - 'package.json'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  migrate-nist:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Migrar CSV NIST a data/elements
+        run: |
+          python scripts/import_nist_exports.py --move --overwrite
+
+      - name: Comprobar resultado
+        run: |
+          echo "CSV restantes en data/import/nist:"
+          find data/import/nist -type f -name '*.csv' | wc -l
+          echo "CSV NIST en data/elements:"
+          find data/elements -type f \( -name 'spectra_nist_lines.csv' -o -name 'spectra_nist_levels.csv' \) | wc -l
+          test "$(find data/import/nist -type f -name '*.csv' | wc -l)" -eq 0
+
+      - name: Commit de migración
+        run: |
+          if git diff --quiet; then
+            echo "No hay cambios que commitear."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data/elements data/import/nist
+          git commit -m "data: mover CSV NIST a carpetas de elementos"
+          git push
