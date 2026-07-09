@@ -39,11 +39,19 @@
 
   function toggleCompared(symbol: string): void {
     if (comparedSymbols.includes(symbol)) {
-      comparedSymbols = comparedSymbols.filter((item) => item !== symbol);
+      removeCompared(symbol);
       return;
     }
 
     comparedSymbols = [...comparedSymbols, symbol];
+  }
+
+  function removeCompared(symbol: string): void {
+    comparedSymbols = comparedSymbols.filter((item) => item !== symbol);
+  }
+
+  function clearCompared(): void {
+    comparedSymbols = [];
   }
 
   init();
@@ -64,17 +72,15 @@
       <p>{errorMessage}</p>
     </section>
   {:else}
-    <PeriodicGrid
-      {elements}
-      {selectedSymbol}
-      {comparedSymbols}
-      on:select={(event) => openElement(event.detail)}
-      on:compare={(event) => toggleCompared(event.detail)}
-    />
+    <PeriodicGrid {elements} {selectedSymbol} on:select={(event) => openElement(event.detail)} />
 
     {#if comparedElements.length > 0}
       <aside class="comparison-drawer" aria-label="Comparador espectral">
-        <CompareElements selected={comparedElements} />
+        <CompareElements
+          selected={comparedElements}
+          on:remove={(event) => removeCompared(event.detail)}
+          on:clear={clearCompared}
+        />
       </aside>
     {/if}
 
