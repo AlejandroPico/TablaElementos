@@ -110,8 +110,9 @@
   }
 
   function domainList(ids: string[]): ElementDataDomain[] {
-    if (!elementData) return [];
-    return ids.map((id) => elementData.domains[id]).filter((domain): domain is ElementDataDomain => Boolean(domain && domain.available));
+    const data = elementData;
+    if (!data) return [];
+    return ids.map((id) => data.domains[id]).filter((domain): domain is ElementDataDomain => Boolean(domain && domain.available));
   }
 
   function hasAnyDomain(ids: string[]): boolean {
