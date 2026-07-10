@@ -1,12 +1,15 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
 
+  export type TableMode = 'short' | 'long';
+
   export let zoomPercent = 100;
   export let zoomLevel = 'Vista general';
   export let elementCount = 0;
   export let spectralLineCount = 0;
   export let nistProblemCount = 0;
   export let softCells = true;
+  export let tableMode: TableMode = 'short';
 
   let infoOpen = false;
 
@@ -15,6 +18,7 @@
     zoomout: void;
     reset: void;
     corners: void;
+    layout: void;
   }>();
 </script>
 
@@ -28,6 +32,17 @@
     on:click={() => dispatch('corners')}
   >
     <span class="corners-icon" aria-hidden="true"></span>
+  </button>
+
+  <button
+    class:active={tableMode === 'long'}
+    class="view-tool-button layout-mode-button"
+    type="button"
+    title={tableMode === 'short' ? 'Mostrar tabla larga de 32 columnas' : 'Mostrar tabla corta de 18 columnas'}
+    aria-label={tableMode === 'short' ? 'Cambiar a tabla larga' : 'Cambiar a tabla corta'}
+    on:click={() => dispatch('layout')}
+  >
+    <span class="layout-icon" aria-hidden="true">{tableMode === 'short' ? '18' : '32'}</span>
   </button>
 
   <button
@@ -78,7 +93,8 @@
     </div>
 
     <div class="view-info-copy">
-      <p><strong>Rueda:</strong> zoom centrado en el cursor.</p>
+      <p><strong>Distribución:</strong> {tableMode === 'short' ? 'corta, 18 columnas' : 'larga, 32 columnas'}.</p>
+      <p><strong>Rueda:</strong> zoom centrado en el cursor y redibujado tipográfico.</p>
       <p><strong>Arrastre:</strong> desplaza el escenario cuando estás ampliado.</p>
       <p><strong>Doble clic:</strong> restaura la vista general.</p>
       <p>Al aumentar el zoom aparecen categoría, grupo, periodo, cobertura de datos y resumen del elemento.</p>
