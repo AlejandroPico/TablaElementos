@@ -1,10 +1,13 @@
 <script lang="ts">
+  import { tick } from 'svelte';
   import CompareElements from '../components/CompareElements.svelte';
   import ElementModal from '../components/ElementModal.svelte';
   import PeriodicGrid from '../components/PeriodicGrid.svelte';
   import ViewToolbar from '../components/ViewToolbar.svelte';
   import type { ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
+
+  type TableMode = 'short' | 'long';
 
   let elements: ElementWithLines[] = [];
   let selectedSymbol = '';
@@ -16,6 +19,7 @@
   let zoomPercent = 100;
   let zoomLevel = 'Vista general';
   let softCells = true;
+  let tableMode: TableMode = 'short';
 
   $: comparedElements = comparedSymbols
     .map((symbol) => elements.find((element) => element.symbol === symbol))
@@ -65,6 +69,26 @@
     comparedSymbols = [];
   }
 
+  async function applyTableMode(nextMode: TableMode): Promise<void> {
+    tableMode = nextMode;
+    await tick();
+    gridView?.resetView();
+  }
+
+  function toggleTableMode(): void {
+    const nextMode: TableMode = tableMode === 'short' ? 'long' : 'short';
+    const transitionDocument = document as Document & {
+      startViewTransition?: (callback: () => Promise<void>) => unknown;
+    };
+
+    if (transitionDocument.startViewTransition) {
+      transitionDocument.startViewTransition(() => applyTableMode(nextMode));
+      return;
+    }
+
+    void applyTableMode(nextMode);
+  }
+
   init();
 </script>
 
@@ -87,6 +111,7 @@
       bind:this={gridView}
       {elements}
       {selectedSymbol}
+      {tableMode}
       on:select={(event) => openElement(event.detail)}
       on:zoomchange={(event) => {
         zoomPercent = event.detail.percent;
@@ -101,10 +126,12 @@
       {spectralLineCount}
       {nistProblemCount}
       {softCells}
+      {tableMode}
       on:zoomin={() => gridView?.zoomIn()}
       on:zoomout={() => gridView?.zoomOut()}
       on:reset={() => gridView?.resetView()}
       on:corners={() => (softCells = !softCells)}
+      on:layout={toggleTableMode}
     />
 
     {#if comparedElements.length > 0}
