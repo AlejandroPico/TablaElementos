@@ -13,16 +13,17 @@
     SpectrumMode
   } from '../lib/atomicTypes';
   import { loadElementData } from '../lib/dataLoader';
+  import { getStrongestLines } from '../lib/filters';
   import { formatEv, formatNm, wavelengthRegion } from '../lib/wavelengthColor';
 
   type TabId =
     | 'summary'
     | 'atom'
+    | 'properties'
+    | 'isotopes'
     | 'spectrum'
     | 'lines'
     | 'levels'
-    | 'isotopes'
-    | 'properties'
     | 'chemistry'
     | 'context'
     | 'sources';
@@ -75,6 +76,11 @@
         { label: 'Niveles de energía', item: element.nist.niveles }
       ]
     : [];
+  $: strongestLines = element ? getStrongestLines(element.lines, 8) : [];
+  $: strongestLineIds = new Set(strongestLines.map(lineId));
+  $: availableDomains = elementData
+    ? Object.values(elementData.domains).filter((domain) => domain.available)
+    : [];
 
   async function loadDataFor(target: ElementWithLines): Promise<void> {
     const token = ++loadToken;
@@ -100,6 +106,15 @@
 
   function energyJump(line: SpectralLine): number {
     return line.upper_level_ev - line.lower_level_ev;
+  }
+
+  function lineId(line: SpectralLine): string {
+    return [
+      line.species,
+      Number(line.wavelength_nm).toFixed(6),
+      line.transition,
+      line.label
+    ].join('|');
   }
 
   function statusLabel(file: NistFileStatus): string {
@@ -154,11 +169,11 @@
       <nav class="modal-tabs master-tabs" aria-label="Secciones de la ficha maestra">
         <button class:active={activeTab === 'summary'} type="button" on:click={() => (activeTab = 'summary')}>Resumen</button>
         <button class:active={activeTab === 'atom'} type="button" on:click={() => (activeTab = 'atom')}>Átomo 3D</button>
+        <button class:active={activeTab === 'properties'} type="button" on:click={() => (activeTab = 'properties')}>Propiedades</button>
+        <button class:active={activeTab === 'isotopes'} type="button" on:click={() => (activeTab = 'isotopes')}>Isótopos</button>
         <button class:active={activeTab === 'spectrum'} type="button" on:click={() => (activeTab = 'spectrum')}>Espectro</button>
         <button class:active={activeTab === 'lines'} type="button" on:click={() => (activeTab = 'lines')}>Líneas</button>
         <button class:active={activeTab === 'levels'} type="button" on:click={() => (activeTab = 'levels')}>Niveles</button>
-        <button class:active={activeTab === 'isotopes'} type="button" on:click={() => (activeTab = 'isotopes')}>Isótopos</button>
-        <button class:active={activeTab === 'properties'} type="button" on:click={() => (activeTab = 'properties')}>Propiedades</button>
         <button class:active={activeTab === 'chemistry'} type="button" on:click={() => (activeTab = 'chemistry')}>Química</button>
         <button class:active={activeTab === 'context'} type="button" on:click={() => (activeTab = 'context')}>Contexto</button>
         <button class:active={activeTab === 'sources'} class:problem={hasNistProblem} type="button" on:click={() => (activeTab = 'sources')}>
@@ -167,9 +182,7 @@
       </nav>
 
       <div class="modal-content">
-        {#if loadingData}
-          <div class="modal-load-state"><span></span><p>Cargando los CSV de {element.name_es}…</p></div>
-        {:else if dataError}
+        {#if dataError}
           <p class="empty-copy modal-data-error">{dataError}</p>
         {/if}
 
@@ -177,6 +190,20 @@
           <ElementPanel {element} {elementData} {loadingData} />
         {:else if activeTab === 'atom'}
           <AtomicModel3D {element} {elementData} />
+        {:else if activeTab === 'properties'}
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando propiedades de {element.name_es}…</p></div>
+          {:else}
+            {#each domainList(PROPERTY_IDS) as domain}<DataDomainTable {domain} />{/each}
+            {#if !hasAnyDomain(PROPERTY_IDS)}<p class="empty-copy master-empty">No hay propiedades adicionales disponibles.</p>{/if}
+          {/if}
+        {:else if activeTab === 'isotopes'}
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando isótopos de {element.name_es}…</p></div>
+          {:else}
+            <DataDomainTable domain={elementData?.domains.isotopes ?? null} />
+            {#if !elementData?.domains.isotopes?.available}<p class="empty-copy master-empty">No hay datos isotópicos disponibles.</p>{/if}
+          {/if}
         {:else if activeTab === 'spectrum'}
           <div class="mode-row">
             <div><p class="eyebrow">Modo de visualización</p><h3>Emisión / absorción</h3></div>
@@ -187,18 +214,34 @@
           </div>
           <SpectrumViewer lines={element.lines} {mode} title={`${element.name_es} (${element.symbol})`} />
         {:else if activeTab === 'lines'}
-          <section class="modal-data-card">
+          <section class="modal-data-card spectral-lines-panel">
             <div class="section-title-row compact">
               <div><p class="eyebrow">Tabla técnica</p><h2>Líneas espectrales NIST</h2></div>
               <span class="range-pill">{element.lines.length.toLocaleString('es-ES')} líneas</span>
             </div>
+
+            {#if strongestLines.length}
+              <div class="featured-lines" aria-label="Líneas espectrales más intensas">
+                <p>Líneas destacadas</p>
+                <div>
+                  {#each strongestLines as line}
+                    <span class="featured-line">
+                      <i style={`--line-color:${line.approximate_color};`}></i>
+                      <b>{formatNm(line.wavelength_nm)}</b>
+                      <small>{line.label}</small>
+                    </span>
+                  {/each}
+                </div>
+              </div>
+            {/if}
+
             {#if element.lines.length}
               <div class="technical-table modal-table">
                 <table>
                   <thead><tr><th>Línea</th><th>Especie</th><th>λ</th><th>Región</th><th>Intensidad</th><th>Nivel inferior</th><th>Nivel superior</th><th>ΔE</th><th>Transición</th></tr></thead>
                   <tbody>
                     {#each element.lines as line}
-                      <tr>
+                      <tr class:featured={strongestLineIds.has(lineId(line))}>
                         <td>{line.label}</td><td>{line.species}</td><td>{formatNm(line.wavelength_nm)}</td>
                         <td>{wavelengthRegion(line.wavelength_nm)}</td><td>{line.intensity.toFixed(2)}</td>
                         <td>{formatEv(line.lower_level_ev)}</td><td>{formatEv(line.upper_level_ev)}</td>
@@ -213,63 +256,71 @@
             {/if}
           </section>
         {:else if activeTab === 'levels'}
-          <DataDomainTable domain={elementData?.domains.nist_levels ?? null} />
-          {#if !loadingData && !elementData?.domains.nist_levels?.available}<p class="empty-copy master-empty">No hay niveles NIST disponibles para este elemento.</p>{/if}
-        {:else if activeTab === 'isotopes'}
-          <DataDomainTable domain={elementData?.domains.isotopes ?? null} />
-          {#if !loadingData && !elementData?.domains.isotopes?.available}<p class="empty-copy master-empty">No hay datos isotópicos disponibles.</p>{/if}
-        {:else if activeTab === 'properties'}
-          {#each domainList(PROPERTY_IDS) as domain}<DataDomainTable {domain} />{/each}
-          {#if !loadingData && !hasAnyDomain(PROPERTY_IDS)}<p class="empty-copy master-empty">No hay propiedades adicionales disponibles.</p>{/if}
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando niveles de {element.name_es}…</p></div>
+          {:else}
+            <DataDomainTable domain={elementData?.domains.nist_levels ?? null} />
+            {#if !elementData?.domains.nist_levels?.available}<p class="empty-copy master-empty">No hay niveles NIST disponibles para este elemento.</p>{/if}
+          {/if}
         {:else if activeTab === 'chemistry'}
-          {#each domainList(CHEMISTRY_IDS) as domain}<DataDomainTable {domain} />{/each}
-          {#if !loadingData && !hasAnyDomain(CHEMISTRY_IDS)}<p class="empty-copy master-empty">No hay datos químicos o de materiales disponibles.</p>{/if}
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando química de {element.name_es}…</p></div>
+          {:else}
+            {#each domainList(CHEMISTRY_IDS) as domain}<DataDomainTable {domain} />{/each}
+            {#if !hasAnyDomain(CHEMISTRY_IDS)}<p class="empty-copy master-empty">No hay datos químicos o de materiales disponibles.</p>{/if}
+          {/if}
         {:else if activeTab === 'context'}
-          {#each domainList(CONTEXT_IDS) as domain}<DataDomainTable {domain} />{/each}
-          {#if !loadingData && !hasAnyDomain(CONTEXT_IDS)}<p class="empty-copy master-empty">Estos bloques todavía están pendientes.</p>{/if}
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando contexto de {element.name_es}…</p></div>
+          {:else}
+            {#each domainList(CONTEXT_IDS) as domain}<DataDomainTable {domain} />{/each}
+            {#if !hasAnyDomain(CONTEXT_IDS)}<p class="empty-copy master-empty">Estos bloques todavía están pendientes.</p>{/if}
+          {/if}
         {:else if activeTab === 'sources'}
-          <DataDomainTable domain={elementData?.domains.sources ?? null} />
-          <section class="modal-data-card nist-panel">
-            <div class="section-title-row compact">
-              <div><p class="eyebrow">Procedencia y validación</p><h2>Estado de los archivos NIST</h2></div>
-              <span class="range-pill">{element.nist?.imported_line_count ?? 0} líneas interpretadas</span>
-            </div>
-            {#if hasNistProblem}
-              <p class="nist-inline-warning">Alguno de los archivos NIST aún no tiene estructura tabular válida. Los demás datos de la ficha sí pueden utilizarse.</p>
-            {/if}
-            {#if element.nist}
-              <div class="nist-status-grid">
-                {#each nistFiles as file}
-                  <article class:problem={file.item.present && !file.item.table_like} class="nist-status-card">
-                    <header><strong>{file.label}</strong><span>{statusLabel(file.item)}</span></header>
-                    <dl>
-                      <div><dt>Archivo</dt><dd>{file.item.file}</dd></div>
-                      <div><dt>Ruta</dt><dd>{file.item.path || '—'}</dd></div>
-                      <div><dt>Filas</dt><dd>{file.item.row_count.toLocaleString('es-ES')}</dd></div>
-                      <div><dt>Columnas</dt><dd>{file.item.columns.length ? file.item.columns.slice(0, 8).join(', ') : '—'}</dd></div>
-                    </dl>
-                    <p>{file.item.notes}</p>
-                  </article>
+          {#if loadingData}
+            <div class="modal-load-state"><span></span><p>Cargando procedencia de {element.name_es}…</p></div>
+          {:else}
+            <section class="dataset-coverage-panel" aria-label="Cobertura local del elemento">
+              <header>
+                <div><p class="eyebrow">Información interna</p><h2>Cobertura del dataset local</h2></div>
+                <strong>{availableDomains.length} archivos con datos</strong>
+              </header>
+              <div class="dataset-coverage-rows">
+                {#each availableDomains as domain}
+                  <div><span>{domain.label}</span><b>{domain.row_count.toLocaleString('es-ES')} registros</b></div>
                 {/each}
               </div>
-            {/if}
-          </section>
+            </section>
+
+            <DataDomainTable domain={elementData?.domains.sources ?? null} />
+            <section class="modal-data-card nist-panel">
+              <div class="section-title-row compact">
+                <div><p class="eyebrow">Procedencia y validación</p><h2>Estado de los archivos NIST</h2></div>
+                <span class="range-pill">{element.nist?.imported_line_count ?? 0} líneas interpretadas</span>
+              </div>
+              {#if hasNistProblem}
+                <p class="nist-inline-warning">Alguno de los archivos NIST aún no tiene estructura tabular válida. Los demás datos de la ficha sí pueden utilizarse.</p>
+              {/if}
+              {#if element.nist}
+                <div class="nist-status-grid">
+                  {#each nistFiles as file}
+                    <article class:problem={file.item.present && !file.item.table_like} class="nist-status-card">
+                      <header><strong>{file.label}</strong><span>{statusLabel(file.item)}</span></header>
+                      <dl>
+                        <div><dt>Archivo</dt><dd>{file.item.file}</dd></div>
+                        <div><dt>Ruta</dt><dd>{file.item.path || '—'}</dd></div>
+                        <div><dt>Filas</dt><dd>{file.item.row_count.toLocaleString('es-ES')}</dd></div>
+                        <div><dt>Columnas</dt><dd>{file.item.columns.length ? file.item.columns.slice(0, 8).join(', ') : '—'}</dd></div>
+                      </dl>
+                      <p>{file.item.notes}</p>
+                    </article>
+                  {/each}
+                </div>
+              {/if}
+            </section>
+          {/if}
         {/if}
       </div>
     </div>
   </div>
 {/if}
-
-<style>
-  .modal-tabs.master-tabs {
-    grid-template-columns: repeat(10, minmax(88px, 1fr)) !important;
-    overflow-x: auto !important;
-    overflow-y: hidden !important;
-  }
-
-  @media (max-width: 980px) {
-    .modal-tabs.master-tabs {
-      grid-template-columns: repeat(10, minmax(104px, 1fr)) !important;
-    }
-  }
-</style>
