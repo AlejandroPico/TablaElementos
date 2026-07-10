@@ -1,0 +1,2 @@
+property,value,unit,source,source_url,retrieved_at,notes
+year_discovered,1783,year,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Año de descubrimiento publicado por PubChem.
