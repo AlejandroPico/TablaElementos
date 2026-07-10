@@ -1,11 +1,10 @@
-/* Renderizado nítido y modos corto/largo de la tabla periódica. */
-
-:root {
-  --long-cell-size: clamp(32px, min(calc((100vw - 72px) / 32), calc((100vh - 126px) / 7)), 58px);
-}
+/* Cámara suave, geometría uniforme y distribuciones corta/larga. */
 
 .periodic-viewport {
+  position: relative;
   display: block;
+  overflow: hidden;
+  contain: layout paint;
 }
 
 .periodic-pan {
@@ -15,7 +14,7 @@
   width: max-content;
   height: max-content;
   transform-origin: center;
-  transition: transform 90ms linear;
+  will-change: transform;
 }
 
 .periodic-grid {
@@ -35,25 +34,70 @@
 }
 
 .periodic-grid.mode-long {
-  grid-template-columns: repeat(32, var(--long-cell-size));
-  grid-template-rows: repeat(7, var(--long-cell-size));
-}
-
-.mode-long .element-cell,
-.mode-long .series-placeholder {
-  min-width: var(--long-cell-size);
-  min-height: var(--long-cell-size);
+  grid-template-columns: repeat(32, var(--cell-size));
+  grid-template-rows: repeat(7, var(--cell-size));
 }
 
 .element-cell {
   z-index: 2;
+  width: var(--cell-size);
+  height: var(--cell-size);
+  min-width: var(--cell-size);
+  min-height: var(--cell-size);
+  aspect-ratio: 1 / 1;
+  overflow: hidden;
   backface-visibility: visible;
-  contain: layout style;
+}
+
+.element-open-button {
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  align-items: stretch;
+  gap: 3px;
+  padding: 7px;
+  overflow: hidden;
+  text-align: center;
 }
 
 .element-open-button,
 .element-open-button * {
   text-rendering: geometricPrecision;
+}
+
+.cell-topline {
+  min-width: 0;
+}
+
+.element-core {
+  align-self: center;
+  justify-self: stretch;
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.element-core strong {
+  max-width: 100%;
+  margin: 0;
+  font-size: clamp(1.25rem, min(2.05vw, 3vh), 2.4rem);
+  line-height: 0.94;
+  text-align: center;
+}
+
+.element-name {
+  width: 100%;
+  max-width: 100%;
+  margin-top: 4px;
+  overflow: hidden;
+  font-size: clamp(0.54rem, min(0.68vw, 0.96vh), 0.82rem);
+  line-height: 1.05;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .zoom-medium .element-open-button,
@@ -84,12 +128,24 @@
   font-size: calc(0.76rem * var(--content-scale) / var(--zoom));
 }
 
+.zoom-medium .element-metrics,
+.zoom-deep .element-metrics,
+.zoom-inspect .element-metrics {
+  gap: calc(4px * var(--content-scale) / var(--zoom));
+}
+
+.element-metrics span {
+  padding: calc(4px * var(--content-scale) / var(--zoom));
+}
+
 .element-metrics small,
 .element-metrics b {
   font-size: calc(0.62rem * var(--content-scale) / var(--zoom));
 }
 
 .element-coverage span {
+  padding: calc(4px * var(--content-scale) / var(--zoom)) calc(6px * var(--content-scale) / var(--zoom));
+  border-radius: calc(8px * var(--content-scale) / var(--zoom));
   font-size: calc(0.58rem * var(--content-scale) / var(--zoom));
 }
 
@@ -103,24 +159,41 @@
   display: grid;
   place-content: center;
   justify-items: center;
-  min-width: 0;
-  min-height: 0;
-  padding: 5px;
-  border: 1px dashed rgba(255, 255, 255, 0.42);
-  color: rgba(255, 255, 255, 0.92);
+  width: var(--cell-size);
+  height: var(--cell-size);
+  min-width: var(--cell-size);
+  min-height: var(--cell-size);
+  padding: 5px 18px 5px 5px;
+  border: 1px dashed rgba(255, 255, 255, 0.44);
+  color: rgba(255, 255, 255, 0.94);
   text-align: center;
   pointer-events: none;
+  overflow: hidden;
 }
 
 .soft-cells .series-placeholder {
   border-radius: 10px;
 }
 
+.series-placeholder::after {
+  content: '↘';
+  position: absolute;
+  right: 6px;
+  bottom: 5px;
+  color: rgba(255, 255, 255, 0.72);
+  font-size: 0.82rem;
+  font-weight: 900;
+}
+
 .series-placeholder strong,
 .series-placeholder span,
 .series-placeholder small {
   display: block;
+  max-width: 100%;
+  overflow: hidden;
   line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .series-placeholder strong {
@@ -134,41 +207,35 @@
 
 .series-placeholder small {
   margin-top: 3px;
-  color: rgba(255, 255, 255, 0.62);
+  color: rgba(255, 255, 255, 0.64);
   font-size: clamp(0.42rem, 0.48vw, 0.56rem);
 }
 
 .lanthanide-placeholder {
-  background: linear-gradient(180deg, rgba(134, 108, 159, 0.72), rgba(101, 80, 125, 0.76));
+  background: linear-gradient(180deg, rgba(134, 108, 159, 0.8), rgba(101, 80, 125, 0.86));
 }
 
 .actinide-placeholder {
-  background: linear-gradient(180deg, rgba(154, 103, 122, 0.72), rgba(118, 77, 93, 0.76));
-}
-
-.series-placeholder::after {
-  content: "";
-  position: absolute;
-  z-index: -1;
-  left: 50%;
-  top: 100%;
-  height: calc(var(--cell-size) + (2 * var(--cell-gap)));
-  border-left: 2px solid currentColor;
-  opacity: 0.38;
+  background: linear-gradient(180deg, rgba(154, 103, 122, 0.8), rgba(118, 77, 93, 0.86));
 }
 
 .series-guide {
   z-index: 1;
   align-self: start;
-  height: 1px;
-  margin-top: -2px;
-  border-top: 2px solid currentColor;
+  height: 4px;
+  margin-top: -4px;
+  border-radius: 999px;
   pointer-events: none;
-  opacity: 0.36;
+  opacity: 0.78;
 }
 
-.lanthanide-guide { color: #b69bd0; }
-.actinide-guide { color: #cf8fa7; }
+.lanthanide-guide {
+  background: linear-gradient(90deg, #b69bd0, rgba(182, 155, 208, 0.08));
+}
+
+.actinide-guide {
+  background: linear-gradient(90deg, #cf8fa7, rgba(207, 143, 167, 0.08));
+}
 
 .layout-icon {
   display: grid;
@@ -186,31 +253,20 @@
   width: 25px;
 }
 
-::view-transition-group(root),
-::view-transition-group(*) {
-  animation-duration: 620ms;
-  animation-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
-}
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation-duration: 620ms;
-}
-
 @media (prefers-reduced-motion: reduce) {
-  .periodic-pan,
-  ::view-transition-group(root),
-  ::view-transition-group(*),
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    transition: none;
-    animation-duration: 1ms;
+  .periodic-pan {
+    will-change: auto;
   }
 }
 
 @media (max-width: 760px) {
-  :root {
-    --long-cell-size: clamp(27px, calc((100vw - 24px) / 16), 42px);
+  .view-tools {
+    top: 10px;
+    right: 10px;
+    max-width: calc(100vw - 20px);
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    gap: 5px;
   }
 
   .layout-icon {
