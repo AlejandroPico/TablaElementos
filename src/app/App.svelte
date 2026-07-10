@@ -22,6 +22,7 @@
   let zoomLevel = 'Vista general';
   let softCells = true;
   let tableMode: TableMode = 'short';
+  let layoutBusy = false;
   let themeMode: ThemeMode = 'auto';
   let resolvedTheme: ResolvedTheme = 'dark';
   let systemTheme: MediaQueryList | null = null;
@@ -76,12 +77,22 @@
   }
 
   async function toggleTableMode(): Promise<void> {
-    const previousRects = gridView?.captureElementRects?.() ?? {};
-    tableMode = tableMode === 'short' ? 'long' : 'short';
-    await tick();
-    await gridView?.fitToViewport?.(false);
-    await tick();
-    gridView?.animateLayoutFrom?.(previousRects);
+    if (layoutBusy) return;
+    layoutBusy = true;
+
+    try {
+      const previousRects = gridView?.captureElementRects?.() ?? {};
+      tableMode = tableMode === 'short' ? 'long' : 'short';
+      await tick();
+
+      const layoutAnimation = gridView?.animateLayoutFrom?.(previousRects);
+      const cameraAnimation = gridView?.fitToViewport?.(true);
+      await Promise.allSettled([Promise.resolve(layoutAnimation), Promise.resolve(cameraAnimation)]);
+    } finally {
+      window.setTimeout(() => {
+        layoutBusy = false;
+      }, 80);
+    }
   }
 
   function resolveAutomaticTheme(): ResolvedTheme {
@@ -171,6 +182,7 @@
       {nistProblemCount}
       {softCells}
       {tableMode}
+      {layoutBusy}
       {themeMode}
       on:zoomin={() => gridView?.zoomIn()}
       on:zoomout={() => gridView?.zoomOut()}
