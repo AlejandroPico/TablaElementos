@@ -45,7 +45,7 @@
       <div><span>Peso CIAAW</span><strong>{propertyValue('atomic', 'standard_atomic_weight')}</strong></div>
       <div><span>Configuración electrónica</span><strong>{propertyValue('atomic', 'electron_configuration')}</strong></div>
       <div><span>Electronegatividad</span><strong>{propertyValue('atomic', 'electronegativity')}</strong></div>
-      <div><span>Estado estándar</span><strong>{elementData?.domains.identity?.rows[0]?.standard_state || '—'}</strong></div>
+      <div><span>Estado estándar</span><strong>{propertyValue('physical', 'standard_state')}</strong></div>
       <div><span>Densidad</span><strong>{propertyValue('physical', 'density')}</strong></div>
       <div><span>Fusión</span><strong>{propertyValue('physical', 'melting_point')}</strong></div>
       <div><span>Ebullición</span><strong>{propertyValue('physical', 'boiling_point')}</strong></div>
