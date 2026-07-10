@@ -17,26 +17,34 @@
 
   const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 14;
+  const CAMERA_ZOOM_TAU = 68;
+  const CAMERA_PAN_TAU = 54;
 
   let viewportElement: HTMLDivElement;
+  let panElement: HTMLDivElement;
   let gridElement: HTMLDivElement;
+
   let zoom = 1;
   let targetZoom = 1;
+  let renderZoom = 1;
   let offsetX = 0;
   let offsetY = 0;
   let targetOffsetX = 0;
   let targetOffsetY = 0;
+
   let isDragging = false;
   let dragStartX = 0;
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+
   let cameraFrame = 0;
+  let lastFrameTime = 0;
   let lastPublishedPercent = -1;
   let lastPublishedLevel = '';
 
-  $: zoomClass = zoom >= 7.5 ? 'zoom-inspect' : zoom >= 3.2 ? 'zoom-deep' : zoom >= 1.6 ? 'zoom-medium' : 'zoom-base';
-  $: contentScale = Math.pow(Math.max(zoom, 1), 0.36);
+  $: zoomClass = renderZoom >= 7.5 ? 'zoom-inspect' : renderZoom >= 3.2 ? 'zoom-deep' : renderZoom >= 1.6 ? 'zoom-medium' : 'zoom-base';
+  $: contentScale = Math.pow(Math.max(renderZoom, 1), 0.36);
 
   const dispatch = createEventDispatcher<{
     select: string;
@@ -47,10 +55,10 @@
     return Math.min(max, Math.max(min, value));
   }
 
-  function zoomLabel(): string {
-    if (zoom >= 7.5) return 'Inspección';
-    if (zoom >= 3.2) return 'Ficha ampliada';
-    if (zoom >= 1.6) return 'Datos intermedios';
+  function zoomLabel(value = zoom): string {
+    if (value >= 7.5) return 'Inspección';
+    if (value >= 3.2) return 'Ficha ampliada';
+    if (value >= 1.6) return 'Datos intermedios';
     return 'Vista general';
   }
 
@@ -64,28 +72,67 @@
     dispatch('zoomchange', { zoom, percent, level });
   }
 
+  function visualScale(): number {
+    return zoom / Math.max(renderZoom, 0.0001);
+  }
+
+  function applyCameraTransform(): void {
+    if (!panElement) return;
+    const scale = visualScale();
+    panElement.style.transform = `translate3d(calc(-50% + ${offsetX.toFixed(2)}px), calc(-50% + ${offsetY.toFixed(2)}px), 0) scale3d(${scale.toFixed(5)}, ${scale.toFixed(5)}, 1)`;
+  }
+
+  function commitRenderZoom(): void {
+    renderZoom = zoom;
+
+    if (gridElement) {
+      gridElement.style.zoom = renderZoom.toFixed(5);
+      gridElement.style.setProperty('--zoom', renderZoom.toFixed(5));
+      gridElement.style.setProperty('--content-scale', Math.pow(Math.max(renderZoom, 1), 0.36).toFixed(4));
+    }
+
+    applyCameraTransform();
+  }
+
   function stopCameraAnimation(): void {
     if (cameraFrame) {
       cancelAnimationFrame(cameraFrame);
       cameraFrame = 0;
     }
+    lastFrameTime = 0;
+    viewportElement?.classList.remove('camera-moving');
   }
 
-  function cameraStep(): void {
+  function cameraStep(timestamp: number): void {
+    if (!lastFrameTime) lastFrameTime = timestamp;
+    const delta = Math.min(48, Math.max(1, timestamp - lastFrameTime));
+    lastFrameTime = timestamp;
+
+    const zoomAlpha = 1 - Math.exp(-delta / CAMERA_ZOOM_TAU);
+    const panAlpha = 1 - Math.exp(-delta / CAMERA_PAN_TAU);
+
     const zoomDistance = targetZoom - zoom;
     const xDistance = targetOffsetX - offsetX;
     const yDistance = targetOffsetY - offsetY;
 
-    zoom += zoomDistance * 0.2;
-    offsetX += xDistance * 0.24;
-    offsetY += yDistance * 0.24;
+    zoom += zoomDistance * zoomAlpha;
+    offsetX += xDistance * panAlpha;
+    offsetY += yDistance * panAlpha;
+    applyCameraTransform();
 
-    const settled = Math.abs(zoomDistance) < 0.001 && Math.abs(xDistance) < 0.1 && Math.abs(yDistance) < 0.1;
+    const settled =
+      Math.abs(zoomDistance) < Math.max(0.0007, targetZoom * 0.00045) &&
+      Math.abs(xDistance) < 0.08 &&
+      Math.abs(yDistance) < 0.08;
+
     if (settled) {
       zoom = targetZoom;
       offsetX = targetOffsetX;
       offsetY = targetOffsetY;
       cameraFrame = 0;
+      lastFrameTime = 0;
+      commitRenderZoom();
+      viewportElement?.classList.remove('camera-moving');
       publishZoom(true);
       return;
     }
@@ -95,7 +142,10 @@
   }
 
   function ensureCameraAnimation(): void {
-    if (!cameraFrame) cameraFrame = requestAnimationFrame(cameraStep);
+    if (cameraFrame) return;
+    viewportElement?.classList.add('camera-moving');
+    lastFrameTime = performance.now();
+    cameraFrame = requestAnimationFrame(cameraStep);
   }
 
   function setCameraTarget(nextZoom: number, anchorX = 0, anchorY = 0): void {
@@ -118,7 +168,14 @@
     offsetY = nextOffsetY;
     targetOffsetX = nextOffsetX;
     targetOffsetY = nextOffsetY;
+    commitRenderZoom();
     publishZoom(true);
+  }
+
+  function normalizedWheelDelta(event: WheelEvent): number {
+    if (event.deltaMode === WheelEvent.DOM_DELTA_LINE) return event.deltaY * 16;
+    if (event.deltaMode === WheelEvent.DOM_DELTA_PAGE) return event.deltaY * window.innerHeight;
+    return event.deltaY;
   }
 
   function handleWheel(event: WheelEvent): void {
@@ -126,7 +183,7 @@
     const rect = viewportElement.getBoundingClientRect();
     const cursorX = event.clientX - rect.left - rect.width / 2;
     const cursorY = event.clientY - rect.top - rect.height / 2;
-    const factor = clamp(Math.exp(-event.deltaY * 0.00145), 0.82, 1.22);
+    const factor = clamp(Math.exp(-normalizedWheelDelta(event) * 0.00135), 0.84, 1.19);
     setCameraTarget(targetZoom * factor, cursorX, cursorY);
   }
 
@@ -149,6 +206,7 @@
     offsetY = dragOriginY + event.clientY - dragStartY;
     targetOffsetX = offsetX;
     targetOffsetY = offsetY;
+    applyCameraTransform();
   }
 
   function stopDrag(): void {
@@ -157,33 +215,38 @@
 
   function fitScale(): number {
     if (!viewportElement || !gridElement) return 1;
+
     const rect = gridElement.getBoundingClientRect();
-    const baseWidth = rect.width / Math.max(zoom, 0.001);
-    const baseHeight = rect.height / Math.max(zoom, 0.001);
-    const availableWidth = Math.max(240, viewportElement.clientWidth - 56);
-    const availableHeight = Math.max(220, viewportElement.clientHeight - 56);
-    return clamp(Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1) * 0.97, MIN_ZOOM, 1);
+    const baseWidth = rect.width / Math.max(zoom, 0.0001);
+    const baseHeight = rect.height / Math.max(zoom, 0.0001);
+    const availableWidth = Math.max(240, viewportElement.clientWidth - 64);
+    const availableHeight = Math.max(220, viewportElement.clientHeight - 64);
+
+    return clamp(Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1) * 0.965, MIN_ZOOM, 1);
   }
 
   export async function fitToViewport(animated = true): Promise<void> {
     await tick();
     const nextZoom = fitScale();
+
+    targetOffsetX = 0;
+    targetOffsetY = 0;
+
     if (animated) {
-      targetOffsetX = 0;
-      targetOffsetY = 0;
       targetZoom = nextZoom;
       ensureCameraAnimation();
-    } else {
-      setCameraImmediate(nextZoom, 0, 0);
+      return;
     }
+
+    setCameraImmediate(nextZoom, 0, 0);
   }
 
   export function zoomIn(): void {
-    setCameraTarget(targetZoom * 1.2);
+    setCameraTarget(targetZoom * 1.18);
   }
 
   export function zoomOut(): void {
-    setCameraTarget(targetZoom / 1.2);
+    setCameraTarget(targetZoom / 1.18);
   }
 
   export function resetView(): void {
@@ -200,11 +263,14 @@
       const rect = cell.getBoundingClientRect();
       snapshots[symbol] = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
     });
+
     return snapshots;
   }
 
-  export function animateLayoutFrom(previous: Record<string, RectSnapshot>): void {
+  export async function animateLayoutFrom(previous: Record<string, RectSnapshot>): Promise<void> {
     if (!gridElement || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    const animations: Animation[] = [];
 
     gridElement.querySelectorAll<HTMLElement>('[data-element-symbol]').forEach((cell) => {
       const symbol = cell.dataset.elementSymbol;
@@ -214,31 +280,51 @@
       const after = cell.getBoundingClientRect();
       const deltaX = before.left - after.left;
       const deltaY = before.top - after.top;
-      const scaleX = before.width / Math.max(after.width, 1);
-      const scaleY = before.height / Math.max(after.height, 1);
+      const atomicNumber = Number(cell.dataset.atomicNumber ?? '0');
+      const isInnerSeries = (atomicNumber >= 57 && atomicNumber <= 71) || (atomicNumber >= 89 && atomicNumber <= 103);
+      const delay = isInnerSeries ? 90 + ((atomicNumber - 57 + 118) % 15) * 9 : 0;
 
-      cell.animate(
+      cell.getAnimations().forEach((animation) => animation.cancel());
+      const animation = cell.animate(
         [
           {
-            transformOrigin: 'top left',
-            transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`,
-            filter: 'brightness(0.96)'
+            transformOrigin: 'center',
+            transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale3d(0.985, 0.985, 1)`,
+            opacity: 0.92
           },
-          { transformOrigin: 'top left', transform: 'translate(0, 0) scale(1, 1)', filter: 'brightness(1)' }
+          {
+            transformOrigin: 'center',
+            transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)',
+            opacity: 1
+          }
         ],
-        { duration: 760, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        {
+          duration: 920,
+          delay,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'both'
+        }
       );
+      animations.push(animation);
     });
 
-    gridElement.querySelectorAll<HTMLElement>('.series-placeholder, .series-guide').forEach((item) => {
-      item.animate(
+    gridElement.querySelectorAll<HTMLElement>('.series-placeholder').forEach((item) => {
+      const animation = item.animate(
         [
-          { opacity: 0, transform: 'translateY(-8px) scale(0.96)' },
-          { opacity: 1, transform: 'translateY(0) scale(1)' }
+          { opacity: 0, transform: 'translate3d(0, -10px, 0) scale3d(0.94, 0.94, 1)' },
+          { opacity: 1, transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)' }
         ],
-        { duration: 520, delay: 120, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+        {
+          duration: 520,
+          delay: 180,
+          easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+          fill: 'both'
+        }
       );
+      animations.push(animation);
     });
+
+    await Promise.allSettled(animations.map((animation) => animation.finished));
   }
 
   function categoryClass(category: string): string {
@@ -297,7 +383,10 @@
     };
 
     window.addEventListener('resize', resize);
-    requestAnimationFrame(() => void fitToViewport(false));
+    requestAnimationFrame(() => {
+      applyCameraTransform();
+      void fitToViewport(false);
+    });
 
     return () => {
       window.removeEventListener('resize', resize);
@@ -320,29 +409,25 @@
     on:pointerleave={stopDrag}
     on:dblclick={resetView}
   >
-    <div
-      class="periodic-pan"
-      style={`transform:translate(calc(-50% + ${offsetX.toFixed(2)}px), calc(-50% + ${offsetY.toFixed(2)}px));`}
-    >
+    <div bind:this={panElement} class="periodic-pan">
       <div
         bind:this={gridElement}
         class={`periodic-grid mode-${tableMode}`}
-        style={`--zoom:${zoom.toFixed(4)};--content-scale:${contentScale.toFixed(3)};zoom:${zoom.toFixed(4)};`}
+        style={`--zoom:${renderZoom.toFixed(5)};--content-scale:${contentScale.toFixed(4)};zoom:${renderZoom.toFixed(5)};`}
       >
         {#if tableMode === 'short'}
           <article class="series-placeholder lanthanide-placeholder" style="grid-column:3;grid-row:6;">
-            <strong>57–71</strong><span>La–Lu</span><small>Lantánidos</small>
+            <strong>57–71</strong><span>La–Lu</span><small>Fila inferior</small>
           </article>
           <article class="series-placeholder actinide-placeholder" style="grid-column:3;grid-row:7;">
-            <strong>89–103</strong><span>Ac–Lr</span><small>Actínidos</small>
+            <strong>89–103</strong><span>Ac–Lr</span><small>Fila inferior</small>
           </article>
-          <div class="series-guide lanthanide-guide" style="grid-column:3 / 18;grid-row:8;"></div>
-          <div class="series-guide actinide-guide" style="grid-column:3 / 18;grid-row:9;"></div>
         {/if}
 
         {#each elements as element (element.symbol)}
           <article
             data-element-symbol={element.symbol}
+            data-atomic-number={element.atomic_number}
             class:active={selectedSymbol === element.symbol}
             class={`element-cell ${categoryClass(element.category)} data-${dataState(element)}`}
             style={positionStyle(element)}
