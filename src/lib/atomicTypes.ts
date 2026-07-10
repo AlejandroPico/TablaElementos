@@ -7,8 +7,10 @@ export interface ElementRecord {
   atomic_number: number;
   group: number;
   period: number;
+  block?: string;
   category: string;
   summary: string;
+  folder?: string;
 }
 
 export interface SpectralLine {
@@ -45,6 +47,34 @@ export interface NistElementStatus {
   imported_line_count: number;
 }
 
+export type DataRow = Record<string, string>;
+
+export interface ElementDataDomain {
+  id: string;
+  label: string;
+  file: string;
+  present: boolean;
+  available: boolean;
+  columns: string[];
+  row_count: number;
+  rows: DataRow[];
+  error?: string;
+}
+
+export interface ElementDataPayload {
+  symbol: string;
+  atomic_number: number;
+  folder: string;
+  domains: Record<string, ElementDataDomain>;
+}
+
+export interface ElementDataIndex {
+  data_url: string;
+  available_domains: string[];
+  domain_counts: Record<string, number>;
+  available_file_count: number;
+}
+
 export interface SpectraDataset {
   metadata: {
     project: string;
@@ -57,13 +87,16 @@ export interface SpectraDataset {
     nist_files_present?: number;
     nist_files_malformed_or_non_tabular?: number;
     nist_imported_spectral_lines?: number;
+    element_data_strategy?: string;
   };
   elements: ElementRecord[];
   spectral_lines_by_element: Record<string, SpectralLine[]>;
   nist_by_element?: Record<string, NistElementStatus>;
+  data_index_by_element?: Record<string, ElementDataIndex>;
 }
 
 export interface ElementWithLines extends ElementRecord {
   lines: SpectralLine[];
   nist?: NistElementStatus;
+  dataIndex?: ElementDataIndex;
 }

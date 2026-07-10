@@ -1,12 +1,12 @@
 {
   "name": "tabla-elementos",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "description": "Tabla periódica ampliada y estática para explorar elementos, espectros, niveles, propiedades y datos científicos.",
   "scripts": {
     "dev": "npm run build:data && vite --host 0.0.0.0",
-    "build:data": "python scripts/build_data.py",
+    "build:data": "python scripts/build_data.py && python scripts/build_element_data.py",
     "init:elements": "python scripts/init_elements_structure.py",
     "import:nist": "python scripts/import_nist_exports.py --move --overwrite",
     "import:nist:dry": "python scripts/import_nist_exports.py --dry-run",

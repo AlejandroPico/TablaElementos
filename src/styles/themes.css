@@ -1,0 +1,138 @@
+/* Paleta sobria y compartida con el lenguaje visual de Nucleidos. */
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #0d1117;
+  --app-bg-2: #151b23;
+  --app-ink: #edf1f5;
+  --panel: rgba(19, 25, 34, 0.94);
+  --panel-strong: rgba(16, 22, 30, 0.985);
+  --line: rgba(197, 207, 219, 0.17);
+  --line-strong: rgba(181, 207, 219, 0.52);
+  --text-soft: #aab4bf;
+  --accent: #b7d0dc;
+  --accent-strong: #edf7fb;
+  --tool-bg: rgba(22, 29, 39, 0.9);
+  --tool-ink: #e4edf2;
+  --popover-bg: rgba(20, 27, 36, 0.98);
+  --surface-soft: rgba(255, 255, 255, 0.035);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --app-bg: #f1efe9;
+  --app-bg-2: #e5e1d8;
+  --app-ink: #27313a;
+  --panel: rgba(250, 249, 245, 0.96);
+  --panel-strong: rgba(252, 251, 248, 0.99);
+  --line: rgba(45, 57, 68, 0.16);
+  --line-strong: rgba(67, 102, 119, 0.48);
+  --text-soft: #68737d;
+  --accent: #4d7180;
+  --accent-strong: #294956;
+  --tool-bg: rgba(250, 249, 245, 0.94);
+  --tool-ink: #33424d;
+  --popover-bg: rgba(250, 249, 245, 0.99);
+  --surface-soft: rgba(39, 55, 67, 0.045);
+}
+
+html,
+body {
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 34rem),
+    radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 38rem),
+    linear-gradient(135deg, var(--app-bg), var(--app-bg-2));
+  transition: background 240ms ease, color 180ms ease;
+}
+
+.view-tool-button,
+.view-zoom-hud {
+  color: var(--tool-ink);
+  border-color: var(--line);
+  background: var(--tool-bg);
+}
+
+.view-tool-button:hover,
+.view-tool-button.active,
+.view-zoom-hud button:hover {
+  border-color: color-mix(in srgb, var(--accent) 56%, transparent);
+  background: color-mix(in srgb, var(--accent) 12%, var(--tool-bg));
+}
+
+.view-info-popover,
+.element-modal,
+.comparison-drawer {
+  color: var(--app-ink);
+  border-color: var(--line);
+  background: var(--popover-bg);
+}
+
+.theme-svg {
+  width: 21px;
+  height: 21px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.7;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.theme-auto-fill {
+  fill: currentColor;
+  stroke: none;
+  opacity: 0.82;
+}
+
+/* Categorías: tonos desaturados para evitar una tabla excesivamente intensa. */
+:root[data-theme='dark'] .element-cell.no-metal { background: linear-gradient(180deg, #697582, #535e6a); }
+:root[data-theme='dark'] .element-cell.gas-noble { background: linear-gradient(180deg, #7a708c, #62596f); }
+:root[data-theme='dark'] .element-cell.metal-alcalino { background: linear-gradient(180deg, #a97867, #865f52); }
+:root[data-theme='dark'] .element-cell.metal-alcalinoterreo { background: linear-gradient(180deg, #9c8964, #7d6e50); }
+:root[data-theme='dark'] .element-cell.metal-transicion { background: linear-gradient(180deg, #66808b, #526873); }
+:root[data-theme='dark'] .element-cell.metaloide { background: linear-gradient(180deg, #71816a, #596753); }
+:root[data-theme='dark'] .element-cell.halogeno { background: linear-gradient(180deg, #746f8a, #5d5870); }
+:root[data-theme='dark'] .element-cell.metal-post-transicion { background: linear-gradient(180deg, #747d85, #5d656c); }
+:root[data-theme='dark'] .element-cell.lantanido { background: linear-gradient(180deg, #81728c, #685b72); }
+:root[data-theme='dark'] .element-cell.actinido { background: linear-gradient(180deg, #8b6f78, #705861); }
+:root[data-theme='dark'] .element-cell.desconocido { background: linear-gradient(180deg, #5e646b, #4a5057); }
+
+:root[data-theme='light'] .element-cell {
+  color: #26313a;
+  border-color: rgba(52, 62, 70, 0.18);
+  box-shadow: 0 5px 14px rgba(43, 50, 56, 0.11), inset 0 0 0 1px rgba(255, 255, 255, 0.42);
+}
+:root[data-theme='light'] .element-cell.no-metal { background: linear-gradient(180deg, #e3e8ea, #d4dce0); }
+:root[data-theme='light'] .element-cell.gas-noble { background: linear-gradient(180deg, #e8e2ef, #d9d0e4); }
+:root[data-theme='light'] .element-cell.metal-alcalino { background: linear-gradient(180deg, #efd9d0, #e2c5b8); }
+:root[data-theme='light'] .element-cell.metal-alcalinoterreo { background: linear-gradient(180deg, #ece3ca, #ddd1ae); }
+:root[data-theme='light'] .element-cell.metal-transicion { background: linear-gradient(180deg, #dce7ea, #c8d8dd); }
+:root[data-theme='light'] .element-cell.metaloide { background: linear-gradient(180deg, #dfe8d9, #cad9c2); }
+:root[data-theme='light'] .element-cell.halogeno { background: linear-gradient(180deg, #e4e0ed, #d2cbe1); }
+:root[data-theme='light'] .element-cell.metal-post-transicion { background: linear-gradient(180deg, #e3e6e8, #d2d7da); }
+:root[data-theme='light'] .element-cell.lantanido { background: linear-gradient(180deg, #e8e0eb, #d8ccdc); }
+:root[data-theme='light'] .element-cell.actinido { background: linear-gradient(180deg, #ebdfe2, #dbcbd0); }
+:root[data-theme='light'] .element-cell.desconocido { background: linear-gradient(180deg, #e1e2e2, #d0d2d3); }
+
+:root[data-theme='light'] .element-open-button strong,
+:root[data-theme='light'] .element-name,
+:root[data-theme='light'] .atomic-number,
+:root[data-theme='light'] .cell-data-state {
+  color: #26313a;
+  text-shadow: none;
+}
+
+:root[data-theme='light'] .element-cell::before {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), transparent 46%);
+}
+
+:root[data-theme='light'] th {
+  color: var(--accent-strong);
+  background: #eceae4;
+}
+
+:root[data-theme='light'] td,
+:root[data-theme='light'] .modal-actions button,
+:root[data-theme='light'] .modal-tabs button,
+:root[data-theme='light'] .segmented-control button {
+  color: var(--app-ink);
+}
