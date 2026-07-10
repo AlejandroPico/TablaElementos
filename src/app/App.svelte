@@ -2,6 +2,7 @@
   import CompareElements from '../components/CompareElements.svelte';
   import ElementModal from '../components/ElementModal.svelte';
   import PeriodicGrid from '../components/PeriodicGrid.svelte';
+  import ViewToolbar from '../components/ViewToolbar.svelte';
   import type { ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
 
@@ -11,10 +12,21 @@
   let comparedSymbols: string[] = [];
   let loading = true;
   let errorMessage = '';
+  let gridView: any;
+  let zoomPercent = 100;
+  let zoomLevel = 'Vista general';
+  let softCells = true;
 
   $: comparedElements = comparedSymbols
     .map((symbol) => elements.find((element) => element.symbol === symbol))
     .filter((element): element is ElementWithLines => Boolean(element));
+
+  $: spectralLineCount = elements.reduce((total, element) => total + element.lines.length, 0);
+  $: nistProblemCount = elements.reduce((total, element) => {
+    if (!element.nist) return total;
+    const files = [element.nist.espectro, element.nist.niveles];
+    return total + files.filter((file) => file.present && !file.table_like).length;
+  }, 0);
 
   async function init(): Promise<void> {
     try {
@@ -42,7 +54,6 @@
       removeCompared(symbol);
       return;
     }
-
     comparedSymbols = [...comparedSymbols, symbol];
   }
 
@@ -61,7 +72,7 @@
   <title>Tabla elementos</title>
 </svelte:head>
 
-<main class:with-comparator={comparedElements.length > 0} class="app-shell">
+<main class:with-comparator={comparedElements.length > 0} class:soft-cells={softCells} class="app-shell">
   {#if loading}
     <section class="state-card">
       <h2>Cargando dataset local…</h2>
@@ -72,7 +83,29 @@
       <p>{errorMessage}</p>
     </section>
   {:else}
-    <PeriodicGrid {elements} {selectedSymbol} on:select={(event) => openElement(event.detail)} />
+    <PeriodicGrid
+      bind:this={gridView}
+      {elements}
+      {selectedSymbol}
+      on:select={(event) => openElement(event.detail)}
+      on:zoomchange={(event) => {
+        zoomPercent = event.detail.percent;
+        zoomLevel = event.detail.level;
+      }}
+    />
+
+    <ViewToolbar
+      {zoomPercent}
+      {zoomLevel}
+      elementCount={elements.length}
+      {spectralLineCount}
+      {nistProblemCount}
+      {softCells}
+      on:zoomin={() => gridView?.zoomIn()}
+      on:zoomout={() => gridView?.zoomOut()}
+      on:reset={() => gridView?.resetView()}
+      on:corners={() => (softCells = !softCells)}
+    />
 
     {#if comparedElements.length > 0}
       <aside class="comparison-drawer" aria-label="Comparador espectral">

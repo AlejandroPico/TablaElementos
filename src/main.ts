@@ -2,6 +2,7 @@ import { mount } from 'svelte';
 import './styles/global.css';
 import './styles/expanded.css';
 import './styles/diagnostics.css';
+import './styles/refinement.css';
 import App from './app/App.svelte';
 
 const target = document.getElementById('app');

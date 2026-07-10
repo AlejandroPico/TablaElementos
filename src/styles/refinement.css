@@ -1,0 +1,417 @@
+/* Primera capa de refinamiento inspirada en el lenguaje visual de Nucleidos. */
+
+.app-shell {
+  padding: 12px;
+}
+
+.view-tools {
+  position: fixed;
+  z-index: 42;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  pointer-events: auto;
+}
+
+.view-tool-button,
+.view-zoom-hud {
+  border: 1px solid rgba(202, 221, 244, 0.18);
+  background: rgba(14, 20, 32, 0.82);
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.28);
+  backdrop-filter: blur(18px);
+}
+
+.view-tool-button {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border-radius: 15px;
+  color: #dbeaff;
+}
+
+.view-tool-button:hover,
+.view-tool-button.active {
+  border-color: rgba(189, 233, 255, 0.55);
+  background: rgba(189, 233, 255, 0.13);
+  transform: translateY(-1px);
+}
+
+.info-icon,
+.reset-icon {
+  font-weight: 900;
+  font-size: 1.05rem;
+}
+
+.corners-icon {
+  width: 17px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-radius: 5px;
+}
+
+.view-tool-button:not(.active) .corners-icon {
+  border-radius: 0;
+}
+
+.view-zoom-hud {
+  min-width: 174px;
+  height: 43px;
+  display: grid;
+  grid-template-columns: 38px 1fr 38px;
+  align-items: center;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.view-zoom-hud button {
+  height: 100%;
+  border: 0;
+  color: #eaf5ff;
+  background: transparent;
+  font-size: 1.15rem;
+  font-weight: 800;
+}
+
+.view-zoom-hud button:hover {
+  background: rgba(189, 233, 255, 0.1);
+}
+
+.view-zoom-hud div {
+  min-width: 0;
+  display: grid;
+  justify-items: center;
+  line-height: 1.05;
+}
+
+.view-zoom-hud strong {
+  font-size: 0.82rem;
+}
+
+.view-zoom-hud span {
+  max-width: 92px;
+  overflow: hidden;
+  color: var(--text-soft);
+  font-size: 0.62rem;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.view-info-popover {
+  position: fixed;
+  z-index: 43;
+  top: 68px;
+  right: 16px;
+  width: min(370px, calc(100vw - 32px));
+  padding: 17px;
+  border: 1px solid rgba(202, 221, 244, 0.18);
+  border-radius: 22px;
+  background: rgba(14, 20, 32, 0.94);
+  box-shadow: 0 22px 70px rgba(0, 0, 0, 0.42);
+  backdrop-filter: blur(22px);
+}
+
+.view-info-popover header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+
+.view-info-popover header p,
+.view-info-popover header strong {
+  margin: 0;
+}
+
+.view-info-popover header p {
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.view-info-popover header button {
+  width: 30px;
+  height: 30px;
+  border: 0;
+  border-radius: 10px;
+  color: #dceaff;
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.view-info-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+  margin-bottom: 14px;
+}
+
+.view-info-stats div {
+  min-width: 0;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 13px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.view-info-stats span,
+.view-info-stats strong {
+  display: block;
+}
+
+.view-info-stats span {
+  color: var(--text-soft);
+  font-size: 0.61rem;
+}
+
+.view-info-stats strong {
+  margin-top: 4px;
+  font-size: 1rem;
+}
+
+.view-info-copy {
+  display: grid;
+  gap: 6px;
+}
+
+.view-info-copy p {
+  margin: 0;
+  color: #c7d3e4;
+  font-size: 0.76rem;
+}
+
+.soft-cells .element-cell,
+.soft-cells .element-open-button {
+  border-radius: 10px;
+}
+
+.element-cell {
+  isolation: isolate;
+}
+
+.element-cell::after {
+  height: 2px;
+}
+
+.element-open-button {
+  grid-template-rows: auto minmax(0, 1fr) auto auto auto;
+  gap: 3px;
+  text-align: left;
+}
+
+.cell-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 4px;
+}
+
+.cell-data-state {
+  max-width: 68%;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: clamp(0.42rem, 0.48vw, 0.58rem);
+  font-weight: 750;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.data-ready .cell-data-state { color: #d9ffe8; }
+.data-review .cell-data-state { color: #ffe09a; }
+
+.element-core {
+  align-self: center;
+  display: grid;
+  justify-items: center;
+  min-width: 0;
+  text-align: center;
+}
+
+.element-metrics,
+.element-coverage,
+.element-summary {
+  display: none;
+}
+
+.zoom-medium .element-open-button,
+.zoom-deep .element-open-button,
+.zoom-inspect .element-open-button {
+  padding: calc(9px / var(--zoom));
+  gap: calc(7px / var(--zoom));
+}
+
+.zoom-medium .atomic-number,
+.zoom-deep .atomic-number,
+.zoom-inspect .atomic-number,
+.zoom-medium .cell-data-state,
+.zoom-deep .cell-data-state,
+.zoom-inspect .cell-data-state {
+  font-size: calc(0.78rem / var(--zoom));
+}
+
+.zoom-medium .element-core strong,
+.zoom-deep .element-core strong,
+.zoom-inspect .element-core strong {
+  font-size: calc(2.35rem / var(--zoom));
+}
+
+.zoom-medium .element-name,
+.zoom-deep .element-name,
+.zoom-inspect .element-name {
+  font-size: calc(0.82rem / var(--zoom));
+}
+
+.zoom-medium .element-metrics,
+.zoom-deep .element-metrics,
+.zoom-inspect .element-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: calc(4px / var(--zoom));
+}
+
+.element-metrics span {
+  min-width: 0;
+  padding: calc(5px / var(--zoom));
+  border-top: calc(1px / var(--zoom)) solid rgba(255, 255, 255, 0.18);
+}
+
+.element-metrics small,
+.element-metrics b {
+  display: block;
+  overflow: hidden;
+  font-size: calc(0.68rem / var(--zoom));
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.element-metrics small { color: rgba(255, 255, 255, 0.56); }
+
+.zoom-deep .element-coverage,
+.zoom-inspect .element-coverage {
+  display: flex;
+  flex-wrap: wrap;
+  gap: calc(4px / var(--zoom));
+}
+
+.element-coverage span {
+  padding: calc(4px / var(--zoom)) calc(6px / var(--zoom));
+  border: calc(1px / var(--zoom)) solid rgba(255, 255, 255, 0.18);
+  border-radius: calc(8px / var(--zoom));
+  color: rgba(255, 255, 255, 0.68);
+  font-size: calc(0.62rem / var(--zoom));
+}
+
+.element-coverage span.ready { color: #d7ffe6; border-color: rgba(129, 230, 169, 0.42); }
+.element-coverage span.warning { color: #ffe09a; border-color: rgba(255, 213, 106, 0.45); }
+
+.zoom-inspect .element-summary {
+  display: -webkit-box;
+  margin: 0;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.76);
+  font-size: calc(0.78rem / var(--zoom));
+  line-height: 1.4;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 5;
+}
+
+.master-modal {
+  border-radius: 28px;
+}
+
+.master-tabs {
+  display: flex;
+  gap: 5px;
+  overflow-x: auto;
+  padding: 5px;
+  background: rgba(255, 255, 255, 0.035);
+  scrollbar-width: none;
+}
+
+.master-tabs::-webkit-scrollbar { display: none; }
+
+.master-tabs button {
+  flex: 0 0 auto;
+  border-radius: 11px;
+}
+
+.compact-warning {
+  margin: 0 18px;
+  border-radius: 14px;
+}
+
+.master-summary {
+  display: grid;
+  gap: 18px;
+}
+
+.master-stats {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.coverage-section,
+.strong-lines-section {
+  min-width: 0;
+}
+
+.coverage-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.coverage-grid article {
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.035);
+}
+
+.coverage-grid article.available {
+  border-color: rgba(129, 230, 169, 0.32);
+  background: rgba(71, 145, 96, 0.08);
+}
+
+.coverage-grid article.problem {
+  border-color: rgba(255, 213, 106, 0.38);
+  background: rgba(160, 112, 25, 0.08);
+}
+
+.coverage-grid span,
+.coverage-grid strong {
+  display: block;
+}
+
+.coverage-grid span {
+  color: var(--text-soft);
+  font-size: 0.7rem;
+}
+
+.coverage-grid strong {
+  margin-top: 4px;
+  overflow: hidden;
+  font-size: 0.78rem;
+  text-overflow: ellipsis;
+}
+
+.master-empty {
+  padding: 16px;
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+}
+
+@media (max-width: 760px) {
+  .view-tools { top: 10px; right: 10px; gap: 5px; }
+  .view-tool-button { width: 38px; height: 38px; border-radius: 13px; }
+  .view-zoom-hud { min-width: 120px; height: 38px; grid-template-columns: 34px 1fr 34px; }
+  .view-zoom-hud span { display: none; }
+  .view-info-popover { top: 56px; right: 10px; width: calc(100vw - 20px); }
+  .coverage-grid, .master-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .master-modal { border-radius: 22px; }
+}
