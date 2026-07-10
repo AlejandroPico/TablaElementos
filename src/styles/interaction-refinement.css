@@ -1,0 +1,99 @@
+/* Interacción táctil, conectores tipo árbol y fase intermedia de la tabla larga. */
+
+.periodic-viewport {
+  cursor: grab;
+  touch-action: none;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
+}
+
+.periodic-viewport.dragging {
+  cursor: grabbing;
+}
+
+.periodic-viewport.dragging .element-open-button {
+  cursor: grabbing;
+}
+
+.periodic-viewport *,
+.periodic-viewport *::before,
+.periodic-viewport *::after {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.periodic-grid.mode-opening {
+  grid-template-columns: repeat(32, var(--cell-size));
+  grid-template-rows: repeat(9, var(--cell-size));
+}
+
+.periodic-viewport.layout-animating {
+  pointer-events: none;
+}
+
+.series-placeholder {
+  place-content: center;
+  justify-items: stretch;
+  padding: 7px 8px 7px 31px;
+  text-align: left;
+}
+
+.series-placeholder::before,
+.series-placeholder::after {
+  content: none;
+}
+
+.series-tree-mark {
+  position: absolute;
+  left: 11px;
+  top: 9px;
+  bottom: 9px;
+  width: 14px;
+  border-left: 1.5px solid currentColor;
+  opacity: 0.7;
+}
+
+.series-tree-mark::after {
+  content: '';
+  position: absolute;
+  left: -1px;
+  width: 12px;
+  border-top: 1.5px solid currentColor;
+  border-radius: 0 999px 999px 0;
+}
+
+.lanthanide-placeholder .series-tree-mark::after {
+  top: 34%;
+}
+
+.actinide-placeholder .series-tree-mark {
+  bottom: auto;
+  height: 62%;
+}
+
+.actinide-placeholder .series-tree-mark::after {
+  top: 100%;
+}
+
+.series-placeholder strong,
+.series-placeholder > span:not(.series-tree-mark),
+.series-placeholder small {
+  text-align: left;
+}
+
+.camera-moving .element-open-button,
+.layout-animating .element-open-button {
+  pointer-events: none;
+}
+
+@media (pointer: coarse) {
+  .periodic-viewport {
+    cursor: default;
+  }
+
+  .element-open-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}

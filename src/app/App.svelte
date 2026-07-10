@@ -8,6 +8,8 @@
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
 
   type TableMode = 'short' | 'long';
+  type TableLayout = 'short' | 'opening' | 'long';
+  type LayoutAnimationStage = 'spread' | 'series-in' | 'series-out' | 'collapse';
   type ThemeMode = 'auto' | 'light' | 'dark';
   type ResolvedTheme = 'light' | 'dark';
 
@@ -22,6 +24,7 @@
   let zoomLevel = 'Vista general';
   let softCells = true;
   let tableMode: TableMode = 'short';
+  let layoutMode: TableLayout = 'short';
   let layoutBusy = false;
   let themeMode: ThemeMode = 'auto';
   let resolvedTheme: ResolvedTheme = 'dark';
@@ -76,10 +79,23 @@
     comparedSymbols = [];
   }
 
-  function nextPaint(): Promise<void> {
-    return new Promise((resolve) => {
-      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
-    });
+  function pause(milliseconds: number): Promise<void> {
+    return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
+  }
+
+  async function runLayoutStage(nextLayout: TableLayout, stage: LayoutAnimationStage): Promise<void> {
+    const previousRects = gridView?.captureElementRects?.() ?? {};
+    layoutMode = nextLayout;
+    await tick();
+
+    const layoutAnimation = gridView?.animateLayoutFrom?.(previousRects, stage);
+    await pause(stage === 'spread' || stage === 'collapse' ? 110 : 70);
+    const cameraAnimation = gridView?.fitToViewport?.(true);
+
+    await Promise.allSettled([
+      Promise.resolve(layoutAnimation),
+      Promise.resolve(cameraAnimation)
+    ]);
   }
 
   async function toggleTableMode(): Promise<void> {
@@ -87,15 +103,19 @@
     layoutBusy = true;
 
     try {
-      const previousRects = gridView?.captureElementRects?.() ?? {};
-      tableMode = tableMode === 'short' ? 'long' : 'short';
-      await tick();
-
-      const layoutAnimation = gridView?.animateLayoutFrom?.(previousRects);
-      await nextPaint();
-      const cameraAnimation = gridView?.fitToViewport?.(true);
-      await Promise.allSettled([Promise.resolve(layoutAnimation), Promise.resolve(cameraAnimation)]);
+      if (tableMode === 'short') {
+        tableMode = 'long';
+        await runLayoutStage('opening', 'spread');
+        await pause(45);
+        await runLayoutStage('long', 'series-in');
+      } else {
+        tableMode = 'short';
+        await runLayoutStage('opening', 'series-out');
+        await pause(45);
+        await runLayoutStage('short', 'collapse');
+      }
     } finally {
+      layoutMode = tableMode;
       window.setTimeout(() => {
         layoutBusy = false;
       }, 80);
@@ -173,7 +193,7 @@
       bind:this={gridView}
       {elements}
       {selectedSymbol}
-      {tableMode}
+      {layoutMode}
       on:select={(event) => openElement(event.detail)}
       on:zoomchange={(event) => {
         zoomPercent = event.detail.percent;

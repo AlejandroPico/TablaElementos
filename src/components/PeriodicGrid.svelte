@@ -2,7 +2,8 @@
   import { createEventDispatcher, onMount, tick } from 'svelte';
   import type { ElementWithLines } from '../lib/atomicTypes';
 
-  export type TableMode = 'short' | 'long';
+  export type TableLayout = 'short' | 'opening' | 'long';
+  export type LayoutAnimationStage = 'spread' | 'series-in' | 'series-out' | 'collapse';
 
   interface RectSnapshot {
     left: number;
@@ -13,12 +14,13 @@
 
   export let elements: ElementWithLines[] = [];
   export let selectedSymbol = '';
-  export let tableMode: TableMode = 'short';
+  export let layoutMode: TableLayout = 'short';
 
   const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 14;
   const CAMERA_ZOOM_TAU = 68;
   const CAMERA_PAN_TAU = 54;
+  const DRAG_THRESHOLD_PX = 5;
 
   let viewportElement: HTMLDivElement;
   let panElement: HTMLDivElement;
@@ -32,16 +34,20 @@
   let targetOffsetX = 0;
   let targetOffsetY = 0;
 
-  let isDragging = false;
+  let isPointerDown = false;
+  let dragActivated = false;
+  let activePointerId = -1;
   let dragStartX = 0;
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let suppressClickUntil = 0;
 
   let cameraFrame = 0;
   let lastFrameTime = 0;
   let lastPublishedPercent = -1;
   let lastPublishedLevel = '';
+  let cameraResolvers: Array<() => void> = [];
 
   $: zoomClass = renderZoom >= 7.5 ? 'zoom-inspect' : renderZoom >= 3.2 ? 'zoom-deep' : renderZoom >= 1.6 ? 'zoom-medium' : 'zoom-base';
   $: contentScale = Math.pow(Math.max(renderZoom, 1), 0.36);
@@ -70,6 +76,17 @@
     lastPublishedPercent = percent;
     lastPublishedLevel = level;
     dispatch('zoomchange', { zoom, percent, level });
+  }
+
+  function resolveCameraPromises(): void {
+    const pending = cameraResolvers;
+    cameraResolvers = [];
+    pending.forEach((resolve) => resolve());
+  }
+
+  function waitForCamera(): Promise<void> {
+    if (!cameraFrame) return Promise.resolve();
+    return new Promise((resolve) => cameraResolvers.push(resolve));
   }
 
   function visualScale(): number {
@@ -101,6 +118,7 @@
     }
     lastFrameTime = 0;
     viewportElement?.classList.remove('camera-moving');
+    resolveCameraPromises();
   }
 
   function cameraStep(timestamp: number): void {
@@ -134,6 +152,7 @@
       commitRenderZoom();
       viewportElement?.classList.remove('camera-moving');
       publishZoom(true);
+      resolveCameraPromises();
       return;
     }
 
@@ -188,11 +207,12 @@
   }
 
   function startDrag(event: PointerEvent): void {
-    const target = event.target as HTMLElement;
-    if (target.closest('.element-open-button, .series-placeholder')) return;
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
 
     stopCameraAnimation();
-    isDragging = true;
+    isPointerDown = true;
+    dragActivated = false;
+    activePointerId = event.pointerId;
     dragStartX = event.clientX;
     dragStartY = event.clientY;
     dragOriginX = targetOffsetX;
@@ -201,16 +221,60 @@
   }
 
   function dragCanvas(event: PointerEvent): void {
-    if (!isDragging) return;
-    offsetX = dragOriginX + event.clientX - dragStartX;
-    offsetY = dragOriginY + event.clientY - dragStartY;
+    if (!isPointerDown || event.pointerId !== activePointerId) return;
+
+    const deltaX = event.clientX - dragStartX;
+    const deltaY = event.clientY - dragStartY;
+
+    if (!dragActivated && Math.hypot(deltaX, deltaY) < DRAG_THRESHOLD_PX) return;
+
+    if (!dragActivated) {
+      dragActivated = true;
+      suppressClickUntil = performance.now() + 450;
+    }
+
+    event.preventDefault();
+    offsetX = dragOriginX + deltaX;
+    offsetY = dragOriginY + deltaY;
     targetOffsetX = offsetX;
     targetOffsetY = offsetY;
     applyCameraTransform();
   }
 
-  function stopDrag(): void {
-    isDragging = false;
+  function stopDrag(event: PointerEvent): void {
+    if (!isPointerDown || event.pointerId !== activePointerId) return;
+
+    if (dragActivated) suppressClickUntil = performance.now() + 450;
+
+    if (viewportElement.hasPointerCapture(event.pointerId)) {
+      viewportElement.releasePointerCapture(event.pointerId);
+    }
+
+    isPointerDown = false;
+    dragActivated = false;
+    activePointerId = -1;
+  }
+
+  function cancelDrag(event: PointerEvent): void {
+    if (event.pointerId !== activePointerId) return;
+    suppressClickUntil = performance.now() + 450;
+    stopDrag(event);
+  }
+
+  function openFromClick(event: MouseEvent, symbol: string): void {
+    if (performance.now() < suppressClickUntil) {
+      event.preventDefault();
+      event.stopPropagation();
+      return;
+    }
+
+    dispatch('select', symbol);
+  }
+
+  function handleDoubleClick(event: MouseEvent): void {
+    const target = event.target as HTMLElement;
+    if (target.closest('[data-element-symbol]')) return;
+    resetView();
   }
 
   function fitScale(): number {
@@ -235,6 +299,7 @@
     if (animated) {
       targetZoom = nextZoom;
       ensureCameraAnimation();
+      await waitForCamera();
       return;
     }
 
@@ -267,10 +332,14 @@
     return snapshots;
   }
 
-  export async function animateLayoutFrom(previous: Record<string, RectSnapshot>): Promise<void> {
+  export async function animateLayoutFrom(
+    previous: Record<string, RectSnapshot>,
+    stage: LayoutAnimationStage
+  ): Promise<void> {
     if (!gridElement || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
     const animations: Animation[] = [];
+    viewportElement?.classList.add('layout-animating');
 
     gridElement.querySelectorAll<HTMLElement>('[data-element-symbol]').forEach((cell) => {
       const symbol = cell.dataset.elementSymbol;
@@ -280,26 +349,48 @@
       const after = cell.getBoundingClientRect();
       const deltaX = before.left - after.left;
       const deltaY = before.top - after.top;
+      const distance = Math.hypot(deltaX, deltaY);
+      if (distance < 0.75) return;
+
       const atomicNumber = Number(cell.dataset.atomicNumber ?? '0');
-      const isInnerSeries = (atomicNumber >= 57 && atomicNumber <= 71) || (atomicNumber >= 89 && atomicNumber <= 103);
-      const delay = isInnerSeries ? 90 + ((atomicNumber - 57 + 118) % 15) * 9 : 0;
+      const isLanthanide = atomicNumber >= 57 && atomicNumber <= 71;
+      const isActinide = atomicNumber >= 89 && atomicNumber <= 103;
+      const isInnerSeries = isLanthanide || isActinide;
+
+      if ((stage === 'series-in' || stage === 'series-out') && !isInnerSeries) return;
+      if ((stage === 'spread' || stage === 'collapse') && isInnerSeries) return;
+
+      const seriesIndex = isLanthanide ? atomicNumber - 57 : isActinide ? atomicNumber - 89 : 0;
+      const delay =
+        stage === 'series-in' || stage === 'series-out'
+          ? seriesIndex * 13
+          : Math.min(72, Math.abs(deltaX) * 0.018);
+      const duration = stage === 'series-in' || stage === 'series-out' ? 820 : 760;
 
       cell.getAnimations().forEach((animation) => animation.cancel());
       const animation = cell.animate(
         [
           {
+            offset: 0,
             transformOrigin: 'center',
             transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale3d(0.985, 0.985, 1)`,
-            opacity: 0.92
+            opacity: 0.94
           },
           {
+            offset: 0.78,
+            transformOrigin: 'center',
+            transform: `translate3d(${(-deltaX * 0.025).toFixed(2)}px, ${(-deltaY * 0.025).toFixed(2)}px, 0) scale3d(1.008, 1.008, 1)`,
+            opacity: 1
+          },
+          {
+            offset: 1,
             transformOrigin: 'center',
             transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)',
             opacity: 1
           }
         ],
         {
-          duration: 920,
+          duration,
           delay,
           easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           fill: 'both'
@@ -309,14 +400,19 @@
     });
 
     gridElement.querySelectorAll<HTMLElement>('.series-placeholder').forEach((item) => {
+      const appearing = layoutMode !== 'long';
       const animation = item.animate(
-        [
-          { opacity: 0, transform: 'translate3d(0, -10px, 0) scale3d(0.94, 0.94, 1)' },
-          { opacity: 1, transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)' }
-        ],
+        appearing
+          ? [
+              { opacity: 0, transform: 'translate3d(-8px, 0, 0) scale3d(0.96, 0.96, 1)' },
+              { opacity: 1, transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)' }
+            ]
+          : [
+              { opacity: 1, transform: 'translate3d(0, 0, 0) scale3d(1, 1, 1)' },
+              { opacity: 0, transform: 'translate3d(-8px, 0, 0) scale3d(0.96, 0.96, 1)' }
+            ],
         {
-          duration: 520,
-          delay: 180,
+          duration: 360,
           easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
           fill: 'both'
         }
@@ -325,6 +421,8 @@
     });
 
     await Promise.allSettled(animations.map((animation) => animation.finished));
+    animations.forEach((animation) => animation.cancel());
+    viewportElement?.classList.remove('layout-animating');
   }
 
   function categoryClass(category: string): string {
@@ -365,15 +463,41 @@
     return { column: element.group, row: element.period };
   }
 
+  function openingPosition(element: ElementWithLines): { column: number; row: number } {
+    const z = element.atomic_number;
+
+    if (z >= 57 && z <= 71) return { column: z - 54, row: 8 };
+    if (z >= 89 && z <= 103) return { column: z - 86, row: 9 };
+
+    if (z >= 55 && z <= 56) return { column: z - 54, row: 6 };
+    if (z >= 72 && z <= 86) return { column: z - 54, row: 6 };
+    if (z >= 87 && z <= 88) return { column: z - 86, row: 7 };
+    if (z >= 104 && z <= 118) return { column: z - 86, row: 7 };
+
+    return {
+      column: element.group <= 2 ? element.group : element.group + 14,
+      row: element.period
+    };
+  }
+
   function longPosition(element: ElementWithLines): { column: number; row: number } {
     const z = element.atomic_number;
     if (z >= 55 && z <= 86) return { column: z - 54, row: 6 };
     if (z >= 87 && z <= 118) return { column: z - 86, row: 7 };
-    return { column: element.group <= 2 ? element.group : element.group + 14, row: element.period };
+    return {
+      column: element.group <= 2 ? element.group : element.group + 14,
+      row: element.period
+    };
   }
 
   function positionStyle(element: ElementWithLines): string {
-    const position = tableMode === 'long' ? longPosition(element) : shortPosition(element);
+    const position =
+      layoutMode === 'long'
+        ? longPosition(element)
+        : layoutMode === 'opening'
+          ? openingPosition(element)
+          : shortPosition(element);
+
     return `grid-column:${position.column};grid-row:${position.row};`;
   }
 
@@ -398,28 +522,30 @@
 <section class="periodic-card" aria-label="Tabla elementos">
   <div
     bind:this={viewportElement}
-    class={`periodic-viewport ${zoomClass} table-${tableMode}`}
+    class={`periodic-viewport ${zoomClass} table-${layoutMode}`}
+    class:dragging={dragActivated}
     role="application"
     aria-label="Escenario interactivo de la tabla periódica"
     on:wheel={handleWheel}
     on:pointerdown={startDrag}
     on:pointermove={dragCanvas}
     on:pointerup={stopDrag}
-    on:pointercancel={stopDrag}
-    on:pointerleave={stopDrag}
-    on:dblclick={resetView}
+    on:pointercancel={cancelDrag}
+    on:dblclick={handleDoubleClick}
   >
     <div bind:this={panElement} class="periodic-pan">
       <div
         bind:this={gridElement}
-        class={`periodic-grid mode-${tableMode}`}
+        class={`periodic-grid mode-${layoutMode}`}
         style={`--zoom:${renderZoom.toFixed(5)};--content-scale:${contentScale.toFixed(4)};zoom:${renderZoom.toFixed(5)};`}
       >
-        {#if tableMode === 'short'}
+        {#if layoutMode !== 'long'}
           <article class="series-placeholder lanthanide-placeholder" style="grid-column:3;grid-row:6;">
+            <span class="series-tree-mark" aria-hidden="true"></span>
             <strong>57–71</strong><span>La–Lu</span><small>Fila inferior</small>
           </article>
           <article class="series-placeholder actinide-placeholder" style="grid-column:3;grid-row:7;">
+            <span class="series-tree-mark" aria-hidden="true"></span>
             <strong>89–103</strong><span>Ac–Lr</span><small>Fila inferior</small>
           </article>
         {/if}
@@ -436,7 +562,7 @@
             <button
               class="element-open-button"
               type="button"
-              on:click={() => dispatch('select', element.symbol)}
+              on:click={(event) => openFromClick(event, element.symbol)}
               aria-label={`Abrir ficha maestra de ${element.name_es}`}
             >
               <div class="cell-topline">
