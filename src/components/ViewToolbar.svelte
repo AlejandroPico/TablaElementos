@@ -11,6 +11,7 @@
   export let nistProblemCount = 0;
   export let softCells = true;
   export let tableMode: TableMode = 'short';
+  export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
 
   let infoOpen = false;
@@ -45,8 +46,10 @@
 
   <button
     class:active={tableMode === 'long'}
+    class:busy={layoutBusy}
     class="view-tool-button layout-mode-button"
     type="button"
+    disabled={layoutBusy}
     title={tableMode === 'short' ? 'Mostrar tabla larga de 32 columnas' : 'Mostrar tabla corta de 18 columnas'}
     aria-label={tableMode === 'short' ? 'Cambiar a tabla larga' : 'Cambiar a tabla corta'}
     on:click={() => dispatch('layout')}
@@ -114,7 +117,7 @@
     <div class="view-info-copy">
       <p><strong>Distribución:</strong> {tableMode === 'short' ? 'corta, 18 columnas' : 'larga, 32 columnas'}.</p>
       <p><strong>Tema:</strong> {themeLabel().toLowerCase()}.</p>
-      <p><strong>Rueda:</strong> zoom continuo centrado en el cursor.</p>
+      <p><strong>Rueda:</strong> cámara GPU continua y centrada en el cursor.</p>
       <p><strong>Arrastre:</strong> desplaza el escenario cuando estás ampliado.</p>
       <p><strong>Doble clic:</strong> vuelve a encajar la tabla completa.</p>
     </div>
