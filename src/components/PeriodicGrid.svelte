@@ -24,7 +24,8 @@
   const MIN_ZOOM = 0.18;
   const MAX_ZOOM = 14;
   const DRAG_THRESHOLD_PX = 5;
-  const CAMERA_TAU_MS = 82;
+  const CAMERA_TAU_MS = 78;
+  const RENDER_STEP = 0.5;
 
   let viewportElement: HTMLDivElement;
   let panElement: HTMLDivElement;
@@ -36,6 +37,7 @@
   let offsetY = 0;
   let targetOffsetX = 0;
   let targetOffsetY = 0;
+  let renderBucket = 1;
   let committedZoom = 1;
 
   let cameraFrame = 0;
@@ -49,6 +51,7 @@
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let pressedSymbol = '';
   let suppressClickUntil = 0;
 
   $: zoomClass =
@@ -108,9 +111,22 @@
     });
   }
 
+  function bucketFor(value: number): number {
+    return clamp(Math.round(value / RENDER_STEP) * RENDER_STEP, 0.5, MAX_ZOOM);
+  }
+
+  function setRenderBucket(nextBucket: number): void {
+    if (Math.abs(nextBucket - renderBucket) < 0.001) return;
+    renderBucket = nextBucket;
+
+    if (gridElement) {
+      gridElement.style.zoom = renderBucket.toFixed(2);
+      gridElement.style.setProperty('--zoom', renderBucket.toFixed(2));
+    }
+  }
+
   function updateCommittedDetailLevel(): void {
     committedZoom = zoom;
-    gridElement?.style.setProperty('--zoom', committedZoom.toFixed(4));
     gridElement?.style.setProperty(
       '--content-scale',
       Math.pow(Math.max(committedZoom, 1), 0.36).toFixed(4)
@@ -119,10 +135,11 @@
 
   function applyCamera(): void {
     if (!panElement) return;
+    const compositorScale = zoom / Math.max(renderBucket, 0.0001);
     panElement.style.transform =
       `translate3d(calc(-50% + ${offsetX.toFixed(2)}px), ` +
       `calc(-50% + ${offsetY.toFixed(2)}px), 0) ` +
-      `scale3d(${zoom.toFixed(5)}, ${zoom.toFixed(5)}, 1)`;
+      `scale3d(${compositorScale.toFixed(5)}, ${compositorScale.toFixed(5)}, 1)`;
   }
 
   function resolveCameraPromises(): void {
@@ -153,6 +170,9 @@
     zoom += (targetZoom - zoom) * alpha;
     offsetX += (targetOffsetX - offsetX) * alpha;
     offsetY += (targetOffsetY - offsetY) * alpha;
+
+    const nextBucket = bucketFor(zoom);
+    if (Math.abs(nextBucket - renderBucket) >= 0.001) setRenderBucket(nextBucket);
     applyCamera();
 
     const settled =
@@ -164,6 +184,7 @@
       zoom = targetZoom;
       offsetX = targetOffsetX;
       offsetY = targetOffsetY;
+      setRenderBucket(bucketFor(zoom));
       applyCamera();
       updateCommittedDetailLevel();
       publishZoom();
@@ -205,6 +226,7 @@
     offsetY = nextY;
     targetOffsetX = nextX;
     targetOffsetY = nextY;
+    setRenderBucket(bucketFor(zoom));
     applyCamera();
     updateCommittedDetailLevel();
     publishZoom();
@@ -225,9 +247,15 @@
     setCameraTarget(targetZoom * factor, anchorX, anchorY);
   }
 
+  function symbolFromTarget(target: EventTarget | null): string {
+    if (!(target instanceof HTMLElement)) return '';
+    return target.closest<HTMLElement>('[data-element-symbol]')?.dataset.elementSymbol ?? '';
+  }
+
   function startDrag(event: PointerEvent): void {
     if (event.pointerType === 'mouse' && event.button !== 0) return;
 
+    event.preventDefault();
     stopCamera();
     isPointerDown = true;
     dragActivated = false;
@@ -236,7 +264,7 @@
     dragStartY = event.clientY;
     dragOriginX = offsetX;
     dragOriginY = offsetY;
-    viewportElement.setPointerCapture(event.pointerId);
+    pressedSymbol = symbolFromTarget(event.target);
   }
 
   function dragCanvas(event: PointerEvent): void {
@@ -250,6 +278,7 @@
     if (!dragActivated) {
       dragActivated = true;
       viewportElement.classList.add('dragging');
+      viewportElement.setPointerCapture(event.pointerId);
     }
 
     event.preventDefault();
@@ -263,7 +292,9 @@
   function finishDrag(event: PointerEvent): void {
     if (!isPointerDown || event.pointerId !== activePointerId) return;
 
-    if (dragActivated) suppressClickUntil = performance.now() + 500;
+    const wasDrag = dragActivated;
+    const symbol = pressedSymbol;
+
     if (viewportElement.hasPointerCapture(event.pointerId)) {
       viewportElement.releasePointerCapture(event.pointerId);
     }
@@ -272,20 +303,36 @@
     isPointerDown = false;
     dragActivated = false;
     activePointerId = -1;
+    pressedSymbol = '';
+
+    if (wasDrag) {
+      suppressClickUntil = performance.now() + 500;
+      return;
+    }
+
+    if (symbol) {
+      suppressClickUntil = performance.now() + 350;
+      dispatch('select', symbol);
+    }
   }
 
   function cancelDrag(event: PointerEvent): void {
     if (event.pointerId !== activePointerId) return;
     suppressClickUntil = performance.now() + 500;
-    finishDrag(event);
+
+    if (viewportElement.hasPointerCapture(event.pointerId)) {
+      viewportElement.releasePointerCapture(event.pointerId);
+    }
+
+    viewportElement.classList.remove('dragging');
+    isPointerDown = false;
+    dragActivated = false;
+    activePointerId = -1;
+    pressedSymbol = '';
   }
 
-  function openFromClick(event: MouseEvent, symbol: string): void {
-    if (performance.now() < suppressClickUntil) {
-      event.preventDefault();
-      event.stopPropagation();
-      return;
-    }
+  function openFromKeyboard(event: MouseEvent, symbol: string): void {
+    if (event.detail !== 0 || performance.now() < suppressClickUntil) return;
     dispatch('select', symbol);
   }
 
@@ -326,11 +373,16 @@
 
   function fitScale(): number {
     if (!viewportElement || !gridElement) return 1;
+    const rect = gridElement.getBoundingClientRect();
+    const baseWidth = rect.width / Math.max(zoom, 0.0001);
+    const baseHeight = rect.height / Math.max(zoom, 0.0001);
     const availableWidth = Math.max(240, viewportElement.clientWidth - 56);
     const availableHeight = Math.max(220, viewportElement.clientHeight - 56);
-    const width = Math.max(1, gridElement.offsetWidth);
-    const height = Math.max(1, gridElement.offsetHeight);
-    return clamp(Math.min(availableWidth / width, availableHeight / height, 1) * 0.97, MIN_ZOOM, 1);
+    return clamp(
+      Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1) * 0.97,
+      MIN_ZOOM,
+      1
+    );
   }
 
   export async function fitToViewport(animated = true): Promise<void> {
@@ -404,8 +456,9 @@
         if ((stage === 'series-in' || stage === 'series-out') && !innerSeries) return;
 
         const after = cell.getBoundingClientRect();
-        const deltaX = (before.left - after.left) / Math.max(zoom, 0.0001);
-        const deltaY = (before.top - after.top) / Math.max(zoom, 0.0001);
+        const localScale = Math.max(zoom, 0.0001);
+        const deltaX = (before.left - after.left) / localScale;
+        const deltaY = (before.top - after.top) / localScale;
         const deltaScaleX = before.width / Math.max(after.width, 0.0001);
         const deltaScaleY = before.height / Math.max(after.height, 0.0001);
 
@@ -422,13 +475,13 @@
           [
             {
               transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaScaleX}, ${deltaScaleY})`,
-              opacity: 0.88
+              opacity: 0.86
             },
             { transform: 'translate3d(0, 0, 0) scale(1, 1)', opacity: 1 }
           ],
           {
-            duration: innerSeries ? 820 : 680,
-            delay: innerSeries ? Math.min(180, seriesIndex * 12) : 0,
+            duration: innerSeries ? 900 : 760,
+            delay: innerSeries ? Math.min(210, seriesIndex * 14) : 0,
             easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
             fill: 'both'
           }
@@ -438,12 +491,18 @@
       });
 
     await Promise.allSettled(animations.map((animation) => animation.finished));
+    animations.forEach((animation) => animation.cancel());
     viewportElement.classList.remove('layout-animating');
   }
 
   onMount(() => {
+    setRenderBucket(1);
+    updateCommittedDetailLevel();
+
     const observer = new ResizeObserver(() => {
-      if (!isPointerDown) void fitToViewport(false);
+      if (!isPointerDown && !viewportElement.classList.contains('layout-animating')) {
+        void fitToViewport(false);
+      }
     });
     observer.observe(viewportElement);
 
@@ -471,7 +530,11 @@
   on:dblclick={handleDoubleClick}
 >
   <div bind:this={panElement} class="periodic-pan">
-    <div bind:this={gridElement} class={`periodic-grid mode-${layoutMode}`}>
+    <div
+      bind:this={gridElement}
+      class={`periodic-grid mode-${layoutMode}`}
+      style={`zoom:${renderBucket};--zoom:${renderBucket};--content-scale:${Math.pow(Math.max(committedZoom, 1), 0.36).toFixed(4)};`}
+    >
       {#if layoutMode !== 'long'}
         <div
           class="series-placeholder lanthanide-placeholder"
@@ -508,7 +571,7 @@
             class="element-open-button"
             type="button"
             aria-label={`Abrir ficha de ${element.name_es}`}
-            on:click={(event) => openFromClick(event, element.symbol)}
+            on:click={(event) => openFromKeyboard(event, element.symbol)}
             on:dragstart|preventDefault
           >
             <div class="cell-topline">
@@ -526,3 +589,47 @@
     </div>
   </div>
 </div>
+
+<style>
+  .periodic-grid.mode-short {
+    grid-template-columns: repeat(18, var(--cell-size));
+    grid-template-rows: repeat(9, var(--cell-size));
+  }
+
+  .periodic-grid.mode-opening {
+    grid-template-columns: repeat(32, var(--cell-size));
+    grid-template-rows: repeat(9, var(--cell-size));
+  }
+
+  .periodic-grid.mode-long {
+    grid-template-columns: repeat(32, var(--cell-size));
+    grid-template-rows: repeat(7, var(--cell-size));
+  }
+
+  .periodic-viewport,
+  .periodic-viewport * {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  .periodic-viewport {
+    touch-action: none;
+    cursor: grab;
+  }
+
+  .periodic-viewport.dragging {
+    cursor: grabbing;
+  }
+
+  .periodic-viewport.dragging .element-open-button {
+    pointer-events: none;
+  }
+
+  .element-cell {
+    transform-origin: center center;
+  }
+
+  .layout-animating .element-cell {
+    pointer-events: none;
+  }
+</style>

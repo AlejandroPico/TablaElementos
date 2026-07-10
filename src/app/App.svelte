@@ -83,19 +83,23 @@
     return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
   }
 
-  async function runLayoutStage(nextLayout: TableLayout, stage: LayoutAnimationStage): Promise<void> {
+  function nextFrame(): Promise<void> {
+    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
+  }
+
+  async function runLayoutStage(
+    nextLayout: TableLayout,
+    stage: LayoutAnimationStage,
+    settleDelay = 90
+  ): Promise<void> {
     const previousRects = gridView?.captureElementRects?.() ?? {};
     layoutMode = nextLayout;
     await tick();
+    await nextFrame();
 
-    const layoutAnimation = gridView?.animateLayoutFrom?.(previousRects, stage);
-    await pause(stage === 'spread' || stage === 'collapse' ? 110 : 70);
-    const cameraAnimation = gridView?.fitToViewport?.(true);
-
-    await Promise.allSettled([
-      Promise.resolve(layoutAnimation),
-      Promise.resolve(cameraAnimation)
-    ]);
+    await Promise.resolve(gridView?.animateLayoutFrom?.(previousRects, stage));
+    await pause(settleDelay);
+    await Promise.resolve(gridView?.fitToViewport?.(true));
   }
 
   async function toggleTableMode(): Promise<void> {
@@ -105,20 +109,20 @@
     try {
       if (tableMode === 'short') {
         tableMode = 'long';
-        await runLayoutStage('opening', 'spread');
-        await pause(45);
-        await runLayoutStage('long', 'series-in');
+        await runLayoutStage('opening', 'spread', 130);
+        await pause(110);
+        await runLayoutStage('long', 'series-in', 70);
       } else {
         tableMode = 'short';
-        await runLayoutStage('opening', 'series-out');
-        await pause(45);
-        await runLayoutStage('short', 'collapse');
+        await runLayoutStage('opening', 'series-out', 100);
+        await pause(110);
+        await runLayoutStage('short', 'collapse', 70);
       }
     } finally {
       layoutMode = tableMode;
       window.setTimeout(() => {
         layoutBusy = false;
-      }, 80);
+      }, 120);
     }
   }
 

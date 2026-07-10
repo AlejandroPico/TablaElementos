@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import AtomicModel3D from './AtomicModel3D.svelte';
   import DataDomainTable from './DataDomainTable.svelte';
   import ElementPanel from './ElementPanel.svelte';
   import SpectrumViewer from './SpectrumViewer.svelte';
@@ -16,6 +17,7 @@
 
   type TabId =
     | 'summary'
+    | 'atom'
     | 'spectrum'
     | 'lines'
     | 'levels'
@@ -112,7 +114,9 @@
   function domainList(ids: string[]): ElementDataDomain[] {
     const data = elementData;
     if (!data) return [];
-    return ids.map((id) => data.domains[id]).filter((domain): domain is ElementDataDomain => Boolean(domain && domain.available));
+    return ids
+      .map((id) => data.domains[id])
+      .filter((domain): domain is ElementDataDomain => Boolean(domain && domain.available));
   }
 
   function hasAnyDomain(ids: string[]): boolean {
@@ -122,7 +126,13 @@
 
 {#if element}
   <div class="modal-backdrop" role="presentation" on:click={closeOnBackdrop}>
-    <section class="element-modal master-modal" aria-modal="true" role="dialog" aria-label={`Ficha maestra de ${element.name_es}`}>
+    <div
+      class="element-modal master-modal"
+      aria-modal="true"
+      role="dialog"
+      aria-label={`Ficha maestra de ${element.name_es}`}
+      tabindex="-1"
+    >
       <header class="modal-header">
         <div class="modal-identity">
           <div class="modal-symbol"><span>{element.atomic_number}</span><strong>{element.symbol}</strong></div>
@@ -143,6 +153,7 @@
 
       <nav class="modal-tabs master-tabs" aria-label="Secciones de la ficha maestra">
         <button class:active={activeTab === 'summary'} type="button" on:click={() => (activeTab = 'summary')}>Resumen</button>
+        <button class:active={activeTab === 'atom'} type="button" on:click={() => (activeTab = 'atom')}>Átomo 3D</button>
         <button class:active={activeTab === 'spectrum'} type="button" on:click={() => (activeTab = 'spectrum')}>Espectro</button>
         <button class:active={activeTab === 'lines'} type="button" on:click={() => (activeTab = 'lines')}>Líneas</button>
         <button class:active={activeTab === 'levels'} type="button" on:click={() => (activeTab = 'levels')}>Niveles</button>
@@ -164,6 +175,8 @@
 
         {#if activeTab === 'summary'}
           <ElementPanel {element} {elementData} {loadingData} />
+        {:else if activeTab === 'atom'}
+          <AtomicModel3D {element} {elementData} />
         {:else if activeTab === 'spectrum'}
           <div class="mode-row">
             <div><p class="eyebrow">Modo de visualización</p><h3>Emisión / absorción</h3></div>
@@ -243,6 +256,20 @@
           </section>
         {/if}
       </div>
-    </section>
+    </div>
   </div>
 {/if}
+
+<style>
+  .modal-tabs.master-tabs {
+    grid-template-columns: repeat(10, minmax(88px, 1fr)) !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+  }
+
+  @media (max-width: 980px) {
+    .modal-tabs.master-tabs {
+      grid-template-columns: repeat(10, minmax(104px, 1fr)) !important;
+    }
+  }
+</style>
