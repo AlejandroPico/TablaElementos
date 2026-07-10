@@ -1,981 +1,502 @@
-Col_0
-"(()=>{var e,t,r={384(e,t,r){""use strict"";r.d(t,{NT:()=>a,Zm:()=>c,bQ:()=>d,dV:()=>u,pV:()=>l});var n=r(6154),i=r(1863),s=r(944),o=r(1910);const a={beacon:""bam.nr-data.net"",errorBeacon:""bam.nr-data.net""};function c(){return n.gm.NREUM||(n.gm.NREUM={}),void 0===n.gm.newrelic&&(n.gm.newrelic=n.gm.NREUM),n.gm.NREUM}function u(){let e=c();return e.o||(e.o={ST:n.gm.setTimeout,SI:n.gm.setImmediate||n.gm.setInterval,CT:n.gm.clearTimeout,XHR:n.gm.XMLHttpRequest,REQ:n.gm.Request,EV:n.gm.Event,PR:n.gm.Promise,MO:n.gm.MutationObserver,FETCH:n.gm.fetch,WS:n.gm.WebSocket},(0,o.i)(...Object.values(e.o))),e}function d(e,t){let r=c();r.initializedAgents??={},t.initializedAt={ms:(0,i.t)(),date:new Date},r.initializedAgents[e]=t,2===Object.keys(r.initializedAgents).length&&(0,s.R)(69)}function l(){return function(){let e=c();const t=e.info||{};e.info={beacon:a.beacon,errorBeacon:a.errorBeacon,...t}}(),function(){let e=c();const t=e.init||{};e.init={...t}}(),u(),function(){let e=c();const t=e.loader_config||{};e.loader_config={...t}}(),c()}},782(e,t,r){""use strict"";r.d(t,{T:()=>n});const n=r(860).K7.pageViewTiming},860(e,t,r){""use strict"";r.d(t,{$J:()=>d,K7:()=>c,P3:()=>u,XX:()=>i,Yy:()=>a,df:()=>s,qY:()=>n,v4:()=>o});const n=""events"",i=""jserrors"",s=""browser/blobs"",o=""rum"",a=""browser/logs"",c={ajax:""ajax"",genericEvents:""generic_events"",jserrors:i,logging:""logging"",metrics:""metrics"",pageAction:""page_action"",pageViewEvent:""page_view_event"",pageViewTiming:""page_view_timing"",sessionReplay:""session_replay"",sessionTrace:""session_trace"",softNav:""soft_navigations""},u={[c.pageViewEvent]:1,[c.pageViewTiming]:2,[c.metrics]:3,[c.jserrors]:4,[c.softNav]:5,[c.ajax]:6,[c.sessionTrace]:7,[c.sessionReplay]:8,[c.logging]:9,[c.genericEvents]:10},d={[c.pageViewEvent]:o,[c.pageViewTiming]:n,[c.ajax]:n,[c.softNav]:n,[c.metrics]:i,[c.jserrors]:i,[c.sessionTrace]:s,[c.sessionReplay]:s,[c.logging]:a,[c.genericEvents]:""ins""}},944(e,t,r){""use strict"";r.d(t,{R:()=>i});var n=r(3241);function i(e,t){""function""==typeof console.debug&&(console.debug(""New Relic Warning: https://github.com/newrelic/newrelic-browser-agent/blob/main/docs/warning-codes.md#"".concat(e),t),(0,n.W)({drained:null,type:""data"",name:""warn"",feature:""warn"",data:{code:e,secondary:t}}))}},981(e,t,r){""use strict"";r.d(t,{R:()=>n});const n={AJAX:""AjaxRequest"",PA:""PageAction"",UA:""UserAction"",BP:""BrowserPerformance"",WS:""WebSocket"",SPV:""SecurityPolicyViolation"",JSE:""JavaScriptError"",LOG:""Log"",PVE:""PageView"",PVT:""PageViewTiming"",SR:""SessionReplay"",ST:""SessionTrace"",BI:""BrowserInteraction""}},1687(e,t,r){""use strict"";r.d(t,{Ak:()=>a,Ze:()=>u,x3:()=>c});var n=r(3241),i=r(3606),s=r(860),o=r(2646);function a(e,t){if(!e)return;const r={staged:!1,priority:s.P3[t]||0};e.runtime.drainRegistry.get(t)||e.runtime.drainRegistry.set(t,r)}function c(e,t){if(!e)return;const r=e.runtime.drainRegistry;r&&(r.get(t)&&r.delete(t),l(e,t,!1),r.size&&d(e))}function u(e,t=""feature"",r=!1){if(e){if(!e.runtime.drainRegistry.get(t)||r)return l(e,t);e.runtime.drainRegistry.get(t).staged=!0,d(e)}}function d(e){if(!e)return;const t=Array.from(e.runtime.drainRegistry);t.every(([e,t])=>t.staged)&&(t.sort((e,t)=>e[1].priority-t[1].priority),t.forEach(([t])=>{e.runtime.drainRegistry.delete(t),l(e,t)}))}function l(e,t,r=!0){if(!e)return;const s=e.ee,a=i.i.handlers;if(s&&!s.aborted&&s.backlog&&a){if((0,n.W)({type:""lifecycle"",name:""drain"",feature:t}),r){const e=s.backlog[t],r=a[t];if(r){for(let t=0;e&&t<e.length;++t)f(e[t],r);Object.entries(r).forEach(([e,t])=>{Object.values(t||{}).forEach(t=>{t[0]?.on&&t[0].context()instanceof o.y&&!t[0].listeners(e).includes(t[1])&&t[0].on(e,t[1])})})}}s.isolatedBacklog||delete a[t],s.backlog[t]=null,s.emit(""drain-""+t,[])}}function f(e,t){var r=e[1];Object.values(t[r]||{}).forEach(t=>{var r=e[0];if(t[0]===r){var n=t[1],i=e[3],s=e[2];n.apply(i,s)}})}},1738(e,t,r){""use strict"";r.d(t,{U:()=>f,Y:()=>l});var n=r(3241),i=r(9908),s=r(1863),o=r(944),a=r(3969),c=r(8362),u=r(860),d=r(4261);function l(e,t,r,s){const l=s||r;!l||l[e]&&l[e]!==c.d.prototype[e]||(l[e]=function(){(0,i.p)(a.xV,[""API/""+e+""/called""],void 0,u.K7.metrics,r.ee),(0,n.W)({drained:!!r.runtime?.activatedFeatures,type:""data"",name:""api"",feature:d.Pl+e,data:{}});try{return t.apply(this,arguments)}catch(e){(0,o.R)(23,e)}})}function f(e,t,r,n,o){const a=e.info;null===r?delete a.jsAttributes[t]:a.jsAttributes[t]=r,(o||null===r)&&(0,i.p)(d.Pl+n,[(0,s.t)(),t,r],void 0,""session"",e.ee)}},1741(e,t,r){""use strict"";r.d(t,{W:()=>s});var n=r(944),i=r(4261);class s{#e(e,...t){if(this[e]!==s.prototype[e])return this[e](...t);(0,n.R)(35,e)}addPageAction(e,t){return this.#e(i.hG,e,t)}register(e){return this.#e(i.eY,e)}recordCustomEvent(e,t){return this.#e(i.fF,e,t)}setPageViewName(e,t){return this.#e(i.Fw,e,t)}setCustomAttribute(e,t,r){return this.#e(i.cD,e,t,r)}noticeError(e,t){return this.#e(i.o5,e,t)}setUserId(e,t=!1){return this.#e(i.Dl,e,t)}setApplicationVersion(e){return this.#e(i.nb,e)}setErrorHandler(e){return this.#e(i.bt,e)}addRelease(e,t){return this.#e(i.k6,e,t)}log(e,t){return this.#e(i.$9,e,t)}start(){return this.#e(i.d3)}finished(e){return this.#e(i.BL,e)}recordReplay(){return this.#e(i.CH)}pauseReplay(){return this.#e(i.Tb)}addToTrace(e){return this.#e(i.U2,e)}setCurrentRouteName(e){return this.#e(i.PA,e)}interaction(e){return this.#e(i.dT,e)}wrapLogger(e,t,r){return this.#e(i.Wb,e,t,r)}measure(e,t){return this.#e(i.V1,e,t)}consent(e){return this.#e(i.Pv,e)}}},1863(e,t,r){""use strict"";function n(){return Math.floor(performance.now())}r.d(t,{t:()=>n})},1910(e,t,r){""use strict"";r.d(t,{i:()=>s});var n=r(944);const i=new Map;function s(...e){return e.every(e=>{if(i.has(e))return i.get(e);const t=""function""==typeof e?e.toString():"""",r=t.includes(""[native code]""),s=t.includes(""nrWrapper"");return r||s||(0,n.R)(64,e?.name||t),i.set(e,r),r})}},2555(e,t,r){""use strict"";r.d(t,{D:()=>a,f:()=>o});var n=r(384),i=r(8122);const s={beacon:n.NT.beacon,errorBeacon:n.NT.errorBeacon,licenseKey:void 0,applicationID:void 0,sa:void 0,queueTime:void 0,applicationTime:void 0,ttGuid:void 0,user:void 0,account:void 0,product:void 0,extra:void 0,jsAttributes:{},userAttributes:void 0,atts:void 0,transactionName:void 0,tNamePlain:void 0};function o(e){try{return!!e.licenseKey&&!!e.errorBeacon&&!!e.applicationID}catch(e){return!1}}const a=e=>(0,i.a)(e,s)},2614(e,t,r){""use strict"";r.d(t,{BB:()=>s,Wt:()=>n,g:()=>c,iL:()=>a,tS:()=>o,wk:()=>i});const n=""NRBA_SESSION::"",i=144e5,s=18e5,o={STARTED:""session-started"",PAUSE:""session-pause"",RESET:""session-reset"",RESUME:""session-resume"",UPDATE:""session-update""},a={SAME_TAB:""same-tab"",CROSS_TAB:""cross-tab""},c={OFF:0,FULL:1,ERROR:2}},2646(e,t,r){""use strict"";r.d(t,{y:()=>n});class n{constructor(e){this.contextId=e}}},2843(e,t,r){""use strict"";r.d(t,{G:()=>s,u:()=>i});var n=r(3878);function i(e,t=!1,r,i){(0,n.DD)(""visibilitychange"",function(){if(t)return void(""hidden""===document.visibilityState&&e());e(document.visibilityState)},r,i)}function s(e,t,r){(0,n.sp)(""pagehide"",e,t,r)}},3241(e,t,r){""use strict"";r.d(t,{W:()=>i});var n=r(6154);function i(e={}){try{n.gm.dispatchEvent(new CustomEvent(""newrelic"",{detail:e}))}catch(e){}}},3606(e,t,r){""use strict"";r.d(t,{i:()=>s});var n=r(9908);s.on=o;var i=s.handlers={};function s(e,t,r,s){o(s||n.d,i,e,t,r)}function o(e,t,r,i,s){s||(s=""feature""),e||(e=n.d);var o=t[s]=t[s]||{};(o[r]=o[r]||[]).push([e,i])}},3878(e,t,r){""use strict"";function n(e,t){return{capture:e,passive:!1,signal:t}}function i(e,t,r=!1,i){window.addEventListener(e,t,n(r,i))}function s(e,t,r=!1,i){document.addEventListener(e,t,n(r,i))}r.d(t,{DD:()=>s,jT:()=>n,sp:()=>i})},3969(e,t,r){""use strict"";r.d(t,{TZ:()=>n,XG:()=>a,rs:()=>i,xV:()=>o,z_:()=>s});const n=r(860).K7.metrics,i=""sm"",s=""cm"",o=""storeSupportabilityMetrics"",a=""storeEventMetrics""},4234(e,t,r){""use strict"";r.d(t,{W:()=>i});var n=r(1687);class i{constructor(e,t){this.agentRef=e,this.ee=e?.ee,this.featureName=t,this.blocked=!1}deregisterDrain(){(0,n.x3)(this.agentRef,this.featureName)}}},4261(e,t,r){""use strict"";r.d(t,{$9:()=>u,BL:()=>a,CH:()=>g,Dl:()=>_,Fw:()=>y,PA:()=>h,Pl:()=>n,Pv:()=>A,Tb:()=>l,U2:()=>s,V1:()=>x,Wb:()=>R,bt:()=>b,cD:()=>v,d3:()=>w,dT:()=>c,eY:()=>p,fF:()=>f,hG:()=>i,k6:()=>o,nb:()=>m,o5:()=>d});const n=""api-"",i=""addPageAction"",s=""addToTrace"",o=""addRelease"",a=""finished"",c=""interaction"",u=""log"",d=""noticeError"",l=""pauseReplay"",f=""recordCustomEvent"",g=""recordReplay"",p=""register"",m=""setApplicationVersion"",h=""setCurrentRouteName"",v=""setCustomAttribute"",b=""setErrorHandler"",y=""setPageViewName"",_=""setUserId"",w=""start"",R=""wrapLogger"",x=""measure"",A=""consent""},5289(e,t,r){""use strict"";r.d(t,{GG:()=>o,Qr:()=>c,sB:()=>a});var n=r(3878),i=r(6389);function s(){return""undefined""==typeof document||""complete""===document.readyState}function o(e,t){if(s())return e();const r=(0,i.J)(e),o=setInterval(()=>{s()&&(clearInterval(o),r())},500);(0,n.sp)(""load"",r,t)}function a(e){if(s())return e();(0,n.DD)(""DOMContentLoaded"",e)}function c(e){if(s())return e();(0,n.sp)(""popstate"",e)}},5607(e,t,r){""use strict"";r.d(t,{W:()=>n});const n=(0,r(9566).bz)()},6154(e,t,r){""use strict"";r.d(t,{OF:()=>u,RI:()=>i,WN:()=>l,bv:()=>s,gm:()=>o,m:()=>c,mw:()=>a,sb:()=>d,zk:()=>f});var n=r(1863);const i=""undefined""!=typeof window&&!!window.document,s=""undefined""!=typeof WorkerGlobalScope&&(""undefined""!=typeof self&&self instanceof WorkerGlobalScope&&self.navigator instanceof WorkerNavigator||""undefined""!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis.navigator instanceof WorkerNavigator),o=i?window:""undefined""!=typeof WorkerGlobalScope&&(""undefined""!=typeof self&&self instanceof WorkerGlobalScope&&self||""undefined""!=typeof globalThis&&globalThis instanceof WorkerGlobalScope&&globalThis),a=Boolean(""hidden""===o?.document?.visibilityState),c=""""+o?.location,u=/iPad|iPhone|iPod/.test(o.navigator?.userAgent),d=u&&""undefined""==typeof SharedWorker,l=((()=>{const e=o.navigator?.userAgent?.match(/Firefox[/\s](\d+\.\d+)/);Array.isArray(e)&&e.length>=2&&e[1]})(),Date.now()-(0,n.t)()),f=()=>{const e=o?.performance?.getEntriesByType?.(""navigation"")?.[0];if(e&&e.responseStart>0&&e.responseStart<o.performance.now())return e}},6389(e,t,r){""use strict"";function n(e,t=500,r={}){const n=r?.leading||!1;let i;return(...r)=>{n&&void 0===i&&(e.apply(this,r),i=setTimeout(()=>{i=clearTimeout(i)},t)),n||(clearTimeout(i),i=setTimeout(()=>{e.apply(this,r)},t))}}function i(e){let t=!1;return(...r)=>{t||(t=!0,e.apply(this,r))}}r.d(t,{J:()=>i,s:()=>n})},6630(e,t,r){""use strict"";r.d(t,{T:()=>n});const n=r(860).K7.pageViewEvent},7699(e,t,r){""use strict"";r.d(t,{It:()=>s,KC:()=>a,No:()=>i,qh:()=>o});var n=r(860);const i=16e3,s=1e6,o=""SESSION_ERROR"",a={[n.K7.logging]:!0,[n.K7.genericEvents]:!0,[n.K7.jserrors]:!0,[n.K7.ajax]:!0}},7836(e,t,r){""use strict"";r.d(t,{P:()=>a,ee:()=>c});var n=r(384),i=r(8990),s=r(2646),o=r(5607);const a=""nr@context:"".concat(o.W),c=function e(t,r){var n={},o={},d={},l=!1;try{l=16===r.length&&u.initializedAgents?.[r]?.runtime.isolatedBacklog}catch(e){}var f={on:p,addEventListener:p,removeEventListener:function(e,t){var r=n[e];if(!r)return;for(var i=0;i<r.length;i++)r[i]===t&&r.splice(i,1)},emit:function(e,r,n,i,s){!1!==s&&(s=!0);if(c.aborted&&!i)return;t&&s&&t.emit(e,r,n);var a=g(n);m(e).forEach(e=>{e.apply(a,r)});var u=v()[o[e]];u&&u.push([f,e,r,a]);return a},get:h,listeners:m,context:g,buffer:function(e,t){const r=v();if(t=t||""feature"",f.aborted)return;Object.entries(e||{}).forEach(([e,n])=>{o[n]=t,t in r||(r[t]=[])})},abort:function(){f._aborted=!0,Object.keys(f.backlog).forEach(e=>{delete f.backlog[e]})},isBuffering:function(e){return!!v()[o[e]]},debugId:r,backlog:l?{}:t&&""object""==typeof t.backlog?t.backlog:{},isolatedBacklog:l};return Object.defineProperty(f,""aborted"",{get:()=>{let e=f._aborted||!1;return e||(t&&(e=t.aborted),e)}}),f;function g(e){return e&&e instanceof s.y?e:e?(0,i.I)(e,a,()=>new s.y(a)):new s.y(a)}function p(e,t){n[e]=m(e).concat(t)}function m(e){return n[e]||[]}function h(t){return d[t]=d[t]||e(f,t)}function v(){return f.backlog}}(void 0,""globalEE""),u=(0,n.Zm)();u.ee||(u.ee=c)},8122(e,t,r){""use strict"";r.d(t,{a:()=>i});var n=r(944);function i(e,t){try{if(!e||""object""!=typeof e)return(0,n.R)(3);if(!t||""object""!=typeof t)return(0,n.R)(4);const r=Object.create(Object.getPrototypeOf(t),Object.getOwnPropertyDescriptors(t)),s=0===Object.keys(r).length?e:r;for(let o in s)if(void 0!==e[o])try{if(null===e[o]){r[o]=null;continue}Array.isArray(e[o])&&Array.isArray(t[o])?r[o]=Array.from(new Set([...e[o],...t[o]])):e[o]instanceof Map||e[o]instanceof Set||e[o]instanceof Date||e[o]instanceof RegExp?r[o]=e[o]:""object""==typeof e[o]&&""object""==typeof t[o]?r[o]=i(e[o],t[o]):r[o]=e[o]}catch(e){r[o]||(0,n.R)(1,e)}return r}catch(e){(0,n.R)(2,e)}}},8362(e,t,r){""use strict"";r.d(t,{d:()=>s});var n=r(9566),i=r(1741);class s extends i.W{agentIdentifier=(0,n.LA)(16)}},8374(e,t,r){r.nc=(()=>{try{return document?.currentScript?.nonce}catch(e){}return""""})()},8990(e,t,r){""use strict"";r.d(t,{I:()=>i});var n=Object.prototype.hasOwnProperty;function i(e,t,r){if(n.call(e,t))return e[t];var i=r();if(Object.defineProperty&&Object.keys)try{return Object.defineProperty(e,t,{value:i,writable:!0,enumerable:!1}),i}catch(e){}return e[t]=i,i}},9324(e,t,r){""use strict"";r.d(t,{F3:()=>i,Xs:()=>s,xv:()=>n});const n=""1.317.0"",i=""PROD"",s=""CDN""},9566(e,t,r){""use strict"";r.d(t,{LA:()=>o,bz:()=>s});var n=r(6154);function i(e,t){return e?15&e[t]:16*Math.random()|0}function s(){const e=n.gm?.crypto||n.gm?.msCrypto;let t,r=0;return e&&e.getRandomValues&&(t=e.getRandomValues(new Uint8Array(30))),""xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx"".split("""").map(e=>""x""===e?i(t,r++).toString(16):""y""===e?(3&i()|8).toString(16):e).join("""")}function o(e){const t=n.gm?.crypto||n.gm?.msCrypto;let r,s=0;t&&t.getRandomValues&&(r=t.getRandomValues(new Uint8Array(e)));const o=[];for(var a=0;a<e;a++)o.push(i(r,s++).toString(16));return o.join("""")}},9908(e,t,r){""use strict"";r.d(t,{d:()=>n,p:()=>i});var n=r(7836).ee.get(""handle"");function i(e,t,r,i,s){s?(s.buffer([e],i),s.emit(e,t,r)):(n.buffer([e],i),n.emit(e,t,r))}}},n={};function i(e){var t=n[e];if(void 0!==t)return t.exports;var s=n[e]={exports:{}};return r[e](s,s.exports,i),s.exports}i.m=r,i.d=(e,t)=>{for(var r in t)i.o(t,r)&&!i.o(e,r)&&Object.defineProperty(e,r,{enumerable:!0,get:t[r]})},i.f={},i.e=e=>Promise.all(Object.keys(i.f).reduce((t,r)=>(i.f[r](e,t),t),[])),i.u=e=>""nr-rum-1.317.0.min.js"",i.o=(e,t)=>Object.prototype.hasOwnProperty.call(e,t),e={},t=""NRBA-1.317.0.PROD:"",i.l=(r,n,s,o)=>{if(e[r])e[r].push(n);else{var a,c;if(void 0!==s)for(var u=document.getElementsByTagName(""script""),d=0;d<u.length;d++){var l=u[d];if(l.getAttribute(""src"")==r||l.getAttribute(""data-webpack"")==t+s){a=l;break}}if(!a){c=!0;var f={296:""sha512-dDeLB65HNhC/52vAGvWxqlhzdrCMMyKyfDMLuD3glK6yvtLAoc7fLRa5TyYwZurrYnIgxKx6VGqcGByXhK/6SA==""};(a=document.createElement(""script"")).charset=""utf-8"",i.nc&&a.setAttribute(""nonce"",i.nc),a.setAttribute(""data-webpack"",t+s),a.src=r,0!==a.src.indexOf(window.location.origin+""/"")&&(a.crossOrigin=""anonymous""),f[o]&&(a.integrity=f[o])}e[r]=[n];var g=(t,n)=>{a.onerror=a.onload=null,clearTimeout(p);var i=e[r];if(delete e[r],a.parentNode&&a.parentNode.removeChild(a),i&&i.forEach(e=>e(n)),t)return t(n)},p=setTimeout(g.bind(null,void 0,{type:""timeout"",target:a}),12e4);a.onerror=g.bind(null,a.onerror),a.onload=g.bind(null,a.onload),c&&document.head.appendChild(a)}},i.r=e=>{""undefined""!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:""Module""}),Object.defineProperty(e,""__esModule"",{value:!0})},i.p=""https://js-agent.newrelic.com/"",(()=>{var e={374:0,840:0};i.f.j=(t,r)=>{var n=i.o(e,t)?e[t]:void 0;if(0!==n)if(n)r.push(n[2]);else{var s=new Promise((r,i)=>n=e[t]=[r,i]);r.push(n[2]=s);var o=i.p+i.u(t),a=new Error;i.l(o,r=>{if(i.o(e,t)&&(0!==(n=e[t])&&(e[t]=void 0),n)){var s=r&&(""load""===r.type?""missing"":r.type),o=r&&r.target&&r.target.src;a.message=""Loading chunk ""+t+"" failed: (""+s+"": ""+o+"")"",a.name=""ChunkLoadError"",a.type=s,a.request=o,n[1](a)}},""chunk-""+t,t)}};var t=(t,r)=>{var n,s,[o,a,c]=r,u=0;if(o.some(t=>0!==e[t])){for(n in a)i.o(a,n)&&(i.m[n]=a[n]);if(c)c(i)}for(t&&t(r);u<o.length;u++)s=o[u],i.o(e,s)&&e[s]&&e[s][0](),e[s]=0},r=self[""webpackChunk:NRBA-1.317.0.PROD""]=self[""webpackChunk:NRBA-1.317.0.PROD""]||[];r.forEach(t.bind(null,0)),r.push=t.bind(null,r.push.bind(r))})(),(()=>{""use strict"";i(8374);var e=i(8362),t=i(860);const r=Object.values(t.K7);var n=i(384),s=i(1741);var o=i(2555),a=i(981);t.K7.genericEvents,a.R.PA,a.R.UA,a.R.BP;const c=""experimental.resources"",u=""register"",d=(t.K7.ajax,""none""),l=e=>{if(!e||""string""!=typeof e)return!1;try{document.createDocumentFragment().querySelector(e)}catch{return!1}return!0};var f=i(2614),g=i(944),p=i(8122);const m=""[data-nr-mask]"",h=e=>(0,p.a)(e,(()=>{const e={feature_flags:[],experimental:{register:!1,resources:!1},mask_selector:""*"",block_selector:""[data-nr-block]"",mask_input_options:{color:!1,date:!1,""datetime-local"":!1,email:!1,month:!1,number:!1,range:!1,search:!1,tel:!1,text:!1,time:!1,url:!1,week:!1,textarea:!1,select:!1,password:!0}};return{ajax:{deny_list:void 0,block_internal:!0,enabled:!0,autoStart:!0,capture_payloads:d},api:{register:{get enabled(){return e.feature_flags.includes(u)||e.experimental.register},set enabled(t){e.experimental.register=t},duplicate_data_to_container:!1}},browser_consent_mode:{enabled:!1},distributed_tracing:{enabled:void 0,exclude_newrelic_header:void 0,cors_use_newrelic_header:void 0,cors_use_tracecontext_headers:void 0,allowed_origins:void 0},get feature_flags(){return e.feature_flags},set feature_flags(t){e.feature_flags=t},generic_events:{enabled:!0,autoStart:!0},harvest:{interval:30},jserrors:{enabled:!0,autoStart:!0},logging:{enabled:!0,autoStart:!0},metrics:{enabled:!0,autoStart:!0},obfuscate:void 0,page_action:{enabled:!0},page_view_event:{enabled:!0,autoStart:!0},page_view_timing:{enabled:!0,autoStart:!0},performance:{capture_marks:!1,capture_measures:!1,capture_detail:!0,resources:{get enabled(){return e.feature_flags.includes(c)||e.experimental.resources},set enabled(t){e.experimental.resources=t},asset_types:[],first_party_domains:[],ignore_newrelic:!0}},privacy:{cookies_enabled:!0},proxy:{assets:void 0,beacon:void 0},session:{expiresMs:f.wk,inactiveMs:f.BB},session_replay:{autoStart:!0,enabled:!1,preload:!1,sampling_rate:10,error_sampling_rate:100,collect_fonts:!1,inline_images:!1,fix_stylesheets:!0,mask_all_inputs:!0,get mask_text_selector(){return e.mask_selector},set mask_text_selector(t){l(t)?e.mask_selector="""".concat(t,"","").concat(m):""""===t||null===t?e.mask_selector=m:(0,g.R)(5,t)},get block_class(){return""nr-block""},get ignore_class(){return""nr-ignore""},get mask_text_class(){return""nr-mask""},get block_selector(){return e.block_selector},set block_selector(t){l(t)?e.block_selector+="","".concat(t):""""!==t&&(0,g.R)(6,t)},get mask_input_options(){return e.mask_input_options},set mask_input_options(t){t&&""object""==typeof t?e.mask_input_options={...t,password:!0}:(0,g.R)(7,t)}},session_trace:{enabled:!0,autoStart:!0},soft_navigations:{enabled:!0,autoStart:!0},ssl:void 0,user_actions:{enabled:!0,elementAttributes:[""id"",""className"",""tagName"",""type""]}}})());var v=i(6154),b=i(9324);let y=0;const _={buildEnv:b.F3,distMethod:b.Xs,version:b.xv,originTime:v.WN},w={consented:!1},R={activatedFeatures:void 0,appMetadata:{},configured:!1,get consented(){return this.session?.state?.consent||w.consented},set consented(e){w.consented=e},customTransaction:void 0,denyList:[],disabled:!1,drainRegistry:new Map,harvester:void 0,isolatedBacklog:!1,isRecording:!1,loaderType:void 0,maxBytes:3e4,obfuscator:void 0,onerror:void 0,ptid:void 0,releaseIds:{},session:void 0,timeKeeper:void 0,registeredEntities:[],jsAttributesMetadata:{bytes:0},get harvestCount(){return++y}};var x=i(7836),A=i(3241);const k={accountID:void 0,trustKey:void 0,agentID:void 0,licenseKey:void 0,applicationID:void 0,xpid:void 0};function S(e,t={},r,a){let{init:c,info:u,loader_config:d,runtime:l={},exposed:f=!0}=t;if(!u){const e=(0,n.pV)();c=e.init,u=e.info,d=e.loader_config}var g;e.init=h(c||{}),e.loader_config=(g=d||{},(0,p.a)(g,k)),u.jsAttributes??={},v.bv&&(u.jsAttributes.isWorker=!0),e.info=(0,o.D)(u);const m=e.init;e.runtime??=(e=>{const t=(0,p.a)(e,R),r=Object.keys(_).reduce((e,t)=>(e[t]={value:_[t],writable:!1,configurable:!0,enumerable:!0},e),{});return Object.defineProperties(t,r)})(l),m.proxy.assets&&(e=>{const t=e.startsWith(""http"");e+=""/"",i.p=t?e:""https://""+e})(m.proxy.assets),e.runtime.configured||(Object.defineProperty(e,""beacons"",{get:()=>[e.info.beacon,e.info.errorBeacon,e.init.proxy.assets,e.init.proxy.beacon].filter(Boolean)}),Object.defineProperty(e.runtime,""denyList"",{get:()=>[...e.init.ajax.deny_list||[],...e.init.ajax.block_internal?e.beacons:[]]}),e.runtime.ptid=e.agentIdentifier,function(e){const t=(0,n.pV)();Object.getOwnPropertyNames(s.W.prototype).forEach(r=>{const n=s.W.prototype[r];if(""function""!=typeof n||""constructor""===n)return;let i=t[r];e[r]&&!1!==e.exposed&&""micro-agent""!==e.runtime?.loaderType&&(t[r]=(...t)=>{const n=e[r](...t);return i?i(...t):n})})}(e),e.runtime.loaderType=r,e.ee=x.ee.get(e.agentIdentifier),e.exposed=f,(0,A.W)({drained:!!e.runtime.activatedFeatures,type:""lifecycle"",name:""initialize"",feature:void 0,data:e.config}),e.runtime.configured=!0)}var T=i(9908),E=i(1863),j=i(4261),P=i(1738);var N=i(1687),O=i(4234),M=i(5289);const I=e=>v.RI&&!0===e?.privacy.cookies_enabled;function D(e){return!!(0,n.dV)().o.MO&&I(e)&&!0===e?.session_trace.enabled}var W=i(6389),V=i(7699);const B=new WeakSet;class K extends O.W{constructor(e,t){super(e,t),this.abortHandler=void 0,this.featAggregate=void 0,this.loadedSuccessfully=void 0,this.onAggregateImported=new Promise(e=>{this.loadedSuccessfully=e}),this.deferred=Promise.resolve(),!1===e.init[this.featureName].autoStart?this.deferred=new Promise((t,r)=>{this.ee.on(""manual-start-all"",(0,W.J)(()=>{(0,N.Ak)(e,this.featureName),t()}))}):(0,N.Ak)(e,t)}importAggregator(e,t,r={}){if(this.featAggregate)return;const n=async()=>{if(await this.deferred,this.#t(e),!(0,o.f)(e.info))return(0,g.R)(43),e.ee.abort(),void this.loadedSuccessfully(!1);let n;try{if(I(e.init)){const{setupAgentSession:t}=await i.e(296).then(i.bind(i,8));n=t(e)}}catch(e){(0,g.R)(20,e),this.ee.emit(""internal-error"",[e]),(0,T.p)(V.qh,[e],void 0,this.featureName,this.ee)}try{if(!this.#r(this.featureName,n,e.init))return(0,N.Ze)(this.agentRef,this.featureName),void this.loadedSuccessfully(!1);const{Aggregate:i}=await t();this.featAggregate=new i(e,r),e.runtime.harvester.initializedAggregates.push(this.featAggregate),this.loadedSuccessfully(!0)}catch(e){(0,g.R)(34,e),this.abortHandler?.(),(0,N.Ze)(this.agentRef,this.featureName,!0),this.loadedSuccessfully(!1),this.ee&&this.ee.abort()}};v.RI?(0,M.GG)(()=>n(),!0):n()}#r(e,r,n){if(this.blocked)return!1;switch(e){case t.K7.sessionReplay:return D(n)&&!!r;case t.K7.sessionTrace:return!!r;default:return!0}}#t(e){if(!B.has(e)&&(B.add(e),!(0,o.f)(e.info))){const t=(0,n.pV)();let r={...t.info?.jsAttributes};try{r={...r,...e.info?.jsAttributes}}catch(e){}S(e,{...t,info:{...t.info,jsAttributes:r},runtime:e.runtime},e.runtime.loaderType)}}}var C=i(6630);class U extends K{static featureName=C.T;constructor(e){var t;super(e,C.T),this.setupInspectionEvents(),t=e,(0,P.Y)(j.Fw,function(e,r){""string""==typeof e&&(""/""!==e.charAt(0)&&(e=""/""+e),t.runtime.customTransaction=(r||""http://custom.transaction"")+e,(0,T.p)(j.Pl+j.Fw,[(0,E.t)()],void 0,void 0,t.ee))},t),this.importAggregator(e,()=>i.e(296).then(i.bind(i,1324)))}setupInspectionEvents(){const e=(e,t)=>{e&&(0,A.W)({timeStamp:e.timeStamp,loaded:""complete""===e.target.readyState,type:""window"",name:t,data:e.target.location+""""})};(0,M.sB)(t=>{e(t,""DOMContentLoaded"")}),(0,M.GG)(t=>{e(t,""load"")}),(0,M.Qr)(t=>{e(t,""navigate"")}),this.ee.on(f.tS.UPDATE,(e,t)=>{(0,A.W)({type:""lifecycle"",name:""session"",data:t})})}}class F extends e.d{constructor(e){var t;(super(),v.gm)?(this.features={},(0,n.bQ)(this.agentIdentifier,this),this.desiredFeatures=new Set(e.features||[]),this.desiredFeatures.add(U),S(this,e,e.loaderType||""agent""),t=this,(0,P.Y)(j.cD,function(e,r,n=!1){if(""string""==typeof e){if([""string"",""number"",""boolean""].includes(typeof r)||null===r)return(0,P.U)(t,e,r,j.cD,n);(0,g.R)(40,typeof r)}else(0,g.R)(39,typeof e)},t),function(e){(0,P.Y)(j.Dl,function(t,r=!1){if(""string""!=typeof t&&null!==t)return void(0,g.R)(41,typeof t);const n=e.info.jsAttributes[""enduser.id""];r&&null!=n&&n!==t?(0,T.p)(j.Pl+""setUserIdAndResetSession"",[t],void 0,""session"",e.ee):(0,P.U)(e,""enduser.id"",t,j.Dl,!0)},e)}(this),function(e){(0,P.Y)(j.nb,function(t){if(""string""==typeof t||null===t)return(0,P.U)(e,""application.version"",t,j.nb,!1);(0,g.R)(42,typeof t)},e)}(this),function(e){(0,P.Y)(j.d3,function(){e.ee.emit(""manual-start-all"")},e)}(this),function(e){(0,P.Y)(j.Pv,function(t=!0){if(""boolean""==typeof t){if((0,T.p)(j.Pl+j.Pv,[t],void 0,""session"",e.ee),e.runtime.consented=t,t){const t=e.features.page_view_event;t.onAggregateImported.then(e=>{const r=t.featAggregate;e&&!r.sentRum&&r.sendRum()})}}else(0,g.R)(65,typeof t)},e)}(this),this.run()):(0,g.R)(21)}get config(){return{info:this.info,init:this.init,loader_config:this.loader_config,runtime:this.runtime}}get api(){return this}run(){try{const e=function(e){const t={};return r.forEach(r=>{t[r]=!!e[r]?.enabled}),t}(this.init),n=[...this.desiredFeatures];n.sort((e,r)=>t.P3[e.featureName]-t.P3[r.featureName]),n.forEach(r=>{if(!e[r.featureName]&&r.featureName!==t.K7.pageViewEvent)return;const n=function(e){switch(e){case t.K7.ajax:return[t.K7.jserrors];case t.K7.sessionTrace:return[t.K7.ajax,t.K7.pageViewEvent];case t.K7.sessionReplay:return[t.K7.sessionTrace];case t.K7.pageViewTiming:return[t.K7.pageViewEvent];default:return[]}}(r.featureName).filter(e=>!(e in this.features));n.length>0&&(0,g.R)(36,{targetFeature:r.featureName,missingDependencies:n}),this.features[r.featureName]=new r(this)})}catch(e){(0,g.R)(22,e);for(const e in this.features)this.features[e].abortHandler?.();const t=(0,n.Zm)();delete t.initializedAgents[this.agentIdentifier]?.features,delete this.sharedAggregator;return t.ee.get(this.agentIdentifier).abort(),!1}}}var L=i(2843),G=i(782);class H extends K{static featureName=G.T;constructor(e){super(e,G.T),v.RI&&((0,L.u)(()=>(0,T.p)(""docHidden"",[(0,E.t)()],void 0,G.T,this.ee),!0),(0,L.G)(()=>(0,T.p)(""winPagehide"",[(0,E.t)()],void 0,G.T,this.ee)),this.importAggregator(e,()=>i.e(296).then(i.bind(i,2117))))}}var z=i(3969);class Y extends K{static featureName=z.TZ;constructor(e){super(e,z.TZ),this.importAggregator(e,()=>i.e(296).then(i.bind(i,9623)))}}new F({features:[U,H,Y],loaderType:""lite""})})()})();</script>"
-"<meta name=""description"" content=""NIST promotes U.S. innovation and industrial competitiveness by advancing measurement science, standards, and technology in ways that enhance economic security and improve our quality of life."" />"
-"<link rel=""canonical"" href=""https://www.nist.gov/"" />"
-"<link rel=""shortlink"" href=""https://www.nist.gov/"" />"
-"<meta name=""citation_title"" content=""National Institute of Standards and Technology | NIST"" />"
-"<meta property=""og:site_name"" content=""NIST"" />"
-"<meta property=""og:type"" content=""website"" />"
-"<meta property=""og:url"" content=""https://www.nist.gov/"" />"
-"<meta property=""og:title"" content=""National Institute of Standards and Technology"" />"
-"<meta property=""og:description"" content=""NIST promotes U.S. innovation and industrial competitiveness by advancing measurement science, standards, and technology in ways that enhance economic security and improve our quality of life."" />"
-"<meta property=""og:image"" content=""https://www.nist.gov/themes/custom/nist_www/img/homepage/nist_mark.png"" />"
-"<meta property=""og:image:width"" content=""2048"" />"
-"<meta property=""og:image:height"" content=""1152"" />"
-"<meta property=""og:image:alt"" content=""NIST Logo"" />"
-"<meta name=""dcterms.title"" content=""National Institute of Standards and Technology"" />"
-"<meta name=""dcterms.subject"" content=""Working with industry and science to advance innovation and improve quality of life."" />"
-"<meta name=""dcterms.type"" content=""text"" />"
-"<meta name=""dcterms.format"" content=""text/html"" />"
-"<meta name=""dcterms.identifier"" content=""https://www.nist.gov/national-institute-standards-and-technology"" />"
-"<meta name=""dcterms.source"" content=""NIST"" />"
-"<meta name=""dcterms.modified"" content=""2026-07-09T08:59-04:00"" />"
-"<meta name=""twitter:card"" content=""summary_large_image"" />"
-"<meta name=""twitter:title"" content=""National Institute of Standards and Technology"" />"
-"<meta name=""twitter:site"" content=""NIST"" />"
-"<meta name=""twitter:description"" content=""NIST promotes U.S. innovation and industrial competitiveness by advancing measurement science, standards, and technology in ways that enhance economic security and improve our quality of life."" />"
-"<meta name=""twitter:image"" content=""https://www.nist.gov/themes/custom/nist_www/img/homepage/nist_mark.png"" />"
-"<meta name=""twitter:image:alt"" content=""NIST Logo"" />"
-"<meta name=""msvalidate.01"" content=""9802F04AC0DBFA09E639BA8F2E349685"" />"
-"<meta name=""google-site-verification"" content=""QMu0ODkER3rN5hLcMLqNVf7e3bkjYsNLTuhqfH48jCA"" />"
-"<meta name=""Generator"" content=""Drupal 10 (https://www.drupal.org)"" />"
-"<meta name=""MobileOptimized"" content=""width"" />"
-"<meta name=""HandheldFriendly"" content=""true"" />"
-"<meta name=""viewport"" content=""width=device-width, initial-scale=1.0"" />"
-"<link rel=""preconnect"" href=""https://challenges.cloudflare.com"" />"
-"<meta name=""nist_search_modified"" class=""elastic"" content=""2026-07-09T08:59:00-04:00"" />"
-"<script type=""application/ld+json"">{"
-"    ""@context"": ""https://schema.org"","
-"    ""@graph"": ["
-        {
-"            ""@type"": ""Article"","
-"            ""headline"": ""National Institute of Standards and Technology"","
-"            ""name"": ""NIST"","
-"            ""description"": ""NIST promotes U.S. innovation and industrial competitiveness by advancing measurement science, standards, and technology in ways that enhance economic security and improve our quality of life."","
-"            ""image"": {"
-"                ""@type"": ""ImageObject"","
-"                ""representativeOfPage"": ""True"","
-"                ""url"": ""/themes/custom/nist_www/img/homepage/nist_mark.png"","
-"                ""width"": ""2048"","
-"                ""height"": ""1152"""
-            }
-        }
-    ]
-}</script>
-"<meta name=""nist_search_bundle"" class=""elastic"" content=""homepage"" />"
-"<link rel=""icon"" href=""/themes/custom/nist_www/favicon.ico"" type=""image/vnd.microsoft.icon"" />"
-    <title>National Institute of Standards and Technology</title>
-"    <link rel=""stylesheet"" media=""all"" href=""/sites/default/files/css/css_KpZVaNDx7ibsns0WkZepLbTjnZXSsOi5zIiZKnra1qQ.css?delta=0&amp;language=en&amp;theme=nist_www&amp;include=eJxlj9EOwiAMRX-IyCc1BSrgCiXAwvx7mVOzxbd7TprbFtcugNkGqU3jCZRBu8DkLkWfMkQrWVmppF1dC_INH7hdhIvI4hVtnWNevvaDKsfWtWcxyO8MBT3BncjtW_S_OqZ6oETzAGGDFZI47WJDwwS_VhhjXJp3DpJor1Pt2Tql-UqjFx-_YAo"" />"
-"<link rel=""stylesheet"" media=""all"" href=""/sites/default/files/css/css_TLWDRuDRCC3_1Tyq4NkastLMiFfabmCjUoPQbTeNhRI.css?delta=1&amp;language=en&amp;theme=nist_www&amp;include=eJxlj9EOwiAMRX-IyCc1BSrgCiXAwvx7mVOzxbd7TprbFtcugNkGqU3jCZRBu8DkLkWfMkQrWVmppF1dC_INH7hdhIvI4hVtnWNevvaDKsfWtWcxyO8MBT3BncjtW_S_OqZ6oETzAGGDFZI47WJDwwS_VhhjXJp3DpJor1Pt2Tql-UqjFx-_YAo"" />"
-"<link rel=""stylesheet"" media=""print"" href=""/sites/default/files/css/css_LpHBc8EPEsDrEJSd96BC5X0OHJG9W5P68QT2eD_fJio.css?delta=2&amp;language=en&amp;theme=nist_www&amp;include=eJxlj9EOwiAMRX-IyCc1BSrgCiXAwvx7mVOzxbd7TprbFtcugNkGqU3jCZRBu8DkLkWfMkQrWVmppF1dC_INH7hdhIvI4hVtnWNevvaDKsfWtWcxyO8MBT3BncjtW_S_OqZ6oETzAGGDFZI47WJDwwS_VhhjXJp3DpJor1Pt2Tql-UqjFx-_YAo"" />"
-"<link rel=""stylesheet"" media=""all"" href=""/sites/default/files/css/css_kfQW1jCigosdfLW1PuY5XRAa83Cx9i1HLkILJX6Wkp8.css?delta=3&amp;language=en&amp;theme=nist_www&amp;include=eJxlj9EOwiAMRX-IyCc1BSrgCiXAwvx7mVOzxbd7TprbFtcugNkGqU3jCZRBu8DkLkWfMkQrWVmppF1dC_INH7hdhIvI4hVtnWNevvaDKsfWtWcxyO8MBT3BncjtW_S_OqZ6oETzAGGDFZI47WJDwwS_VhhjXJp3DpJor1Pt2Tql-UqjFx-_YAo"" />"
-"    <script type=""application/json"" data-drupal-selector=""drupal-settings-json"">{""path"":{""baseUrl"":""\/"",""pathPrefix"":"""",""currentPath"":""node\/783411"",""currentPathIsAdmin"":false,""isFront"":true,""currentLanguage"":""en"",""currentQuery"":{""format"":""1"",""order_out"":""0"",""output_level"":""2"",""spectra"":""Sm I"",""units"":""1""}},""pluralDelimiter"":""\u0003"",""suppressDeprecationErrors"":true,""gtag"":{""tagId"":"""",""consentMode"":false,""otherIds"":[],""events"":[],""additionalConfigInfo"":[]},""ajaxPageState"":{""libraries"":""eJx1kFsSwiAMRTeEZUlMKClggXSADnX3pg8d1PEHcm5eF2CtpCCNjnKR0IHQMM6KudIiu1j5kdLf5L0I3GrwaZYmrwuE4UJhiWxAVcFKy8c3D3CH7VOMIvlSpQ2kIfTxjbcc6BAM5heqyXOvoZYCgVE1sy-feBKc6QUsqgnR7Iblr3RWVYeRHRAFDVlFMtL4AponH884alprva2O3152yVHEfYMoj1Ix8kcVFA31RDnK6x6Mh0D2CepsmHo"",""theme"":""nist_www"",""theme_token"":null},""ajaxTrustedUrl"":[],""gtm"":{""tagId"":null,""settings"":{""data_layer"":""dataLayer"",""include_classes"":false,""allowlist_classes"":"""",""blocklist_classes"":"""",""include_environment"":false,""environment_id"":"""",""environment_token"":""""},""tagIds"":[""GTM-54VSXXDF""]},""auto_anchors"":{""show_automatic_anchor_links"":true,""root_elements"":"".nist-page__region--content, .nist-content-row"",""anchor_elements"":""h2:not(.tl-headline), h3:not(.tl-headline-date)"",""link_content"":""\u003Cimg src=\u0022\/libraries\/nist-component-library\/dist\/img\/link.svg\u0022 alt=\u0022permalink\u0022\u003E"",""exclude_admin_pages"":true},""back_to_top"":{""back_to_top_button_trigger"":100,""back_to_top_speed"":1200,""back_to_top_prevent_on_mobile"":false,""back_to_top_prevent_in_admin"":true,""back_to_top_button_type"":""image"",""back_to_top_button_text"":""Back to top""},""nist_search"":{""clickTracking"":""search-report-click"",""isDebug"":false,""clickTrackEnabled"":true,""message"":""NIST Search in debug mode. Check the browsers network inspector for Click Track reporting results...""},""webform"":{""dialog"":{""options"":{""narrow"":{""title"":""Narrow"",""width"":600},""normal"":{""title"":""Normal"",""width"":800},""wide"":{""title"":""Wide"",""width"":1000}},""entity_type"":""node"",""entity_id"":""783411""}},""data"":{""extlink"":{""extTarget"":false,""extTargetAppendNewWindowDisplay"":true,""extTargetAppendNewWindowLabel"":"""",""extTargetNoOverride"":false,""extNofollow"":false,""extTitleNoOverride"":false,""extNoreferrer"":false,""extFollowNoOverride"":false,""extClass"":""ext"",""extLabel"":""(link is external)"",""extImgClass"":false,""extSubdomains"":true,""extExclude"":""\\.gov\\\/|\\.mil\\\/|\\manufacturingusa\\.com\\\/"",""extInclude"":"""",""extCssExclude"":"".ck-editor, .nist-video-thumbnail__lightbox-trigger, a.nist-icon--mail-blue"",""extCssInclude"":"""",""extCssExplicit"":"""",""extAlert"":true,""extAlertText"":""Thank you for visiting NIST. We hope your visit was informative. We have provided a link to this site because it has information that may be of interest to our users. NIST does not necessarily endorse the views expressed or the facts presented on this site. Further, NIST does not endorse any commercial products that may be advertised or available on this site. Click OK to be directed to your link."",""extHideIcons"":false,""mailtoClass"":""0"",""telClass"":"""",""mailtoLabel"":""(link sends email)"",""telLabel"":""(link is a phone number)"",""extUseFontAwesome"":false,""extIconPlacement"":""after"",""extPreventOrphan"":false,""extFaLinkClasses"":""fa fa-external-link"",""extFaMailtoClasses"":""fa fa-envelope-o"",""extAdditionalLinkClasses"":"""",""extAdditionalMailtoClasses"":"""",""extAdditionalTelClasses"":"""",""extFaTelClasses"":""fa fa-phone"",""allowedDomains"":[],""extExcludeNoreferrer"":""""}},""user"":{""uid"":0,""permissionsHash"":""875e680e0313ee626581ae2795425dd5501fdff52b84168125ae1988c7b8b5e4""}}</script>"
-"<script src=""/sites/default/files/js/js_rjeGiUO4ayK0cAnqKOrVbaap_xvuh5BOystjAOR6EUs.js?scope=header&amp;delta=0&amp;language=en&amp;theme=nist_www&amp;include=eJxljmEOgzAIhS_UyZEItVg7aTFtTT3-OnWJ2_4AHzzg0VYVKY2z5gJ0A2NpXLBz1RVuNT6L4b1KSAu4vK0kw4XGq3phrOTB9_DLAz1p_25Gk0Kp4EUtyaNfPnBmcpw_iFPoeqctiZLDmruXkPo2neOVPOPE7N4m4b91qurMsX9VFUsZozpwoZDtlw_rh6a1drPS2E6aI1x5cIFE_QuuxnZ3""></script>"
-"<script src=""/modules/contrib/google_tag/js/gtag.js?thwhs0""></script>"
-"<script src=""/modules/contrib/google_tag/js/gtm.js?thwhs0""></script>"
-"<script src=""/sites/default/files/js/js_5WbAeKWaHF5M7ZGOm0J4MoiuVLINg4UjWTVpVV4wxTc.js?scope=header&amp;delta=3&amp;language=en&amp;theme=nist_www&amp;include=eJxljmEOgzAIhS_UyZEItVg7aTFtTT3-OnWJ2_4AHzzg0VYVKY2z5gJ0A2NpXLBz1RVuNT6L4b1KSAu4vK0kw4XGq3phrOTB9_DLAz1p_25Gk0Kp4EUtyaNfPnBmcpw_iFPoeqctiZLDmruXkPo2neOVPOPE7N4m4b91qurMsX9VFUsZozpwoZDtlw_rh6a1drPS2E6aI1x5cIFE_QuuxnZ3""></script>"
-  </head>
-"  <body class=""node-783411"">"
-"        <a href=""#main-content"" class=""visually-hidden focusable"" data-elastic-exclude>"
-      Skip to main content
-    </a>
-"    <noscript><iframe src=""https://www.googletagmanager.com/ns.html?id=GTM-54VSXXDF"""
-"                  height=""0"" width=""0"" style=""display:none;visibility:hidden""></iframe></noscript>"
-"      <div class=""dialog-off-canvas-main-canvas"" data-off-canvas-main-canvas>"
-  <!-- nist-index-ignore-start -->
-"<section data-elastic-exclude class=""usa-banner"" aria-label=""Official website of the United States government"">"
-"  <div class=""usa-accordion"">"
-"    <header class=""usa-banner__header"">"
-"      <div class=""usa-banner__inner"">"
-"        <div class=""grid-col-auto"">"
-"          <img class=""usa-banner__header-flag"" src=""/libraries/nist-component-library/dist/img/us_flag_small.png"" alt=""U.S. flag"">"
-        </div>
-"        <div class=""grid-col-fill tablet:grid-col-auto"">"
-"          <p class=""usa-banner__header-text"">An official website of the United States government</p>"
-"          <p class=""usa-banner__header-action"" aria-hidden=""true"">Here’s how you know</p>"
-        </div>
-"        <button class=""usa-accordion__button usa-banner__button"" aria-expanded=""false"" aria-controls=""gov-banner-default"">"
-"          <span class=""usa-banner__button-text"">Here’s how you know</span>"
-        </button>
-      </div>
-    </header>
-"    <div class=""usa-banner__content usa-accordion__content"" id=""gov-banner-default"">"
-"      <div class=""grid-row grid-gap-lg"">"
-"        <div class=""usa-banner__guidance tablet:grid-col-6"">"
-"          <img class=""usa-banner__icon usa-media-block__img"" src=""/libraries/nist-component-library/dist/img/icon-dot-gov.svg"" role=""img"" alt="""" aria-hidden=""true"">"
-"          <div class=""usa-media-block__body"">"
-            <p>
-              <strong>Official websites use .gov</strong>
-              <br/>
-              A <strong>.gov</strong> website belongs to an official government organization in the United States.
-            </p>
-          </div>
-        </div>
-"        <div class=""usa-banner__guidance tablet:grid-col-6"">"
-"          <img class=""usa-banner__icon usa-media-block__img"" src=""/libraries/nist-component-library/dist/img/icon-https.svg"" role=""img"" alt="""" aria-hidden=""true"">"
-"          <div class=""usa-media-block__body"">"
-            <p>
-              <strong>Secure .gov websites use HTTPS</strong>
-              <br/>
-"              A <strong>lock</strong> (  <span class=""icon-lock"">"
-"    <svg xmlns=""http://www.w3.org/2000/svg"" width=""52"" height=""64"" viewbox=""0 0 52 64"" class=""usa-banner__lock-image"" role=""img"" aria-labelledby=""banner-lock-title banner-lock-description"" focusable=""false"">"
-"      <title id=""banner-lock-title"">Lock</title>"
-"      <desc id=""banner-lock-description"">A locked padlock</desc><path fill=""#000000"" fill-rule=""evenodd"" d=""M26 0c10.493 0 19 8.507 19 19v9h3a4 4 0 0 1 4 4v28a4 4 0 0 1-4 4H4a4 4 0 0 1-4-4V32a4 4 0 0 1 4-4h3v-9C7 8.507 15.507 0 26 0zm0 8c-5.979 0-10.843 4.77-10.996 10.712L15 19v9h22v-9c0-6.075-4.925-11-11-11z""/></svg>"
-  </span>
-") or <strong>https://</strong> means you’ve safely connected to the .gov website. Share sensitive information only on official, secure websites."
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-<!-- nist-index-ignore-end -->
-    <div data-elastic-exclude>
-<!-- nist-index-ignore-start -->
-"<div class=""nist-print-header"" style=""display:none;"">"
-"  <p class=""nist-print-header__url"">https://www.nist.gov/national-institute-standards-and-technology</p>"
-"  <img class=""nist-print-header__logo"" width=""289"" height=""38"" src=""/libraries/nist-component-library/dist/img/logo/nist_logo_sidestack.svg"" alt=""National Institute of Standards and Technology"" />"
-</div>
-"<div class=""usa-overlay""></div>"
-"<header class=""usa-header nist-header--www nist-header--full"" role=""banner"">"
-"      <iframe src=""https://time.gov/web/"" title=""webclock"" class=""nist-timewidget""></iframe>"
-"    <div class=""usa-navbar__outer"">"
-"    <div class=""usa-navbar"">"
-"      <div class=""usa-logo flex-fill"">"
-"            <a href=""/"" title=""National Institute of Standards and Technology"" aria-label=""Home"">"
-"      <img src=""/libraries/nist-component-library/dist/img/logo/NIST-Logo-Brand-White.svg"" alt=""National Institute of Standards and Technology"" width=""300px"" height=""42px"" />"
-    </a>
-        </div>
-"      <div class=""usa-header__right grid-row flex-auto"">"
-"            <div class=""usa-nav__secondary"">"
-"      <ul class=""usa-nav__secondary-links"">"
-"        <li class=""usa-nav__secondary-item"">"
-"          <a href=""/careers"">Careers</a>"
-        </li>
-"        <li class=""usa-nav__secondary-item"">"
-"          <a href=""https://shop.nist.gov/"">Shop</a>"
-        </li>
-"        <li class=""usa-nav__secondary-item"">"
-"          <a href=""/contact"">Contact</a>"
-        </li>
-      </ul>
-    </div>
-"          <div class=""grid-col-fill nist-header__search-group"">"
-"<form class=""usa-search usa-search--small"""
-"  accept-charset=""UTF-8"""
-"  action=""/search"""
-"  id=""search_form"""
-"  method=""get"""
-"  role=""search"">"
-"  <label class=""usa-sr-only"" for=""search-form"">Search NIST</label>"
-"  <input class=""usa-input"" id=""search-form"" type=""search"" name=""s"" placeholder=""Search NIST"" required="""" maxlength=""128"">"
-"  <button class=""usa-button"" type=""submit""><img src=""/libraries/nist-component-library/dist/img/usa-icons-bg/search--white.svg"" class=""usa-search__submit-icon"" alt=""Search""></button>"
-</form>
-                  </div>
-"                  <div class=""grid-col-auto padding-left-1"">"
-"            <button class=""usa-menu-btn"">Menu</button>"
-          </div>
-              </div>
-    </div>
-  </div>
-"<nav aria-label=""Primary navigation"" class=""usa-nav"">"
-"  <div class=""usa-nav__inner"">"
-"    <button class=""usa-nav__close"">Close</button>"
-"    <ul class=""usa-nav__primary usa-accordion"">"
-"            <li class=""usa-nav__primary-item"">"
-"                <a class=""usa-nav__link"" href=""/publications"">Publications</a>"
-              </li>
-"            <li class=""usa-nav__primary-item"">"
-"                <button class=""usa-accordion__button usa-nav__link"" aria-expanded=""false"" aria-controls=""primary_menu-2""><span>What We Do</span></button>"
-"        <div id=""primary_menu-2"" class=""usa-nav__submenu usa-megamenu"">"
-"          <div class=""grid-row"">"
-"                                                        <div class=""tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/topics"" class=""usa-nav__link"">All Topics</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/advanced-communications"" class=""usa-nav__link"">Advanced communications</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/artificial-intelligence"" class=""usa-nav__link"">Artificial intelligence</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/bioscience"" class=""usa-nav__link"">Bioscience</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/buildings-and-construction"" class=""usa-nav__link"">Buildings and construction</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/chemistry"" class=""usa-nav__link"">Chemistry</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/cybersecurity-and-privacy"" class=""usa-nav__link"">Cybersecurity and Privacy</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/electronics"" class=""usa-nav__link"">Electronics</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/energy"" class=""usa-nav__link"">Energy</a>"
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/environment"" class=""usa-nav__link"">Environment</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/fire"" class=""usa-nav__link"">Fire</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/forensic-science"" class=""usa-nav__link"">Forensic science</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/health"" class=""usa-nav__link"">Health</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/information-technology"" class=""usa-nav__link"">Information technology</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/infrastructure"" class=""usa-nav__link"">Infrastructure</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/manufacturing"" class=""usa-nav__link"">Manufacturing</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/materials"" class=""usa-nav__link"">Materials</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/mathematics-and-statistics"" class=""usa-nav__link"">Mathematics and statistics</a>"
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/metrology"" class=""usa-nav__link"">Metrology</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/nanotechnology"" class=""usa-nav__link"">Nanotechnology</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/neutron-research"" class=""usa-nav__link"">Neutron research</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/performance-excellence"" class=""usa-nav__link"">Performance excellence</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/physics"" class=""usa-nav__link"">Physics</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/public-safety"" class=""usa-nav__link"">Public safety</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/quantum-information-science"" class=""usa-nav__link"">Quantum information science</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/resilience"" class=""usa-nav__link"">Resilience</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/standards"" class=""usa-nav__link"">Standards</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/transportation"" class=""usa-nav__link"">Transportation</a>"
-                              </li>
-                            </ul>
-            </div>
-          </div>
-        </div>
-              </li>
-"            <li class=""usa-nav__primary-item"">"
-"                <button class=""usa-accordion__button usa-nav__link"" aria-expanded=""false"" aria-controls=""primary_menu-3""><span>Labs &amp; Major Programs</span></button>"
-"        <div id=""primary_menu-3"" class=""usa-nav__submenu usa-megamenu"">"
-"          <div class=""grid-row"">"
-"                                                        <div class=""tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/adlp"" class=""usa-nav__link"">Assoc Director of Laboratory Programs</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/laboratories"" class=""usa-nav__link"">Laboratories</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/ctl"" class=""usa-nav__link"">Communications Technology Laboratory</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/el"" class=""usa-nav__link"">Engineering Laboratory</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/itl"" class=""usa-nav__link"">Information Technology Laboratory</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/mml"" class=""usa-nav__link"">Material Measurement Laboratory</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/pml"" class=""usa-nav__link"">Physical Measurement Laboratory</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/user-facilities"" class=""usa-nav__link"">User Facilities</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/ncnr"" class=""usa-nav__link"">NIST Center for Neutron Research</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/cnst"" class=""usa-nav__link"">CNST NanoFab</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/research-test-beds"" class=""usa-nav__link"">Research Test Beds</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/laboratories/projects-programs"" class=""usa-nav__link"">Research Projects</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/laboratories/tools-instruments"" class=""usa-nav__link"">Tools &amp; Instruments</a>"
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/major-programs"" class=""usa-nav__link"">Major Programs</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/baldrige"" class=""usa-nav__link"">Baldrige Performance Excellence Program</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/chips"" class=""usa-nav__link"">CHIPS for America Initiative</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/mep"" class=""usa-nav__link"">Manufacturing Extension Partnership (MEP)</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/oam"" class=""usa-nav__link"">Office of Advanced Manufacturing</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/spo"" class=""usa-nav__link"">Special Programs Office</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/tpo"" class=""usa-nav__link"">Technology Partnerships Office</a>"
-                  </li>
-                                </ul>
-                              </li>
-                            </ul>
-            </div>
-          </div>
-        </div>
-              </li>
-"            <li class=""usa-nav__primary-item"">"
-"                <button class=""usa-accordion__button usa-nav__link"" aria-expanded=""false"" aria-controls=""primary_menu-4""><span>Services &amp; Resources</span></button>"
-"        <div id=""primary_menu-4"" class=""usa-nav__submenu usa-megamenu"">"
-"          <div class=""grid-row"">"
-"                                                        <div class=""tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/standards-measurements"" class=""usa-nav__link"">Measurements and Standards</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/calibrations"" class=""usa-nav__link"">Calibration Services</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/nvlap"" class=""usa-nav__link"">Laboratory Accreditation (NVLAP)</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/nist-quality-system"" class=""usa-nav__link"">Quality System</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/srm"" class=""usa-nav__link"">Standard Reference Materials (SRMs)</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/sri"" class=""usa-nav__link"">Standard Reference Instruments (SRIs)</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/standardsgov"" class=""usa-nav__link"">Standards.gov</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/pml/time-and-frequency-division/time-services"" class=""usa-nav__link"">Time Services</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/pml/owm"" class=""usa-nav__link"">Office of Weights and Measures</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/services-resources/software"" class=""usa-nav__link"">Software</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/data"" class=""usa-nav__link"">Data</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""https://webbook.nist.gov/chemistry/"" class=""usa-nav__link"">Chemistry WebBook</a>"
-                  </li>
-                                  <li>
-"                    <a href=""https://nvd.nist.gov/"" class=""usa-nav__link"">National Vulnerability Database</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/pml/productsservices/physical-reference-data"" class=""usa-nav__link"">Physical Reference Data</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/srd"" class=""usa-nav__link"">Standard Reference Data (SRD)</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""https://shop.nist.gov/"" class=""usa-nav__link"">Storefront</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/tpo"" class=""usa-nav__link"">License &amp; Patents</a>"
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""https://csrc.nist.gov/"" class=""usa-nav__link"">Computer Security Resource Center (CSRC)</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/nist-research-library"" class=""usa-nav__link"">NIST Research Library</a>"
-                              </li>
-                            </ul>
-            </div>
-          </div>
-        </div>
-              </li>
-"            <li class=""usa-nav__primary-item"">"
-"                <button class=""usa-accordion__button usa-nav__link"" aria-expanded=""false"" aria-controls=""primary_menu-5""><span>News &amp; Events</span></button>"
-"        <div id=""primary_menu-5"" class=""usa-nav__submenu usa-megamenu"">"
-"          <div class=""grid-row"">"
-"                                                        <div class=""tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/news-events/news"" class=""usa-nav__link"">News</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/news-events/events"" class=""usa-nav__link"">Events</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/blogs"" class=""usa-nav__link"">Blogs</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/nist-focus"" class=""usa-nav__link"">NIST In Focus</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/feature-stories"" class=""usa-nav__link"">Feature Stories</a>"
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/awards"" class=""usa-nav__link"">Awards</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/video-gallery"" class=""usa-nav__link"">Video Gallery</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/image-gallery"" class=""usa-nav__link"">Image Gallery</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/comms/media-contacts"" class=""usa-nav__link"">Media Contacts</a>"
-                              </li>
-                            </ul>
-            </div>
-          </div>
-        </div>
-              </li>
-"            <li class=""usa-nav__primary-item"">"
-"                <button class=""usa-accordion__button usa-nav__link"" aria-expanded=""false"" aria-controls=""primary_menu-6""><span>About NIST</span></button>"
-"        <div id=""primary_menu-6"" class=""usa-nav__submenu usa-megamenu"">"
-"          <div class=""grid-row"">"
-"                                                        <div class=""tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/about-nist"" class=""usa-nav__link"">About Us</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/director/leadership"" class=""usa-nav__link"">Leadership</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/director/nist-organization-structure"" class=""usa-nav__link"">Organization Structure</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/about-nist/budget-planning"" class=""usa-nav__link"">Budget &amp; Planning</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/contact"" class=""usa-nav__link"">Contact Us</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/about-nist/visit"" class=""usa-nav__link"">Visit</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/careers"" class=""usa-nav__link"">Careers</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""/iaao/academic-affairs-office"" class=""usa-nav__link"">Student programs</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                          </ul></div><div class=""column-break tablet:grid-col-fill""><ul class=""usa-nav__submenu-list"">"
-"                            <li class=""usa-nav__submenu-item"">"
-"                <a href=""/about-nist/work-nist"" class=""usa-nav__link"">Work with NIST</a>"
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/history"" class=""usa-nav__link"">History</a>"
-"                                <ul class=""usa-nav__submenu-list"">"
-                                  <li>
-"                    <a href=""http://nistdigitalarchives.contentdm.oclc.org/"" class=""usa-nav__link"">NIST Digital Archives</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/nist-museum"" class=""usa-nav__link"">NIST Museum</a>"
-                  </li>
-                                  <li>
-"                    <a href=""/nist-and-nobel"" class=""usa-nav__link"">NIST and the Nobel</a>"
-                  </li>
-                                </ul>
-                              </li>
-"                                                        <li class=""usa-nav__submenu-item"">"
-"                <a href=""/education"" class=""usa-nav__link"">Educational Resources</a>"
-                              </li>
-                            </ul>
-            </div>
-          </div>
-        </div>
-              </li>
-          </ul>
-  </div>
-</nav>
-</header>
-<!-- nist-index-ignore-end -->
-</div>
-"  <div class=""grid-container"">"
-  </div>
-<div
-"   id=""block-nist-www-content"" class=""nist-block"""
->
-"<section class=""nist-page__content homepage"">"
-"<a id=""main-content"" tabindex=""-1""></a>"
-"<div class=""homepage-hero"">"
-"  <div class=""homepage-hero__fallback-mobile"" style=""background-image:url('https://www.nist.gov/sites/default/files/styles/homepage_hero_small/public/images/2026/03/20/BannerVideo-NIST125thAnniversary-Still.jpg.webp?itok=9WXVXFlT')""></div>"
-"  <div class=""homepage-hero__fallback-desktop"" style=""background-image:url('https://www.nist.gov/sites/default/files/styles/homepage_hero_large/public/images/2026/03/20/BannerVideo-NIST125thAnniversary-Still.jpg.webp?itok=Y5estj-h')""></div>"
-"      <div class=""homepage-hero__loading"">"
-      <div></div>
-      <div></div>
-      <div></div>
-      <div></div>
-    </div>
-    <iframe
-"      aria-describedby=""homepage_video_description"""
-"      title=""National Institute of Standards and Technology"""
-"      width=""1920"""
-"      height=""1080"""
-"      src=""https://customer-ltx6ylk10sje63q6.cloudflarestream.com/84921ef26d48015ab5328c0fcb8c49b7/iframe?muted=true&preload=true&loop=true&autoplay=true&controls=false"""
-"      allow=""accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture;"""
-"      allowfullscreen=""true"""
-    ></iframe>
-"    <div id=""homepage_video_description"" class=""usa-sr-only"">  Video background with quick clips showing a variety of NIST scientists at work as well as campus shots."
-</div>
-"    <div class=""homepage-hero__inner"">"
-"    <div class=""homepage-hero__content-wrapper grid-container"">"
-"      <div class=""homepage-hero__content"">"
-"          <h2 class=""homepage-hero__heading"">"
-    125 Years of Driving Innovation
-  </h2>
-"          <p class=""homepage-hero__text"">"
-"    From developing precise atomic clocks to creating encryption standards to supporting manufacturing, NIST plays a crucial role in <em>advancing technology.</em>"
-  </p>
-      </div>
-    </div>
-  </div>
-</div>
-"<div class=""grid-container"">"
-"  <div class=""nist-page-segment what-we-do"">"
-"    <h2 class=""nist-page-segment__title"">What we do</h2>"
-"    <div class=""nist-page-segment__content grid-row grid-gap-4"">"
-"      <div class=""desktop-lg:grid-col-6 margin-bottom-2"">"
-"        <div class=""margin-top-2 margin-bottom-4 padding-right-4"">"
-"          <div class=""text-with-summary"">"
-"      <p>From nanoscale devices that power the most advanced microchips to earthquake-resistant skyscrapers, NIST’s measurements and research fuel innovation and improve the quality of life for all Americans. We provide support and resources to U.S. manufacturing, helping to grow our economy and ensure our national security.</p><p>Discover how our work makes America safer, healthier and more prosperous.</p>"
-  </div>
-        </div>
-      </div>
-"      <div class=""desktop-lg:grid-col-6"">"
-"        <ul class=""nist-icon-list nist-icon-list--notch-color"">"
-"      <li><a href=""/artificial-intelligence""><span class=""inline-text"">Artificial Intelligence</span></a></li>"
-"      <li><a href=""/bioscience""><span class=""inline-text"">Bioscience</span></a></li>"
-"      <li><a href=""/cybersecurity-and-privacy""><span class=""inline-text"">Cybersecurity and Privacy</span></a></li>"
-"      <li><a href=""/energy""><span class=""inline-text"">Energy</span></a></li>"
-"      <li><a href=""/manufacturing""><span class=""inline-text"">Manufacturing</span></a></li>"
-"      <li><a href=""/advanced-communications""><span class=""inline-text"">Next-Gen Communications</span></a></li>"
-"      <li><a href=""/quantum-science""><span class=""inline-text"">Quantum Science</span></a></li>"
-"      <li><a href=""/standards""><span class=""inline-text"">Standards</span></a></li>"
-  </ul>
-      </div>
-    </div>
-"    <a href=""/topics"" class=""usa-button usa-button--outline usa-button--big usa-button--black nist-page-segment__button"">"
-      See more topics
-"      <svg class=""usa-icon "" aria-hidden=""true"">"
-"  <use href=""/libraries/nist-component-library/dist/img/sprite.svg?cache_bust=1776955625841#nist_notch_arrow""/>"
-</svg>
-    </a>
-  </div>
-</div>
-"<div class=""celebration-125-250 bg-base-lighter padding-2 mobile-lg:padding-6 tablet:padding-4 tablet:padding-right-8 text-center"">"
-"  <div class=""tablet:display-flex flex-justify-center tablet-lg:margin-y-4"">"
-"    <a class=""margin-4 display-inline-block"" href=""/125th-anniversary"" title=""NIST's 125 celebration page"">"
-"      <img loading=""lazy"" src=""/themes/custom/nist_www/img/homepage/125-250-web_NIST-125.svg"" alt=""NIST logo with phrases 'celebrating 125 years' and 'est. 1901' on it."" width=""415"" />"
-    </a>
-"    <a class=""margin-4 display-inline-block"" href=""https://freedom250.org/"" title=""Freedom 250 website"">"
-"      <img loading=""lazy"" src=""/themes/custom/nist_www/img/homepage/125-250-web_Freedom-250.svg"" alt=""American flag with 13 white stars in a circle in the blue box and the number 250 inside the circle. Underneath the flag: Freedom 250"" width=""415"" />"
-    </a>
-  </div>
-</div>
-"<div class=""chips-banner"">"
-"  <div class=""grid-container padding-y-4"">"
-"    <div class=""grid-row grid-gap-4 flex-align-center"">"
-"      <div class=""tablet:grid-col chips-banner__title"">"
-"        <h2 class=""margin-y-1""><a href=""/chips"" title=""Learn more at chips.gov"">CHIPS <span class=""text-italic"">for</span> America</a></h2>"
-      </div>
-"      <div class=""tablet:grid-col-auto chips-banner__image"">"
-"        <a href=""/chips"" title=""Learn more at chips.gov"">"
-          <picture>
-"            <source srcset=""/themes/custom/nist_www/img/homepage/chips_logo_mark.webp?v1"" type=""image/webp"">"
-"            <source srcset=""/themes/custom/nist_www/img/homepage/chips_logo_mark.png?v1"" type=""image/png"">"
-"            <img src=""/themes/custom/nist_www/img/homepage/chips_logo_mark.png?v1"" alt=""CHIPS.gov logo"" width=""100"" height=""76"" loading=""lazy"">"
-          </picture>
-        </a>
-      </div>
-"      <div class=""tablet:grid-col chips-banner__text"">"
-"        <div class=""maxw-mobile margin-x-auto tablet:margin-left-0"">"
-"          Investments in innovation, resilience and a more competitive American future | <a href=""/chips"" title=""Learn more at chips.gov"" class=""chips-banner__more"">Learn more</a>"
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-"<div class=""bg-base-lightest"">"
-"  <div class=""grid-container"">"
-"    <div class=""nist-page-segment homepage-featured"">"
-"      <h2 class=""nist-page-segment__title nist-page-segment__title--green"">What’s new</h2>"
-"      <div class=""nist-page-segment__content"">"
-"        <div class=""grid-row grid-gap-2 featured-grid margin-top-4 margin-bottom-4"">"
-"  <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-6 featured-grid__item featured-grid__item-1"">"
-"<a class=""featured-grid__item-link"" href=""/news-events/news/2026/07/arvind-raman-confirmed-18th-nist-director"" title=""Go to   Arvind Raman Confirmed as the 18th NIST Director"
-">
-  <h3>  Arvind Raman Confirmed as the 18th NIST Director
-</h3>
-                      <div class=entity-reference"">    <figure class=""nist-image"">"
-      <picture>
-"                  <source srcset=""/sites/default/files/styles/1152_x_768/public/images/2026/06/03/Arvind_LobbyDSC6088_webedit.jpg?h=560fc75e&amp;itok=p-7BOoc9 2x"" media=""(min-width: 0px)"" type=""image/jpeg"" width=""1152"" height=""768""/>"
-"                  <img loading=""lazy"" width=""576"" height=""384"" src=""/sites/default/files/styles/576_x_384/public/images/2026/06/03/Arvind_LobbyDSC6088_webedit.jpg?h=560fc75e&amp;itok=BsI4ovTz"" alt=""NIST director standing in front of the NIST logo"" typeof=""foaf:Image"" />"
-  </picture>
-"            <figcaption class=""nist-image__caption"">"
-"      <div data-caption-editable=""true"" class=""nist-image__caption-content"">"
-      </div>
-                </figcaption>
-  </figure>
-</div>
-</a>
-  </div>
-"  <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-3 padding-top-2 mobile-lg:padding-top-0 featured-grid__item featured-grid__item-2"">"
-"<a class=""featured-grid__item-link"" href=""/news-events/news/2026/07/new-fabric-reference-material-could-help-strengthen-domestic-supply-chain"" title=""Go to   New Fabric Reference Material Could Help Strengthen Domestic Supply Chain for Textiles and Clothing"
-">
-  <h3>  New Fabric Reference Material Could Help Strengthen Domestic Supply Chain for Textiles and Clothing
-</h3>
-                      <div class=entity-reference"">    <figure class=""nist-image"">"
-      <picture>
-"                  <source srcset=""/sites/default/files/styles/280_x_384/public/images/2026/07/07/_3DP7691.jpg?h=fee4874d&amp;itok=4Jz7BtTH 1x, /sites/default/files/styles/560_x_768/public/images/2026/07/07/_3DP7691.jpg?h=fee4874d&amp;itok=eFYqy7Ov 2x"" media=""(min-width: 1200px)"" type=""image/jpeg"" width=""280"" height=""384""/>"
-"              <source srcset=""/sites/default/files/styles/1152_x_768/public/images/2026/07/07/_3DP7691.jpg?h=fee4874d&amp;itok=tZpN5XAp 2x"" media=""(min-width: 0px)"" type=""image/jpeg"" width=""1152"" height=""768""/>"
-"                  <img loading=""lazy"" width=""576"" height=""384"" src=""/sites/default/files/styles/576_x_384/public/images/2026/07/07/_3DP7691.jpg?h=fee4874d&amp;itok=F3PYpuLF"" alt=""Five fabric swatches in clear plastic bags labeled 10279 are arrayed around a box labeled 99% Reflective Calibration Target. "" typeof=""foaf:Image"" />"
-  </picture>
-"            <figcaption class=""nist-image__caption"">"
-"      <div data-caption-editable=""true"" class=""nist-image__caption-content"">"
-      </div>
-                </figcaption>
-  </figure>
-</div>
-</a>
-  </div>
-"  <div class=""mobile-lg:grid-col-12 desktop-lg:grid-col-3 tablet:padding-top-2 desktop-lg:padding-top-0"">"
-"    <div class=""grid-row grid-gap-2 padding-top-2 tablet:padding-top-0 featured-grid__vertical-group"">"
-"      <div class=""mobile-lg:grid-col-6 featured-grid__item featured-grid__item-3"">"
-"<a class=""featured-grid__item-link"" href=""/blogs/taking-measure/nist-experts-help-preserve-250-years-american-history"" title=""Go to   NIST Experts Help Preserve 250 Years of American History"
-">
-  <h3>  NIST Experts Help Preserve 250 Years of American History
-</h3>
-                      <div class=entity-reference"">    <figure class=""nist-image"">"
-      <picture>
-"                  <source srcset=""/sites/default/files/styles/280_x_184/public/images/2026/06/02/america_250_encasement_welding_work_formatted_050626.jpg?h=7b436a88&amp;itok=XEF-fHb8 1x, /sites/default/files/styles/560_x_368/public/images/2026/06/02/america_250_encasement_welding_work_formatted_050626.jpg?h=7b436a88&amp;itok=PeUwjob7 2x"" media=""(min-width: 1200px)"" type=""image/jpeg"" width=""280"" height=""184""/>"
-"              <source srcset=""/sites/default/files/styles/1152_x_768/public/images/2026/06/02/america_250_encasement_welding_work_formatted_050626.jpg?h=7b436a88&amp;itok=xzoeicFZ 2x"" media=""(min-width: 0px)"" type=""image/jpeg"" width=""1152"" height=""768""/>"
-"                  <img loading=""lazy"" width=""576"" height=""384"" src=""/sites/default/files/styles/576_x_384/public/images/2026/06/02/america_250_encasement_welding_work_formatted_050626.jpg?h=7b436a88&amp;itok=zcUqlxaC"" alt=""Two people wearing welding masks and other safety equipment bend over a table to work on a large metal cylinder."" typeof=""foaf:Image"" />"
-  </picture>
-"            <figcaption class=""nist-image__caption"">"
-"      <div data-caption-editable=""true"" class=""nist-image__caption-content"">"
-      </div>
-                </figcaption>
-  </figure>
-</div>
-</a>
-      </div>
-"      <div class=""mobile-lg:grid-col-6 padding-top-2 mobile-lg:padding-top-0 featured-grid__item featured-grid__item-4"">"
-"<a class=""featured-grid__item-link"" href=""/news-events/news/2026/06/nist-releases-technical-findings-what-caused-2021-partial-collapse"" title=""Go to   NIST Releases Technical Findings on What Caused the 2021 Partial Collapse of Champlain Towers South"
-">
-  <h3>  NIST Releases Technical Findings on What Caused the 2021 Partial Collapse of Champlain Towers South
-</h3>
-                      <div class=entity-reference"">    <figure class=""nist-image"">"
-      <picture>
-"                  <source srcset=""/sites/default/files/styles/280_x_184/public/images/2026/06/24/Champlain%20punching%20shear%20no%20label.png?h=c0fa389d&amp;itok=Cel97Jjc 1x, /sites/default/files/styles/560_x_368/public/images/2026/06/24/Champlain%20punching%20shear%20no%20label.png?h=c0fa389d&amp;itok=TZdXnwke 2x"" media=""(min-width: 1200px)"" type=""image/png"" width=""280"" height=""184""/>"
-"              <source srcset=""/sites/default/files/styles/1152_x_768/public/images/2026/06/24/Champlain%20punching%20shear%20no%20label.png?h=c0fa389d&amp;itok=Pf_Zic7E 2x"" media=""(min-width: 0px)"" type=""image/png"" width=""1152"" height=""768""/>"
-"                  <img loading=""lazy"" width=""576"" height=""384"" src=""/sites/default/files/styles/576_x_384/public/images/2026/06/24/Champlain%20punching%20shear%20no%20label.png?h=c0fa389d&amp;itok=k5k-TGI5"" alt=""Champlain punching shear diagram shows a column pushing up through a cracking concrete slab."" typeof=""foaf:Image"" />"
-  </picture>
-"            <figcaption class=""nist-image__caption"">"
-"      <div data-caption-editable=""true"" class=""nist-image__caption-content"">"
-      </div>
-                </figcaption>
-  </figure>
-</div>
-</a>
-      </div>
-    </div>
-  </div>
-</div>
-"        <div class=""grid-row grid-gap-2"">"
-"      <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-3 margin-bottom-2"">"
-"      <article class=""circle-teaser grid-row grid-gap-1"">"
-"  <div class=""circle-teaser__image grid-col-auto"">"
-"                        <div class=""entity-reference"">  <a href=""/news-events/news/2026/06/nist-launches-center-drive-manufacture-quantum-technologies"" hreflang=""en""><img loading=""lazy"" src=""/sites/default/files/styles/140_x_140_crop/public/images/2026/06/29/Quantum%20cryo_0.png?h=04d92ac6&amp;itok=dR_ruMSl"" width=""140"" height=""140"" alt=""Micrograph of yellow square with lines attached to each corner."" typeof=""foaf:Image"" />"
-</a>
-</div>
-  </div>
-"  <div class=""circle-teaser__content grid-col-fill"">"
-"    <h3 class=""circle-teaser__title"">"
-"      <a href=""/news-events/news/2026/06/nist-launches-center-drive-manufacture-quantum-technologies""><span property=""schema:name"">NIST Launches Center to Drive the Manufacture of Quantum Technologies</span>"
-</a>
-    </h3>
-"    <div class=""circle-teaser__date"">"
-"                          <div class=""daterange""><time datetime=""2026-06-29T12:00:00Z"">June 29, 2026</time>"
-</div>
-    </div>
-  </div>
-</article>
-    </div>
-"      <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-3 margin-bottom-2"">"
-"      <article class=""circle-teaser grid-row grid-gap-1"">"
-"  <div class=""circle-teaser__image grid-col-auto"">"
-"                        <div class=""entity-reference"">  <a href=""/blogs/taking-measure/home-gut-microbiome-tests-give-varying-results"" hreflang=""en""><img loading=""lazy"" src=""/sites/default/files/styles/140_x_140_crop/public/images/2026/06/01/stephanie_servetas_april_2026_web_ready.png?h=3dbd9eac&amp;itok=r0ALZNnF"" width=""140"" height=""140"" alt=""Stephanie Servetas poses smiling outdoors on the NIST Gaithersburg campus."" typeof=""foaf:Image"" />"
-</a>
-</div>
-  </div>
-"  <div class=""circle-teaser__content grid-col-fill"">"
-"    <h3 class=""circle-teaser__title"">"
-"      <a href=""/blogs/taking-measure/home-gut-microbiome-tests-give-varying-results""><span>Home Gut Microbiome Tests Give Varying Results</span>"
-</a>
-    </h3>
-"    <div class=""circle-teaser__date"">"
-"                          <div class=""daterange""><time datetime=""2026-06-24T12:00:00Z"">June 24, 2026</time>"
-</div>
-    </div>
-  </div>
-</article>
-    </div>
-"      <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-3 margin-bottom-2"">"
-"      <article class=""circle-teaser grid-row grid-gap-1"">"
-"  <div class=""circle-teaser__image grid-col-auto"">"
-"                        <div class=""entity-reference"">  <a href=""/feature-stories/building-americas-time-capsule"" hreflang=""en""><img loading=""lazy"" src=""/sites/default/files/styles/140_x_140_crop/public/images/2026/06/22/NIST_A250_Time_Capsule_builders_cropped_0.jpg?h=099a44c8&amp;itok=IzloRtcU"" width=""140"" height=""140"" alt=""A group of people around a cylindrical time capsule"" typeof=""foaf:Image"" />"
-</a>
-</div>
-  </div>
-"  <div class=""circle-teaser__content grid-col-fill"">"
-"    <h3 class=""circle-teaser__title"">"
-"      <a href=""/feature-stories/building-americas-time-capsule""><span>Building America’s Time Capsule</span>"
-</a>
-    </h3>
-"    <div class=""circle-teaser__date"">"
-"                          <div class=""datetime""><time datetime=""2026-06-23T12:00:00Z"">June 23, 2026</time>"
-</div>
-    </div>
-  </div>
-</article>
-    </div>
-"      <div class=""mobile-lg:grid-col-6 desktop-lg:grid-col-3 margin-bottom-2"">"
-"      <article class=""circle-teaser grid-row grid-gap-1"">"
-"  <div class=""circle-teaser__image grid-col-auto"">"
-"                        <div class=""entity-reference"">  <a href=""/news-events/news/2026/06/nist-expands-its-library-chemical-fingerprints-identify-unknown-substances"" hreflang=""en""><img loading=""lazy"" src=""/sites/default/files/styles/140_x_140_crop/public/images/2026/06/02/vials_chem_fingerprints.JPG?h=790be497&amp;itok=hVl5OIac"" width=""140"" height=""140"" alt=""Custom trays hold different kinds of vials for laboratory work."" typeof=""foaf:Image"" />"
-</a>
-</div>
-  </div>
-"  <div class=""circle-teaser__content grid-col-fill"">"
-"    <h3 class=""circle-teaser__title"">"
-"      <a href=""/news-events/news/2026/06/nist-expands-its-library-chemical-fingerprints-identify-unknown-substances""><span property=""schema:name"">NIST Expands Its Library of ‘Chemical Fingerprints’ to Identify Unknown Substances</span>"
-</a>
-    </h3>
-"    <div class=""circle-teaser__date"">"
-"                          <div class=""daterange""><time datetime=""2026-06-09T12:00:00Z"">June 9, 2026</time>"
-</div>
-    </div>
-  </div>
-</article>
-    </div>
-  </div>
-      </div>
-"      <a href=""/news-events/news"" class=""usa-button usa-button--outline usa-button--big usa-button--accent-cool nist-page-segment__button"">"
-        See NIST News
-"        <svg class=""usa-icon "" aria-hidden=""true"">"
-"  <use href=""/libraries/nist-component-library/dist/img/sprite.svg?cache_bust=1776955625841#nist_notch_arrow""/>"
-</svg>
-      </a>
-    </div>
-  </div>
-</div>
-"<div class=""grid-container"">"
-"  <div class=""nist-page-segment homepage-nmi"">"
-"    <h2 class=""nist-page-segment__title nist-page-segment__title--blue"">America’s national measurement institute</h2>"
-"    <div class=""nist-page-segment__content grid-row grid-gap-4"">"
-"      <div class=""tablet-lg:grid-col-4"">"
-"        <div class=""homepage-nmi__image"">"
-                    <picture>
-"            <source srcset=""/themes/custom/nist_www/img/homepage/wattbalance_400_x_500.webp?v1 1x, /themes/custom/nist_www/img/homepage/wattbalance_800_x_1000.webp?v1 2x"" media=""(min-width: 55em)"" type=""image/webp"">"
-"            <source srcset=""/themes/custom/nist_www/img/homepage/wattbalance_800_x_400.webp?v1 1x, /themes/custom/nist_www/img/homepage/wattbalance_1600_x_800.webp?v1 2x"" media=""(min-width: 0px)"" type=""image/webp"">"
-"            <source srcset=""/themes/custom/nist_www/img/homepage/wattbalance_400_x_500.jpg?v1 1x, /themes/custom/nist_www/img/homepage/wattbalance_800_x_1000.jpg?v1 2x"" media=""(min-width: 55em)"" type=""image/jpg"">"
-"            <source srcset=""/themes/custom/nist_www/img/homepage/wattbalance_800_x_400.jpg?v1 1x, /themes/custom/nist_www/img/homepage/wattbalance_1600_x_800.jpg?v1 2x"" media=""(min-width: 0px)"" type=""image/jpg"">"
-"            <img src=""/themes/custom/nist_www/img/homepage/wattbalance_1600_x_800.jpg?v1"" width=""1600"" height=""800"" alt=""Photograph of the NIST-4 Kibble watt balance in blue light."" loading=""lazy"">"
-          </picture>
-        </div>
-      </div>
-"      <div class=""tablet-lg:grid-col-8"">"
-"        <div class=""bg-accent-cool padding-4 font-sans-lg text-white"">"
-"                              <div class=""text-long""><p>NIST is the National Metrology Institute for the United States, also known as an NMI. Everything you use in your everyday life works because of measurements. Without precise measurements, your car wouldn’t run, your phone wouldn’t work, and hospitals couldn’t function. We maintain the measurements that make industry and society work. Learn more about our unique role in the national — and global — economy.</p></div>"
-"          <ul class=""nist-icon-list nist-icon-list--notch"">"
-"      <li><a href=""/nmi""><span class=""inline-text"">FAQ</span></a></li>"
-"      <li><a href=""/services-resources/standards-and-measurements""><span class=""inline-text"">Standards and Measurements</span></a></li>"
-"      <li><a href=""/nist-work""><span class=""inline-text"">How NIST’s Measurements Work for You</span></a></li>"
-  </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-"<div class=""nist-in-your-inbox"">"
-"  <div class=""nist-in-your-inbox__image"" role=""img"">"
-        <picture>
-"      <source srcset=""/themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_1200.webp?v1 1x, /themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_2400.webp?v1 2x"" media=""(min-width: 40em)"" type=""image/webp"">"
-"      <source srcset=""/themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_1200.jpg?v1 1x, /themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_2400.jpg?v1 2x"" media=""(min-width: 40em)"" type=""image/jpg"">"
-"      <source srcset=""/themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_960.jpg?v1"" media=""(min-width: 0px)"" type=""image/jpg"">"
-"      <img src=""/themes/custom/nist_www/img/homepage/nist_gaithersburg_campus_2400.jpg?v1"" width=""2400"" height=""1200"" alt=""Photograph of the NIST Gaithersburg Campus"" loading=""lazy"">"
-    </picture>
-  </div>
-"  <div class=""grid-container nist-in-your-inbox__content"">"
-    <h2>NIST in your inbox</h2>
-    <p>
-      Stay up to date with the latest news from NIST. Sign up for our Tech Beat newsletter or to get news about your favorite research topics.
-    </p>
-"    <a href=""https://public.govdelivery.com/accounts/USNIST/subscriber/new"" class=""usa-button usa-button--outline usa-button--big usa-button--accent-warm margin-top-4"">"
-      Sign Up
-"      <svg class=""usa-icon "" aria-hidden=""true"">"
-"  <use href=""/libraries/nist-component-library/dist/img/sprite.svg?cache_bust=1776955625841#nist_notch_arrow""/>"
-</svg>
-    </a>
-  </div>
-</div>
-</section>
-  </div>
-"<div class=""nist-page-feedback__block"">"
-  <a
-"    class=""usa-button usa-button--outline webform-dialog webform-dialog-narrow nist-page-feedback__button"""
-"    href=""/webform/page_feedback?page=https://www.nist.gov/?format=1&amp;order_out=0&amp;output_level=2&amp;spectra=Sm%20I&amp;units=1&page_title=National Institute of Standards and Technology&source_entity_type=node&source_entity_id=783411"""
-"    data-dialog-options=""{&quot;dialogClass&quot;:&quot;no-titlebar page-feedback&quot;}"" rel=""nofollow"""
-  >
-    Was this page helpful?
-  </a>
-</div>
-<div data-elastic-exclude>
-<!-- nist-index-ignore-start -->
-"<footer class=""nist-footer padding-bottom-4"">"
-"    <div class=""grid-container nist-footer__info"">"
-"      <div class=""grid-row"">"
-"        <div class=""tablet:grid-col-6"">"
-"          <div class=""nist-footer__logo"">"
-"            <a href=""/"" title=""National Institute of Standards and Technology"" rel=""home"">"
-"              <img class=""nist-footer__logo-img"" src=""/libraries/nist-component-library/dist/img/logo/NIST-Logo-Brand-White.svg"" alt=""National Institute of Standards and Technology logo"" width=""300px"" height=""42px"" />"
-            </a>
-          </div>
-"          <div class=""nist-footer__contact"">"
-"            <h3 class=""nist-footer__contact-heading"">HEADQUARTERS</h3>"
-            <address>
-              100 Bureau Drive<br>
-"              Gaithersburg, MD 20899<br>"
-"              <a href=""tel:301-975-2000"">301-975-2000</a>"
-            </address>
-            <p>
-"              <a href=""/cdn-cgi/l/email-protection#b0d4df9dc7d5d2ddd1c3c4d5c2f0ded9c3c49ed7dfc6"">Webmaster</a> | <a href=""https://www.nist.gov/contact"">Contact Us</a> | <a href=""https://www.nist.gov/visit"">Our Other Offices</a>"
-            </p>
-          </div>
-        </div>
-"        <div class=""tablet:grid-col-6"">"
-"          <div class=""nist-footer__social-links"">"
-"<a class=""nist-social nist-social--x-white"" href="" https://x.com/NIST"">"
-  <span>X.com</span>
-</a>
-"<a class=""nist-social nist-social--facebook-white"" href="" https://www.facebook.com/NIST"">"
-  <span>Facebook</span>
-</a>
-"<a class=""nist-social nist-social--linkedin-white"" href="" https://www.linkedin.com/company/nist"">"
-  <span>LinkedIn</span>
-</a>
-"<a class=""nist-social nist-social--instagram-white"" href="" https://www.instagram.com/nist/"">"
-  <span>Instagram</span>
-</a>
-"<a class=""nist-social nist-social--youtube-white"" href="" https://www.youtube.com/NIST"">"
-  <span>YouTube</span>
-</a>
-"<a class=""nist-social nist-social--giphy-white"" href="" https://giphy.com/nist"">"
-  <span>Giphy</span>
-</a>
-"<a class=""nist-social nist-social--rss-white"" href="" https://www.nist.gov/news-events/nist-rss-feeds"">"
-  <span>RSS Feed</span>
-</a>
-"<a class=""nist-social nist-social--envelope-white"" href="" https://public.govdelivery.com/accounts/USNIST/subscriber/new"">"
-  <span>Mailing List</span>
-</a>
-          </div>
-"                              <div class=""nist-footer__feedback"">How are we doing?"
-"                        <a class=""usa-button webform-dialog webform-dialog-narrow"""
-"               href=""/webform/nist_gov_feedback?page=/national-institute-standards-and-technology"""
-"                title=""Provide feedback"" rel=""nofollow"" data-dialog-options=""{&quot;dialogClass&quot;:&quot;no-titlebar page-feedback&quot;}"">Feedback</a>"
-          </div>
-                  </div>
-      </div>
-    </div>
-"  <div class=""grid-container"">"
-"    <div class=""nist-footer__nav"" role=""navigation"">"
-      <ul>
-"                              <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/privacy-policy"">Site Privacy</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/oism/accessibility"">Accessibility</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/privacy"">Privacy Program</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/copyrights-disclaimers"">Copyright &amp; Disclaimers</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.commerce.gov/vulnerability-disclosure-policy"">Vulnerability Disclosure</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/no-fear-act-policy"">No Fear Act Policy</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/office-director/freedom-information-act"">FOIA</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/environmental-policy-statement"">Environmental Policy</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/summary-report-scientific-integrity"">Scientific Integrity</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.nist.gov/nist-information-quality-standards"">Information Quality Standards</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://www.commerce.gov/"">Commerce.gov</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""http://www.science.gov/"">Science.gov</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""http://www.usa.gov/"">USA.gov</a>"
-            </li>
-"                      <li class=""nist-footer__menu-item"">"
-"              <a href=""https://vote.gov/"">Vote.gov</a>"
-            </li>
-                        </ul>
-    </div>
-  </div>
-</footer>
-<!-- nist-index-ignore-end -->
-</div>
-  </div>
-"  <script data-cfasync=""false"" src=""/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js""></script><script src=""/sites/default/files/js/js_BS01Y7UQkap7bN4_MKRL517Sgvbm9g8cdGH8VaJrdJQ.js?scope=footer&amp;delta=0&amp;language=en&amp;theme=nist_www&amp;include=eJxljmEOgzAIhS_UyZEItVg7aTFtTT3-OnWJ2_4AHzzg0VYVKY2z5gJ0A2NpXLBz1RVuNT6L4b1KSAu4vK0kw4XGq3phrOTB9_DLAz1p_25Gk0Kp4EUtyaNfPnBmcpw_iFPoeqctiZLDmruXkPo2neOVPOPE7N4m4b91qurMsX9VFUsZozpwoZDtlw_rh6a1drPS2E6aI1x5cIFE_QuuxnZ3""></script>"
-"<script type=""text/javascript"">window.NREUM||(NREUM={});NREUM.info={""beacon"":""bam.nr-data.net"",""licenseKey"":""37b7ccb661"",""applicationID"":""1089704227"",""transactionName"":""YFxUN0sADEdYVkBaClkWdwBNCA1aFnFGRhVWVWoNVgUHaHpaWkcXWFVaBks9LFtdUGJaAEB6WQ1NEw1YVVBGHltBUFMU"",""queueTime"":10,""applicationTime"":198,""atts"":""TBtDQQMaHxgbVBYJHkpE"",""errorBeacon"":""bam.nr-data.net"",""agent"":""""}</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML=""window.__CF$cv$params={r:'a189af54edf444fb',t:'MTc4MzYyNDgxNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);"";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>"
-</html>
+Configuration,Term,J,g,Prefix,Level (cm-1),Suffix,Uncertainty (cm-1),Lande,Leading percentages,Reference
+"=""4f6.6s2""","=""7F""","=""0""",1,"=""""","=""0.00""","=""""","=""0""","=""""","=""  94             :     3                       5D1           ""","=""L3974"""
+"=""4f6.6s2""","=""7F""","=""1""",3,"=""""","=""292.58""","=""""","=""""","=""1.49839""","=""  95             :     2                       5D1           ""","="""""
+"=""4f6.6s2""","=""7F""","=""2""",5,"=""""","=""811.92""","=""""","=""""","=""1.49779""","=""  97             :     2                       5D1           ""","="""""
+"=""4f6.6s2""","=""7F""","=""3""",7,"=""""","=""1489.55""","=""""","=""""","=""1.49707""","=""  98             :     1                       5D1           ""","="""""
+"=""4f6.6s2""","=""7F""","=""4""",9,"=""""","=""2273.09""","=""""","=""""","=""1.49625""","=""  98             :     1                       5F2           ""","="""""
+"=""4f6.6s2""","=""7F""","=""5""",11,"=""""","=""3125.46""","=""""","=""""","=""1.49532""","=""  98             :     1                       5G1           ""","="""""
+"=""4f6.6s2""","=""7F""","=""6""",13,"=""""","=""4020.66""","=""""","=""""","=""1.49417""","=""  97             :     1                       5G1           ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""1""",3,"=""""","=""10801.10""","=""""","=""""","=""-0.98""","=""  99                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""2""",5,"=""""","=""11044.90""","=""""","=""""","=""0.67""","=""  98                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""3""",7,"=""""","=""11406.50""","=""""","=""""","=""1.08""","=""  98                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""4""",9,"=""""","=""11877.50""","=""""","=""""","=""1.25""","=""  97                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""5""",11,"=""""","=""12445.35""","=""""","=""""","=""1.33""","=""  97                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""6""",13,"=""""","=""13095.75""","=""""","=""""","=""1.385""","=""  98                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""7""",15,"=""""","=""13814.90""","=""""","=""""","=""1.410""","=""  99                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""8""",17,"=""""","=""14591.70""","=""""","=""""","=""1.430""","=""  99                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""9H""","=""9""",19,"=""""","=""15418.65""","=""""","=""""","=""1.445""","="" 100                                                         ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""9D""","=""2""",5,"=""""","=""12313.11""","=""""","=""""","=""2.56""","=""  83             :    11                       (7F)(6P) 7P   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""9D""","=""3""",7,"=""""","=""12846.64""","=""""","=""""","=""2.05""","=""  86                                                         ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""9D""","=""4""",9,"=""""","=""13458.46""","=""""","=""""","=""1.830""","=""  85                                                         ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""9D""","=""5""",11,"=""""","=""14202.85""","=""""","=""""","=""1.715""","=""  85             :    10                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""9D""","=""6""",13,"=""""","=""15082.94""","=""""","=""""","=""1.66""","=""  89                                                         ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""2""",5,"=""""","=""13050.05""","=""""","=""""","=""0.02""","=""  88             :    10                       (7F)(6H) 7H   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""3""",7,"=""""","=""13542.80""","=""""","=""""","=""0.77""","=""  86             :    11                       (7F)(6H) 7H   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""4""",9,"=""""","=""14154.30""","=""""","=""""","=""1.075""","=""  82             :    11                       (7F)(6H) 7H   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""5""",11,"=""""","=""14856.20""","=""""","=""""","=""1.240""","=""  76             :    12                       (7F)(6H) 7H   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""6""",13,"=""""","=""15617.45""","=""""","=""""","=""1.36""","=""  65             :    14                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""7""",15,"=""""","=""16392.93""","=""""","=""""","=""1.430""","=""  53             :    26                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8H).6s""","=""7H""","=""8""",17,"=""""","=""17270.96""","=""""","=""""","=""1.435""","=""  50             :    34                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""""","=""1""",3,"=""""","=""13369.35""","=""""","=""""","=""2.65""","=""  38  9F         :    31                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  57             :    26                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""6""",13,"=""""","=""""","=""""","=""""","=""""","=""  51             :    25                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""7""",15,"=""""","=""""","=""""","=""""","=""""","=""  39             :    29                       (7F)(8H) 7H   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""8""",17,"=""""","=""""","=""""","=""""","=""""","=""  65             :    32                       (7F)(8H) 7H   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""0""",1,"=""""","=""13551.20""","=""""","=""""","=""""","=""  96                                                         ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""2""",5,"=""""","=""13687.75""","=""""","=""""","=""1.780""","=""  54             :    35                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""1""",3,"=""""","=""13732.53""","=""""","=""""","=""2.01""","=""  59             :    20                       (7F)(6P) 5P   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""3""",7,"=""""","=""14056.70""","=""""","=""""","=""1.63""","=""  54             :    31                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""9G""","=""4""",9,"=""""","=""14563.98""","=""""","=""""","=""1.575""","=""  57             :    29                       (7F)(8F) 9F   ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""0""",1,"=""""","=""13796.36""","=""""","=""""","=""""","=""  94             :     5                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""1""",3,"=""""","=""13999.50""","=""""","=""""","=""1.50""","=""  95             :     4                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""2""",5,"=""""","=""14380.50""","=""""","=""""","=""1.50""","=""  95             :     4                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""3""",7,"=""""","=""14915.83""","=""""","=""""","=""1.49""","=""  94             :     3                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""4""",9,"=""""","=""15579.12""","=""""","=""""","=""1.500""","=""  94             :     3                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""5""",11,"=""""","=""16344.77""","=""""","=""""","=""1.505""","=""  94             :     2                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""6""",13,"=""""","=""17193.73""","=""""","=""""","=""1.50""","=""  96             :     1                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""7""",15,"=""""","=""18118.86""","=""""","=""""","=""1.49""","=""  98             :     1                       (7F)(1P*) 7G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9G*""","=""8""",17,"=""""","=""19138.80""","=""""","=""""","=""1.50""","="" 100                                                         ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""4""",9,"=""""","=""""","=""""","=""""","=""""","=""  43             :    33                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  60             :    33                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""6""",13,"=""""","=""""","=""""","=""""","=""""","=""  63             :    32                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""7""",15,"=""""","=""""","=""""","=""""","=""""","=""  64             :    34                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""1""",3,"=""""","=""14026.45""","=""""","=""""","=""2.92""","=""  52             :    31                       (7F)(6P) 5P   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""2""",5,"=""""","=""14365.50""","=""""","=""""","=""1.845""","=""  43             :    42                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""9F""","=""3""",7,"=""""","=""14920.45""","=""""","=""""","=""1.74""","=""  55             :    31                       (7F)(8G) 9G   ""","="""""
+"=""4f6.(7F).5d (6P).6s""","=""7P""","=""2""",5,"=""""","=""14550.50""","=""""","=""""","=""2.340""","=""  56             :    14                       (7F)(8P) 7P   ""","="""""
+"=""4f6.(7F).5d (8P).6s""","=""9P""","=""4""",9,"=""""","=""""","=""""","=""""","=""""","=""  43             :    16  4f6.(7F).5d (6P).6s  7P            ""","="""""
+"=""4f6.(7F).5d (8P).6s""","=""9P""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  57             :    25  4f6.(7F).5d (8D).6s  7D            ""","="""""
+"=""4f6.(7F).5d (8P).6s""","=""9P""","=""3""",7,"=""""","=""14612.44""","=""""","=""""","=""2.14""","=""  48             :    25  4f6.(7F).5d (6P).6s  7P            ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""7D""","=""1""",3,"=""""","=""""","=""""","=""""","=""""","=""  56             :    31                       (7F)(6P) 5P   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""7D""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  43             :    37                       (7F)(8P) 9P   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""7D""","=""2""",5,"=""""","=""14783.51""","=""""","=""""","=""1.93""","=""  43             :    27                       (7F)(6P) 5P   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""7D""","=""3""",7,"=""""","=""15524.56""","=""""","=""""","=""1.84""","=""  53             :    20                       (7F)(8P) 9P   ""","="""""
+"=""4f6.(7F).5d (8D).6s""","=""7D""","=""4""",9,"=""""","=""16354.60""","=""""","=""""","=""1.640""","=""  53             :    24                       (7F)(8P) 9P   ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""1""",3,"=""""","=""14863.85""","=""""","=""""","=""3.10""","=""  57             :    37                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""3""",7,"=""""","=""16211.12""","=""""","=""""","=""1.76""","=""  55             :    28                       (7F)(3P*) 9D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""4""",9,"=""""","=""16890.59""","=""""","=""""","=""1.605""","=""  67             :    18                       (7F)(3P*) 7G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""5""",11,"=""""","=""17587.46""","=""""","=""""","=""1.545""","=""  68             :    26                       (7F)(3P*) 7G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""6""",13,"=""""","=""18298.30""","=""""","=""""","=""1.52""","=""  62             :    30                       (7F)(3P*) 7G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9F*""","=""7""",15,"=""""","=""19005.65""","=""""","=""""","=""1.51""","=""  60             :    37                       (7F)(3P*) 7G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""2""",5,"=""""","=""15039.59""","=""""","=""""","=""2.365""","=""  41  9D*        :    29                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9D*""","=""3""",7,"=""""","=""15507.35""","=""""","=""""","=""1.965""","=""  57             :    24                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9D*""","=""2""",5,"=""""","=""15567.32""","=""""","=""""","=""2.235""","=""  53             :    36                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9D*""","=""4""",9,"=""""","=""16131.53""","=""""","=""""","=""1.79""","=""  70             :    18                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9D*""","=""5""",11,"=""""","=""16859.31""","=""""","=""""","=""1.705""","=""  81             :    10                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""9D*""","=""6""",13,"=""""","=""17654.54""","=""""","=""""","=""1.650""","=""  88             :     6                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5D*""","=""0""",1,"=""""","=""15586.30""","=""""","=""""","=""""","=""  74             :    22                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""3""",7,"=""""","=""""","=""""","=""""","=""""","=""  54             :    15                       (7F)(8F) 7F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""4""",9,"=""""","=""""","=""""","=""""","=""""","=""  48             :    16                       (7F)(8F) 7F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  44             :    17                       (7F)(6H) 5H   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""6""",13,"=""""","=""""","=""""","=""""","=""""","=""  44             :    28                       (7F)(6H) 5H   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""7""",15,"=""""","=""""","=""""","=""""","=""""","=""  40             :    37                       (7F)(6H) 5H   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""1""",3,"=""""","=""15639.80""","=""""","=""""","=""0.18""","=""  58             :    22                       (7F)(8F) 7F   ""","="""""
+"=""4f6.(7F).5d (8G).6s""","=""7G""","=""2""",5,"=""""","=""15955.24""","=""""","=""""","=""1.085""","=""  52             :    16                       (7F)(8F) 7F   ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""1""",3,"=""""","=""15650.55""","=""""","=""""","=""-0.13""","=""  79             :    10                       (7F)(3P*) 5F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""2""",5,"=""""","=""16116.42""","=""""","=""""","=""0.960""","=""  80             :     9                       (7F)(3P*) 5F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""3""",7,"=""""","=""16748.30""","=""""","=""""","=""1.27""","=""  78             :    11                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""4""",9,"=""""","=""17504.63""","=""""","=""""","=""1.395""","=""  75             :    18                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""5""",11,"=""""","=""18350.40""","=""""","=""""","=""1.44""","=""  71             :    26                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""6""",13,"=""""","=""19254.29""","=""""","=""""","=""1.47""","=""  65             :    34                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7G*""","=""7""",15,"=""""","=""20211.95""","=""""","=""""","=""1.475""","=""  60             :    39                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).5d (8F).6s""","=""7F""","=""0""",1,"=""""","=""15793.68""","=""""","=""""","=""""","=""  74             :    12                       (7F)(8F) 5D   ""","="""""
+"=""4f6.(7F).5d (6P).6s""","=""""","=""3""",7,"=""""","=""15834.60""","=""""","=""""","=""1.815""","=""  27  7P         :    21                       (7F)(8P) 9P   ""","="""""
+"=""4f6.6s2""","=""5D3""","=""0""",1,"=""""","=""""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""4f6.6s2""","=""5D3""","=""4""",9,"=""""","=""""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""4f6.6s2""","=""5D3""","=""1""",3,"=""""","=""15914.55""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""4f6.6s2""","=""5D3""","=""2""",5,"=""""","=""17864.29""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""4f6.6s2""","=""5D3""","=""3""",7,"=""""","=""20195.76""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5D*""","=""1""",3,"=""""","=""16112.33""","=""""","=""""","=""1.50""","=""  59             :    16                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""2""",5,"=""""","=""16681.74""","=""""","=""""","=""1.77:""","=""  42  5D*        :    22                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7D*""","=""1""",3,"=""""","=""16690.76""","=""""","=""""","=""2.83:""","=""  53             :    30                       (7F)(3P*) 9F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7D*""","=""5""",11,"=""""","=""19264.63""","=""""","=""""","=""1.485""","=""  64             :    23                       (7F)(3P*) 5G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""2""",5,"=""""","=""17190.20""","=""""","=""""","=""1.425""","=""  46             :    25                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""0""",1,"=""""","=""17810.85""","=""""","=""""","=""""","=""  65             :    20                       (7F)(3P*) 5D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""3""",7,"=""""","=""17830.80""","=""""","=""""","=""1.215""","=""  41             :    37                       (7F)(3P*) 5G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""4""",9,"=""""","=""19191.64""","=""""","=""""","=""1.27:""","=""  60             :    20                       (7F)(3P*) 5G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""5""",11,"=""""","=""20153.47""","=""""","=""""","=""1.44""","=""  68             :    19                       (7F)(3P*) 5G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""7F*""","=""6""",13,"=""""","=""21055.76""","=""""","=""""","=""1.455""","=""  65             :    26                       (7F)(3P*) 5G* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""3""",7,"=""""","=""17243.55""","=""""","=""""","=""1.62""","=""  35  7D*        :    21                       (7F)(3P*) 5D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5G*""","=""2""",5,"=""""","=""17462.37""","=""""","=""""","=""0.755""","=""  74             :     8                       (7F)(3P*) 5F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5G*""","=""3""",7,"=""""","=""18209.04""","=""""","=""""","=""1.39""","=""  36             :    27                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5G*""","=""4""",9,"=""""","=""18503.49""","=""""","=""""","=""1.365""","=""  41             :    27                       (7F)(3P*) 7D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5G*""","=""5""",11,"=""""","=""18811.11""","=""""","=""""","=""1.45""","=""  47             :    17                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5G*""","=""6""",13,"=""""","=""19712.41""","=""""","=""""","=""1.38""","=""  70             :    23                       (7F)(3P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""1""",3,"=""""","=""17769.71""","=""""","=""""","=""0.80:""","=""  26  7F*        :    17                       (7F)(3P*) 5F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""4""",9,"=""""","=""17959.27""","=""""","=""""","=""1.52""","=""  30  7D*        :    21                       (7F)(3P*) 5G* ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""8""",17,"=""""","=""""","=""""","=""""","=""""","=""  74             :    14                       (6F*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""2""",5,"=""""","=""18075.67""","=""""","=""""","=""0.41""","=""  56             :    11  4f6.(7F).6s.6p.(3P*) 7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""3""",7,"=""""","=""18948.78""","=""""","=""""","=""0.94""","=""  45             :    11  4f6.(7F).6s.6p.(3P*) 5D*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""4""",9,"=""""","=""19990.25""","=""""","=""""","=""1.115""","=""  53             :    10                       (6H*) 7I*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""5""",11,"=""""","=""21062.82""","=""""","=""""","=""1.21""","=""  59             :    12                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""6""",13,"=""""","=""22160.84""","=""""","=""""","=""1.305""","=""  52             :    15                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7H*""","=""7""",15,"=""""","=""23337.40""","=""""","=""""","=""1.36""","=""  53             :    13                       (6H*) 7G*     ""","="""""
+"=""4f6.(7F).5d (6H).6s""","=""7H""","=""2""",5,"=""""","=""18176.17""","=""""","=""""","=""0.02""","=""  87             :    10                       (7F)(8H) 7H   ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""1""",3,"=""""","=""18225.13""","=""""","=""""","=""0.695""","=""  31  7F*        :    21  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""0""",1,"=""""","=""18309.02""","=""""","=""""","=""""","=""  74             :    13  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""1""",3,"=""""","=""18475.28""","=""""","=""""","=""0.96""","=""  65             :    13  4f6.(7F).6s.6p.(3P*) 5F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""2""",5,"=""""","=""18788.08""","=""""","=""""","=""1.280""","=""  31             :    14  4f6.(7F).6s.6p.(3P*) 7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""3""",7,"=""""","=""19501.27""","=""""","=""""","=""1.365""","=""  49             :     8  4f6.(7F).6s.6p.(3P*) 5D*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""4""",9,"=""""","=""20163.00""","=""""","=""""","=""1.390""","=""  30             :    14  4f6.(7F).6s.6p.(3P*) 5F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""5""",11,"=""""","=""21458.89""","=""""","=""""","=""1.425""","=""  42             :    18                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7F*""","=""6""",13,"=""""","=""22944.38""","=""""","=""""","=""1.475""","=""  61             :    23  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""8""",17,"=""""","=""""","=""""","=""""","=""""","=""  83             :     8                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""9""",19,"=""""","=""""","=""""","=""""","=""""","=""  89             :    11                       (6H*) 7K*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""3""",7,"=""""","=""18328.64""","=""""","=""""","=""0.33""","=""  88             :     7                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""4""",9,"=""""","=""19174.84""","=""""","=""""","=""0.96:""","=""  86             :     9                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""5""",11,"=""""","=""20183.35""","=""""","=""""","=""1.03""","=""  84             :    11                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""6""",13,"=""""","=""21296.45""","=""""","=""""","=""1.12""","=""  82             :    12                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7I*""","=""7""",15,"=""""","=""22468.87""","=""""","=""""","=""1.235""","=""  82             :    12                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""2""",5,"=""""","=""18416.62""","=""""","=""""","=""1.08""","=""  15  7H*        :    13                       (6H*) 7F*     ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5F*""","=""1""",3,"=""""","=""18985.70""","=""""","=""""","=""0.18""","=""  58             :    16  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5F*""","=""2""",5,"=""""","=""19677.46""","=""""","=""""","=""1.08""","=""  59             :    14                       (7F)(3P*) 5D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5F*""","=""3""",7,"=""""","=""20459.30""","=""""","=""""","=""1.295""","=""  55             :    26                       (7F)(3P*) 5D* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""5F*""","=""5""",11,"=""""","=""21809.74""","=""""","=""""","=""1.41""","=""  56             :    14  4f5.(6H*).5d.6s2     7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""2""",5,"=""""","=""19009.52""","=""""","=""""","=""0.945""","=""  37  7G*        :    28                       (6H*) 7F*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""3""",7,"=""""","=""19210.09""","=""""","=""""","=""1.27""","=""  22  7H*        :    16                       (6H*) 7F*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""7G*""","=""3""",7,"=""""","=""19776.97""","=""""","=""""","=""1.15""","=""  52             :    22  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5F*""","=""5""",11,"=""""","=""""","=""""","=""""","=""""","=""  28             :    20                       (6H*) 5I*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5F*""","=""1""",3,"=""""","=""20091.03""","=""""","=""""","=""0.09""","=""  55             :    12                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5F*""","=""2""",5,"=""""","=""20762.82""","=""""","=""""","=""0.99""","=""  53             :    11  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5F*""","=""3""",7,"=""""","=""21700.89""","=""""","=""""","=""1.235""","=""  46             :    15                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5F*""","=""4""",9,"=""""","=""22893.05""","=""""","=""""","=""1.345""","=""  32             :    20                       (6H*) 5G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""4""",9,"=""""","=""20396.67""","=""""","=""""","=""1.405""","=""  24  7F*        :    14  4f6.(7F).6s.6p.(3P*) 5F*           ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""20593.06""","=""""","=""""","=""1.23""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""4""",9,"=""""","=""20712.83""","=""""","=""""","=""1.29""","=""  37  7G*        :    22  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7D*""","=""1""",3,"=""""","=""21193.68""","=""""","=""""","=""2.93""","=""  87             :     8  4f5.(6F*).5d.6s2     7D*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7D*""","=""2""",5,"=""""","=""21813.22""","=""""","=""""","=""1.94""","=""  85             :     8  4f5.(6F*).5d.6s2     7D*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7D*""","=""3""",7,"=""""","=""22632.30""","=""""","=""""","=""1.69""","=""  81             :     8  4f5.(6F*).5d.6s2     7D*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7D*""","=""4""",9,"=""""","=""23594.84""","=""""","=""""","=""1.60""","=""  67             :    10  4f5.(6H*).5d.6s2     5G*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7D*""","=""5""",11,"=""""","=""24323.51""","=""""","=""""","=""1.46""","=""  35             :    20                       (7F)(1P*) 7F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""4""",9,"=""""","=""21243.30""","=""""","=""""","=""1.385""","=""  45  5D*        :    44                       (7F)(3P*) 5F* ""","="""""
+"=""4f6.(7F).6s.6p.(3P*)""","=""*""","=""5""",11,"=""""","=""21599.84""","=""""","=""""","=""1.37""","=""  23  5F*        :    18  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7F*""","=""0""",1,"=""""","=""22041.02""","=""""","=""""","=""""","=""  58             :    32  4f5.(6H*).5d.6s2     7F*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7F*""","=""1""",3,"=""""","=""22313.63""","=""""","=""""","=""1.480""","=""  53             :    31  4f5.(6H*).5d.6s2     7F*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5G*""","=""2""",5,"=""""","=""22491.94""","=""""","=""""","=""0.52""","=""  65             :    16  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""6""",13,"=""""","=""22643.12""","=""""","=""""","=""1.355""","=""  32  7G*        :    19                       (6H*) 7H*     ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""2""",5,"=""""","=""22844.00""","=""""","=""""","=""0.49:""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""3""",7,"=""""","=""23230.75""","=""""","=""""","=""0.83""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""4""",9,"=""""","=""23802.10""","=""""","=""""","=""0.975""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""5""",11,"=""""","=""24467.84""","=""""","=""""","=""1.15""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""6""",13,"=""""","=""25259.80""","=""""","=""""","=""1.25""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""7""",15,"=""""","=""26171.20""","=""""","=""""","=""1.275""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""8""",17,"=""""","=""27196.73""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""9""",19,"=""""","=""28305.00""","=""""","=""""","=""1.38""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d2.6s?""","=""9I*?""","=""10""",21,"=""""","=""29467.69""","=""""","=""""","=""1.395""","=""                                                             ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""2""",5,"=""""","=""22893.37""","=""""","=""""","=""0.59:""","=""  44  7F*        :    29  4f5.(6H*).5d.6s2     7F*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7G*""","=""1""",3,"=""""","=""22914.07""","=""""","=""""","=""-0.480""","=""  57             :    21  4f5.(6F*).5d.6s2     7G*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7G*""","=""1""",3,"=""""","=""23243.84""","=""""","=""""","=""-0.475""","=""  67             :    22                       (6H*) 7G*     ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""3""",7,"=""""","=""23316.63""","=""""","=""""","=""1.01""","=""  37  5G*        :    30  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7G*""","=""2""",5,"=""""","=""23380.75""","=""""","=""""","=""0.72""","=""  52             :    28  4f6.(7F).6s.6p.(1P*) 7G*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""2""",5,"=""""","=""23546.54""","=""""","=""""","=""0.795""","=""  30  7H*        :    25                       (6H*) 7G*     ""","="""""
+"=""""","=""9H*?""","=""1""",3,"=""""","=""23629.98""","=""""","=""""","=""-0.80""","=""                                                             ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""3""",7,"=""""","=""23709.98""","=""""","=""""","=""1.260""","=""  32  7F*        :    26  4f5.(6F*).5d.6s2     7F*           ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""7""",15,"=""""","=""23734.36""","=""""","=""""","=""1.37""","=""  38  7G*        :    31  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""""","=""9H*?""","=""2""",5,"=""""","=""23847.25""","=""""","=""""","=""0.60""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7G*""","=""3""",7,"=""""","=""23852.43""","=""""","=""""","=""0.95""","=""  52             :    22                       (6F*) 7H*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""8""",17,"=""""","=""""","=""""","=""""","=""""","=""  80             :    12                       (6F*) 7H*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""2""",5,"=""""","=""23986.48""","=""""","=""""","=""0.32""","=""  52             :    16                       (6F*) 7G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""3""",7,"=""""","=""24150.80""","=""""","=""""","=""1.105""","=""  37             :    15                       (6H*) 7G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""4""",9,"=""""","=""25065.37""","=""""","=""""","=""1.21""","=""  52             :    24                       (6F*) 7G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""5""",11,"=""""","=""26065.85""","=""""","=""""","=""1.245""","=""  43             :    17                       (6F*) 7G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""6""",13,"=""""","=""27129.49""","=""""","=""""","=""1.33""","=""  50             :    18                       (6F*) 7G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7H*""","=""7""",15,"=""""","=""27718.35""","=""""","=""""","=""1.345""","=""  45             :    33                       (6F*) 7G*     ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""4""",9,"=""""","=""23996.55""","=""""","=""""","=""1.045""","=""  35  7G*        :    14  4f5.(6H*).5d.6s2     5G*           ""","="""""
+"=""""","=""7D*?""","=""1""",3,"=""""","=""24184.05""","=""""","=""""","=""2.21""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""3""",7,"=""""","=""24244.80""","=""""","=""""","=""1.08""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""24312.02""","=""""","=""""","=""1.09""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""24375.60""","=""""","=""""","=""2.49""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""3""",7,"=""""","=""24467.27""","=""""","=""""","=""0.965""","=""  26  7H*        :    22                       (6F*) 7G*     ""","="""""
+"=""""","=""7D*?""","=""2""",5,"=""""","=""24498.96""","=""""","=""""","=""1.73""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""24570.03""","=""""","=""""","=""1.04""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""4""",9,"=""""","=""24633.75""","=""""","=""""","=""1.325""","=""  20  7F*        :    19                       (6F*) 7G*     ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""5""",11,"=""""","=""24668.79""","=""""","=""""","=""1.53""","=""  32  7D*        :    17                       (7F)(1P*) 7G* ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""4""",9,"=""""","=""24772.74""","=""""","=""""","=""1.25""","=""  27  7G*        :    23                       (6F*) 7H*     ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""24913.28""","=""""","=""""","=""1.770""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""3""",7,"=""""","=""24967.14""","=""""","=""""","=""1.56""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""24977.83""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""4""",9,"=""""","=""25387.17""","=""""","=""""","=""1.055""","=""  26  5I*        :    18                       (6H*) 5G*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""5""",11,"=""""","=""25390.91""","=""""","=""""","=""1.29""","=""  25  7H*        :    24                       (6F*) 7G*     ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""25453.11""","=""""","=""""","=""1.32""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""4""",9,"=""""","=""25572.10""","=""""","=""""","=""1.40""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""25604.76""","=""""","=""""","=""1.645""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""5""",11,"=""""","=""25615.55""","=""""","=""""","=""1.39""","=""  15  7G*        :    14                       (6H*) 5F*     ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""25663.60""","=""""","=""""","=""0.705""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""5""",11,"=""""","=""25675.50""","=""""","=""""","=""1.12""","=""  38  5I*        :    25                       (6F*) 7G*     ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""2""",5,"=""""","=""25808.90""","=""""","=""""","=""-0.22""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""3""",7,"=""""","=""26214.75""","=""""","=""""","=""0.55""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""4""",9,"=""""","=""26752.26""","=""""","=""""","=""0.94""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""5""",11,"=""""","=""27852.78""","=""""","=""""","=""1.16""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""6""",13,"=""""","=""28864.89""","=""""","=""""","=""1.25""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""7""",15,"=""""","=""29948.38""","=""""","=""""","=""1.325""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""8""",17,"=""""","=""31129.79""","=""""","=""""","=""1.360""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""9""",19,"=""""","=""32129.89""","=""""","=""""","=""1.43""","=""                                                             ""","="""""
+"=""4f6.(7F).5d.6p.(3F*)?""","=""9I*?""","=""10""",21,"=""""","=""33808.29""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""*""","=""6""",13,"=""""","=""25840.31""","=""""","=""""","=""1.48""","=""  40  7G*        :    17  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7P*""","=""2""",5,"=""""","=""25979.30""","=""""","=""""","=""2.535""","=""  95             :     2                       (6F*) 5P*     ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""26054.05""","=""""","=""""","=""2.34""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""26146.01""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""26180.92""","=""""","=""""","=""1.29""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""2""",5,"=""""","=""26220.86""","=""""","=""""","=""0.09""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""3""",7,"=""""","=""26267.14""","=""""","=""""","=""0.39""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""0""",1,"=""""","=""""","=""""","=""""","=""""","=""  59             :    25  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""1""",3,"=""""","=""26281.09""","=""""","=""""","=""1.50""","=""  58             :    25  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""2""",5,"=""""","=""26786.80""","=""""","=""""","=""1.34:""","=""  58             :    25  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""3""",7,"=""""","=""27425.50""","=""""","=""""","=""1.49""","=""  59             :    24  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""4""",9,"=""""","=""28180.95""","=""""","=""""","=""1.50""","=""  58             :    24  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""5""",11,"=""""","=""29023.96""","=""""","=""""","=""1.405""","=""  54             :    23  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7F*""","=""6""",13,"=""""","=""30092.53""","=""""","=""""","=""1.455""","=""  49             :    20  4f6.(7F).6s.6p.(1P*) 7F*           ""","="""""
+"=""""","=""7D*?""","=""5""",11,"=""""","=""26311.45""","=""""","=""""","=""1.50""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""26382.25""","=""""","=""""","=""1.57""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""1""",3,"=""""","=""26438.25""","=""""","=""""","=""-0.81""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""6""",13,"=""""","=""26471.33""","=""""","=""""","=""1.355""","=""  28  7H*        :    25                       (6F*) 7G*     ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""26507.31""","=""""","=""""","=""0.935""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""26619.16""","=""""","=""""","=""1.935""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""26657.10""","=""""","=""""","=""0.91""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""26703.85""","=""""","=""""","=""1.900""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""3""",7,"=""""","=""26714.40""","=""""","=""""","=""0.725""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""2""",5,"=""""","=""26721.35""","=""""","=""""","=""0.785""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""26776.98""","=""""","=""""","=""1.190""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""26803.70""","=""""","=""""","=""1.17:""","=""                                                             ""","="""""
+"=""""","=""*""","=""0""",1,"=""""","=""26822.13""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""26962.12""","=""""","=""""","=""0.85""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7D*""","=""1""",3,"=""""","=""26962.12""","=""""","=""""","=""2.565""","=""  82             :     8  4f6.(7F).6s.6p.(1P*) 7D*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7D*""","=""2""",5,"=""""","=""27671.35""","=""""","=""""","=""1.955""","=""  84             :     8  4f6.(7F).6s.6p.(1P*) 7D*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7D*""","=""3""",7,"=""""","=""28356.22""","=""""","=""""","=""1.59""","=""  74             :     8  4f6.(7F).6s.6p.(1P*) 7D*           ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7D*""","=""4""",9,"=""""","=""29365.03""","=""""","=""""","=""1.60""","=""  51             :    14                       (6F*) 7P*     ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""7D*""","=""5""",11,"=""""","=""30233.64""","=""""","=""""","=""1.55""","=""  68             :     8                       (6F*) 5F*     ""","="""""
+"=""""","=""9H*?""","=""3""",7,"=""""","=""27166.50""","=""""","=""""","=""1.02""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""27255.97""","=""""","=""""","=""1.55""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""27263.07""","=""""","=""""","=""1.40""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""27267.94""","=""""","=""""","=""0.475""","=""                                                             ""","="""""
+"=""4f6.(7F).6s.6p.(1P*)""","=""7G*""","=""7""",15,"=""""","=""27287.58""","=""""","=""""","=""1.400""","=""  47             :    24  4f5.(6H*).5d.6s2     7G*           ""","="""""
+"=""""","=""7H*?""","=""2""",5,"=""""","=""27338.00""","=""""","=""""","=""0.07""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""27398.92""","=""""","=""""","=""1.675""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""4""",9,"=""""","=""27406.90""","=""""","=""""","=""1.00""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""27509.09""","=""""","=""""","=""1.080""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""1""",3,"=""""","=""27548.28""","=""""","=""""","=""-0.86""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""27583.38""","=""""","=""""","=""1.765""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""27627.25""","=""""","=""""","=""1.525""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""5""",11,"=""""","=""27654.90""","=""""","=""""","=""1.03""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""2""",5,"=""""","=""27709.40""","=""""","=""""","=""0.575""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""27734.99""","=""""","=""""","=""1.685""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""27782.41""","=""""","=""""","=""1.230""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""4""",9,"=""""","=""27783.54""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""27790.77""","=""""","=""""","=""1.26""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""3""",7,"=""""","=""27818.55""","=""""","=""""","=""0.725""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""1""",3,"=""""","=""27888.93""","=""""","=""""","=""2.84""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""27920.10""","=""""","=""""","=""0.40""","=""                                                             ""","="""""
+"=""""","=""*""","=""0""",1,"=""""","=""27925.31""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""27992.35""","=""""","=""""","=""0.805""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""28065.45""","=""""","=""""","=""1.49""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""*""","=""7""",15,"=""""","=""28138.00""","=""""","=""""","=""1.39""","=""  38  7G*        :    23                       (6F*) 7H*     ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28164.78""","=""""","=""""","=""1.14""","=""                                                             ""","="""""
+"=""""","=""*""","=""0""",1,"=""""","=""28168.22""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28224.05""","=""""","=""""","=""0.86""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""28233.08""","=""""","=""""","=""1.74:""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""28250.02""","=""""","=""""","=""1.46""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""28331.84""","=""""","=""""","=""1.135""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""2""",5,"=""""","=""28359.00""","=""""","=""""","=""1.785""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""8""",17,"=""""","=""28373.05""","=""""","=""""","=""1.425""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""28401.00""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""4""",9,"=""""","=""28425.30""","=""""","=""""","=""1.01""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""28445.02""","=""""","=""""","=""1.54""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""28465.30""","=""""","=""""","=""1.140""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""28496.57""","=""""","=""""","=""1.53""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28505.72""","=""""","=""""","=""1.56""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""5""",11,"=""""","=""28534.04""","=""""","=""""","=""1.300""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28585.07""","=""""","=""""","=""0.935""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""6""",13,"=""""","=""28600.02""","=""""","=""""","=""1.165""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""1""",3,"=""""","=""28613.22""","=""""","=""""","=""2.125:""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""28694.06""","=""""","=""""","=""1.67""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""28704.25""","=""""","=""""","=""1.725:""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""28705.58""","=""""","=""""","=""1.53""","=""                                                             ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""1""",3,"=""""","=""28708.20""","=""""","=""""","=""3.36""","=""  95                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""2""",5,"=""""","=""29037.25""","=""""","=""""","=""1.85""","=""  90                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""3""",7,"=""""","=""29551.86""","=""""","=""""","=""1.80""","=""  89                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""4""",9,"=""""","=""30191.24""","=""""","=""""","=""1.68""","=""  90                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""5""",11,"=""""","=""30921.99""","=""""","=""""","=""1.53""","=""  93                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""6""",13,"=""""","=""31725.70""","=""""","=""""","=""1.59""","=""  96                                                         ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""9F""","=""7""",15,"=""""","=""32567.76""","=""""","=""""","=""1.57""","="" 100                                                         ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28744.99""","=""""","=""""","=""1.425""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""28752.34""","=""""","=""""","=""0.96""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""28853.25""","=""""","=""""","=""1.19""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28855.76""","=""""","=""""","=""1.37""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""28913.97""","=""""","=""""","=""0.27""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28942.00""","=""""","=""""","=""1.02""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""28998.13""","=""""","=""""","=""1.48""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29041.31""","=""""","=""""","=""1.36""","=""                                                             ""","="""""
+"=""4f6.6s2?""","=""""","=""2""",5,"=""""","=""29066.02""","=""""","=""""","=""1.57""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""29069.90""","=""""","=""""","=""1.33""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""29130.03""","=""""","=""""","=""0.495""","=""                                                             ""","="""""
+"=""""","=""7H*?""","=""5""",11,"=""""","=""29151.15""","=""""","=""""","=""1.23""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29152.26""","=""""","=""""","=""1.45""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29156.00""","=""""","=""""","=""1.79""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29200.62""","=""""","=""""","=""1.33""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29210.73""","=""""","=""""","=""1.13""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""29226.71""","=""""","=""""","=""1.68""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""29282.28""","=""""","=""""","=""2.00""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""*""","=""6""",13,"=""""","=""29379.80""","=""""","=""""","=""1.215""","=""  42  5H*        :    19                       (6F*) 5H*     ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""0""",1,"=""""","=""29469.59""","=""""","=""""","=""""","=""  88             :    12                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""1""",3,"=""""","=""29656.26""","=""""","=""""","=""1.48""","=""  74             :    12                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""2""",5,"=""""","=""30148.40""","=""""","=""""","=""1.67""","=""  67             :    13                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""3""",7,"=""""","=""30755.28""","=""""","=""""","=""1.47""","=""  66             :    14                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""4""",9,"=""""","=""31508.12""","=""""","=""""","=""1.515""","=""  69             :    15                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""5""",11,"=""""","=""32333.00""","=""""","=""""","=""1.515""","=""  73             :    16                       (7F)(6F) 7F   ""","="""""
+"=""4f6.(7F).6s (8F).7s""","=""7F""","=""6""",13,"=""""","=""33202.66""","=""""","=""""","=""1.49""","=""  78             :    18                       (7F)(6F) 7F   ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""29475.54""","=""""","=""""","=""1.26""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29478.74""","=""""","=""""","=""2.06""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29481.25""","=""""","=""""","=""1.10""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""29490.40""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29506.40""","=""""","=""""","=""1.11""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29521.75""","=""""","=""""","=""1.36""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29557.87""","=""""","=""""","=""0.93""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""9""",19,"=""""","=""29564.24""","=""""","=""""","=""1.435""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""29602.09""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""7""",15,"=""""","=""29627.02""","=""""","=""""","=""1.25""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29639.45""","=""""","=""""","=""0.305""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""29648.85""","=""""","=""""","=""1.230""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29651.20""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""4f5.(6F*).5d.6s2""","=""5G*""","=""4""",9,"=""""","=""29673.01""","=""""","=""""","=""1.26""","=""  54             :    18                       (6F*) 7D*     ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""29723.05""","=""""","=""""","=""0.44""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29731.00""","=""""","=""""","=""1.64""","=""                                                             ""","="""""
+"=""""","=""*""","=""8""",17,"=""""","=""29741.50""","=""""","=""""","=""1.24""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""29746.53""","=""""","=""""","=""1.34""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""29775.10""","=""""","=""""","=""1.83""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""29803.32""","=""""","=""""","=""1.575""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""29807.75""","=""""","=""""","=""1.415""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""29817.84""","=""""","=""""","=""1.21""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""29855.91""","=""""","=""""","=""1.815""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""29929.38""","=""""","=""""","=""1.30""","=""                                                             ""","="""""
+"=""4f6.6s2?""","=""""","=""2""",5,"=""""","=""30040.95""","=""""","=""""","=""1.79""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""30069.97""","=""""","=""""","=""1.68""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30089.27""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""30107.05""","=""""","=""""","=""1.56""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30125.74""","=""""","=""""","=""1.565""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30128.88""","=""""","=""""","=""1.38""","=""                                                             ""","="""""
+"=""""","=""7G*""","=""1""",3,"=""""","=""30238.46""","=""""","=""""","=""-0.14""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30251.58""","=""""","=""""","=""0.93""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""30256.40""","=""""","=""""","=""0.96""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""30278.08""","=""""","=""""","=""1.01""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30284.40""","=""""","=""""","=""1.33""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""30312.27""","=""""","=""""","=""1.215""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30321.75""","=""""","=""""","=""1.37""","=""                                                             ""","="""""
+"=""4f5.(6H*).5d.6s2""","=""5H*""","=""7""",15,"=""""","=""30330.78""","=""""","=""""","=""1.275""","=""  47             :    28                       (6F*) 5H*     ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30332.35""","=""""","=""""","=""1.33""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""30337.45""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30399.70""","=""""","=""""","=""1.96""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""30412.50""","=""""","=""""","=""1.27""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30416.80""","=""""","=""""","=""1.58""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30435.00""","=""""","=""""","=""0.84""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30476.37""","=""""","=""""","=""0.685""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30537.33""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30559.13""","=""""","=""""","=""0.585""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""30560.04""","=""""","=""""","=""1.45""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30560.08""","=""""","=""""","=""1.48""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""30569.18""","=""""","=""""","=""1.37""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""30586.50""","=""""","=""""","=""1.17""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30596.20""","=""""","=""""","=""1.57""","=""                                                             ""","="""""
+"=""""","=""7D*?""","=""4""",9,"=""""","=""30619.60""","=""""","=""""","=""1.64""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30633.21""","=""""","=""""","=""1.36""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""30659.34""","=""""","=""""","=""1.40""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""30689.95""","=""""","=""""","=""1.335""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""8""",17,"=""""","=""30698.42""","=""""","=""""","=""1.29""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30753.65""","=""""","=""""","=""1.49""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""30753.72""","=""""","=""""","=""1.32""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""30770.00""","=""""","=""""","=""1.37""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""30775.70""","=""""","=""""","=""0.68""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30788.75""","=""""","=""""","=""0.75""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30796.27""","=""""","=""""","=""1.32""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30823.54""","=""""","=""""","=""1.72""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30836.69""","=""""","=""""","=""1.47""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""30901.40""","=""""","=""""","=""1.17""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""30911.22""","=""""","=""""","=""1.54""","=""                                                             ""","="""""
+"=""4f6.6s2?""","=""""","=""5""",11,"=""""","=""30931.62""","=""""","=""""","=""1.48""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""30963.07""","=""""","=""""","=""1.49""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31009.20""","=""""","=""""","=""1.425""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31015.20""","=""""","=""""","=""1.415""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31024.75""","=""""","=""""","=""1.41:""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""31041.00""","=""""","=""""","=""0.60""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31047.10""","=""""","=""""","=""1.11:""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""31062.30""","=""""","=""""","=""1.43""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31108.42""","=""""","=""""","=""1.545""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31156.40""","=""""","=""""","=""1.64""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31174.68""","=""""","=""""","=""1.29""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31185.20""","=""""","=""""","=""1.50""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""31207.22""","=""""","=""""","=""1.435""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31210.33""","=""""","=""""","=""1.27""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""31219.70""","=""""","=""""","=""2.66""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31234.62""","=""""","=""""","=""1.21""","=""                                                             ""","="""""
+"=""4f6.(7F).6s (6F).7s""","=""5F""","=""2""",5,"=""""","=""31246.30""","=""""","=""""","=""1.21""","=""  63             :    24  (7F).6s (8F).7s      7F            ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31322.84""","=""""","=""""","=""1.29""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31342.95""","=""""","=""""","=""1.57""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31352.05""","=""""","=""""","=""1.50""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31364.15""","=""""","=""""","=""1.20""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""31391.80""","=""""","=""""","=""0.19""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31421.00""","=""""","=""""","=""1.32""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""31439.15""","=""""","=""""","=""0.765""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31483.52""","=""""","=""""","=""1.43""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31493.41""","=""""","=""""","=""1.16""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""31503.45""","=""""","=""""","=""1.12""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31503.83""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""""","=""*""","=""8""",17,"=""""","=""31534.12""","=""""","=""""","=""1.40""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31568.40""","=""""","=""""","=""1.04""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""31584.91""","=""""","=""""","=""2.77""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31597.53""","=""""","=""""","=""1.73""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31665.43""","=""""","=""""","=""1.52""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""8""",17,"=""""","=""31699.20""","=""""","=""""","=""1.400""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""31716.41""","=""""","=""""","=""1.950""","=""                                                             ""","="""""
+"=""""","=""7I*?""","=""9""",19,"=""""","=""31746.67""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31754.23""","=""""","=""""","=""1.38""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""31786.74""","=""""","=""""","=""1.25""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31820.91""","=""""","=""""","=""1.25""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31845.65""","=""""","=""""","=""1.33:""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""31865.83""","=""""","=""""","=""1.42:""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""31893.78""","=""""","=""""","=""1.34""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""31904.93""","=""""","=""""","=""1.55""","=""                                                             ""","="""""
+"=""""","=""*""","=""0""",1,"=""""","=""31923.80""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""31924.70""","=""""","=""""","=""1.29""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""31934.03""","=""""","=""""","=""1.81""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""31960.69""","=""""","=""""","=""1.495""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32028.11""","=""""","=""""","=""1.475""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""32086.66""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""32125.53""","=""""","=""""","=""1.17""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""32149.28""","=""""","=""""","=""1.565""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""32188.17""","=""""","=""""","=""1.43""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32197.35""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""8""",17,"=""""","=""32242.45""","=""""","=""""","=""1.47""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""32252.30""","=""""","=""""","=""1.47""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32260.63""","=""""","=""""","=""1.13""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""32284.49""","=""""","=""""","=""1.46""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""32289.85""","=""""","=""""","=""1.22""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""32294.20""","=""""","=""""","=""1.73""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32340.69""","=""""","=""""","=""1.41""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""32346.24""","=""""","=""""","=""1.66""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""32401.65""","=""""","=""""","=""1.58""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""32402.62""","=""""","=""""","=""1.93""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""32558.70""","=""""","=""""","=""1.76""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32626.35""","=""""","=""""","=""1.36""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""32696.63""","=""""","=""""","=""1.34""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32735.62""","=""""","=""""","=""1.26""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""32822.82""","=""""","=""""","=""1.50""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32831.50""","=""""","=""""","=""1.355""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""32865.57""","=""""","=""""","=""0.84""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""32868.71""","=""""","=""""","=""1.42""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""32907.64""","=""""","=""""","=""1.49""","=""                                                             ""","="""""
+"=""""","=""*""","=""1""",3,"=""""","=""33030.91""","=""""","=""""","=""0.00""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""33081.45""","=""""","=""""","=""1.28""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""33199.40""","=""""","=""""","=""1.96""","=""                                                             ""","="""""
+"=""""","=""*""","=""8""",17,"=""""","=""33318.35""","=""""","=""""","=""1.345""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""33329.35""","=""""","=""""","=""1.37""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""33382.06""","=""""","=""""","=""0.90""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""33384.92""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""33408.80""","=""""","=""""","=""1.32""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""33411.09""","=""""","=""""","=""1.52""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""33458.94""","=""""","=""""","=""1.600""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""33507.28""","=""""","=""""","=""1.350""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""33634.82""","=""""","=""""","=""2.22""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""33733.00""","=""""","=""""","=""1.505""","=""                                                             ""","="""""
+"=""""","=""*""","=""7""",15,"=""""","=""33739.36""","=""""","=""""","=""1.460""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""33838.15""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""33983.40""","=""""","=""""","=""1.48""","=""                                                             ""","="""""
+"=""""","=""*""","=""2""",5,"=""""","=""34044.11""","=""""","=""""","=""2.03""","=""                                                             ""","="""""
+"=""""","=""*""","=""3""",7,"=""""","=""34189.36""","=""""","=""""","=""1.88""","=""                                                             ""","="""""
+"=""""","=""*""","=""5""",11,"=""""","=""34224.44""","=""""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""4""",9,"=""""","=""34514.74""","=""""","=""""","=""1.45""","=""                                                             ""","="""""
+"=""""","=""*""","=""6""",13,"=""""","=""34723.16""","=""""","=""""","=""1.35""","=""                                                             ""","="""""
+"=""""","=""*""","=""8""",17,"=""""","=""34761.78""","=""""","=""""","=""1.430""","=""                                                             ""","="""""
+"=""""","=""9H*?""","=""9""",19,"=""""","=""35176.51""","=""""","=""""","=""1.43""","=""                                                             ""","="""""
+"=""Sm II (4f6.5s2.5p6.6s 8F<1/2>)""","=""Limit""","=""---""",,"=""""","=""45519.69""","=""""","=""0.17""","=""""","=""                                                             ""","=""L21624"""
+"=""""","=""*""","=""4?""",9,"=""""","=""45775""","=""+a?""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""4 or 5 or 6""",9,"=""""","=""45865""","=""+a?""","=""""","=""""","=""                                                             ""","="""""
+"=""""","=""*""","=""4 or 5 or 6""",9,"=""""","=""46015""","=""+a?""","=""""","=""""","=""                                                             ""","="""""

@@ -1,0 +1,2 @@
+property,value,unit,source,source_url,retrieved_at,notes
+cpk_hex_color,429EB0,hex RGB,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Color convencional CPK; no es el color espectral ni el color real del elemento.

@@ -1,0 +1,5 @@
+property,value,unit,source,source_url,retrieved_at,notes
+atomic_mass,144.91276,u,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Valor publicado por PubChem.
+electron_configuration,[Xe]6s2 4f5,,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Configuración electrónica.
+atomic_radius,236,pm,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Radio atómico publicado por PubChem.
+ionization_energy,5.55,eV,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Primera energía de ionización cuando se proporciona.

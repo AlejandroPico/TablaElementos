@@ -1,0 +1,8 @@
+property,value,unit,source,source_url,retrieved_at,notes
+atomic_mass,132.9054520,u,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Valor publicado por PubChem.
+electron_configuration,[Xe]6s1,,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Configuración electrónica.
+electronegativity,0.79,Pauling,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Escala de Pauling cuando se proporciona.
+atomic_radius,343,pm,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Radio atómico publicado por PubChem.
+ionization_energy,3.894,eV,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Primera energía de ionización cuando se proporciona.
+electron_affinity,0.472,eV,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Afinidad electrónica cuando se proporciona.
+standard_atomic_weight,132.905 451 96(6),u,CIAAW / IUPAC,https://www.ciaaw.org/atomic-weights.htm,2026-07-10T13:14:59+00:00,"Se conserva la notación publicada, incluidos intervalos o valores entre corchetes."
