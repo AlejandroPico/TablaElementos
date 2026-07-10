@@ -1,0 +1,129 @@
+/* Temas claro, oscuro y automático para Tabla elementos. */
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #0a0d12;
+  --app-bg-2: #101722;
+  --app-ink: #eef6ff;
+  --panel: rgba(8, 12, 22, 0.9);
+  --panel-strong: rgba(10, 16, 30, 0.97);
+  --line: rgba(177, 190, 214, 0.18);
+  --line-strong: rgba(166, 221, 255, 0.58);
+  --text-soft: #a8b4c6;
+  --accent: #bde9ff;
+  --accent-strong: #f2fbff;
+  --tool-bg: rgba(14, 20, 32, 0.86);
+  --tool-ink: #dbeaff;
+  --popover-bg: rgba(14, 20, 32, 0.96);
+  --surface-soft: rgba(255, 255, 255, 0.035);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --app-bg: #f7f5f0;
+  --app-bg-2: #e9e5dc;
+  --app-ink: #1a2029;
+  --panel: rgba(255, 255, 255, 0.9);
+  --panel-strong: rgba(255, 255, 255, 0.98);
+  --line: rgba(30, 39, 52, 0.14);
+  --line-strong: rgba(46, 105, 146, 0.52);
+  --text-soft: #667181;
+  --accent: #315f7b;
+  --accent-strong: #17384d;
+  --tool-bg: rgba(255, 255, 255, 0.88);
+  --tool-ink: #263443;
+  --popover-bg: rgba(255, 255, 255, 0.97);
+  --surface-soft: rgba(29, 49, 68, 0.045);
+}
+
+html,
+body {
+  color: var(--app-ink);
+  background:
+    radial-gradient(circle at 16% 10%, color-mix(in srgb, var(--accent) 12%, transparent), transparent 34rem),
+    radial-gradient(circle at 84% 78%, color-mix(in srgb, var(--accent) 8%, transparent), transparent 38rem),
+    linear-gradient(135deg, var(--app-bg), var(--app-bg-2));
+  transition: background 260ms ease, color 220ms ease;
+}
+
+.view-tool-button,
+.view-zoom-hud {
+  color: var(--tool-ink);
+  border-color: var(--line);
+  background: var(--tool-bg);
+}
+
+.view-info-popover {
+  color: var(--app-ink);
+  border-color: var(--line);
+  background: var(--popover-bg);
+}
+
+.view-info-stats div,
+.coverage-grid article,
+.master-tabs {
+  background: var(--surface-soft);
+}
+
+:root[data-theme='light'] .view-tool-button:hover,
+:root[data-theme='light'] .view-tool-button.active,
+:root[data-theme='light'] .view-zoom-hud button:hover {
+  color: #143448;
+  border-color: rgba(49, 95, 123, 0.38);
+  background: rgba(49, 95, 123, 0.1);
+}
+
+:root[data-theme='light'] .view-info-copy p,
+:root[data-theme='light'] .view-info-popover header button,
+:root[data-theme='light'] .modal-header small,
+:root[data-theme='light'] .empty-copy {
+  color: #536171;
+}
+
+:root[data-theme='light'] .element-modal,
+:root[data-theme='light'] .comparison-drawer {
+  color: var(--app-ink);
+  background: var(--panel-strong);
+}
+
+.theme-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  font-size: 0.62rem;
+  font-weight: 950;
+}
+
+.theme-icon.light {
+  border: 2px solid currentColor;
+  border-radius: 50%;
+}
+
+.theme-icon.light::before,
+.theme-icon.light::after {
+  content: '';
+  position: absolute;
+  width: 24px;
+  border-top: 1.5px solid currentColor;
+}
+
+.theme-icon.light::after {
+  transform: rotate(90deg);
+}
+
+.theme-icon.dark {
+  width: 17px;
+  height: 17px;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  border-right-color: transparent;
+  border-radius: 50%;
+  transform: rotate(-35deg);
+}
+
+.theme-icon.auto {
+  border: 1.5px solid currentColor;
+  border-radius: 6px;
+}
