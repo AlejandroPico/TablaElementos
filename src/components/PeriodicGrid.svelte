@@ -1,27 +1,42 @@
 <script lang="ts">
-  import { createEventDispatcher, onMount } from 'svelte';
+  import { createEventDispatcher, onMount, tick } from 'svelte';
   import type { ElementWithLines } from '../lib/atomicTypes';
 
   export type TableMode = 'short' | 'long';
+
+  interface RectSnapshot {
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+  }
 
   export let elements: ElementWithLines[] = [];
   export let selectedSymbol = '';
   export let tableMode: TableMode = 'short';
 
-  const MIN_ZOOM = 0.9;
+  const MIN_ZOOM = 0.2;
   const MAX_ZOOM = 14;
 
+  let viewportElement: HTMLDivElement;
+  let gridElement: HTMLDivElement;
   let zoom = 1;
+  let targetZoom = 1;
   let offsetX = 0;
   let offsetY = 0;
+  let targetOffsetX = 0;
+  let targetOffsetY = 0;
   let isDragging = false;
   let dragStartX = 0;
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let cameraFrame = 0;
+  let lastPublishedPercent = -1;
+  let lastPublishedLevel = '';
 
   $: zoomClass = zoom >= 7.5 ? 'zoom-inspect' : zoom >= 3.2 ? 'zoom-deep' : zoom >= 1.6 ? 'zoom-medium' : 'zoom-base';
-  $: contentScale = Math.pow(zoom, 0.36);
+  $: contentScale = Math.pow(Math.max(zoom, 1), 0.36);
 
   const dispatch = createEventDispatcher<{
     select: string;
@@ -39,76 +54,191 @@
     return 'Vista general';
   }
 
-  function publishZoom(): void {
-    dispatch('zoomchange', {
-      zoom,
-      percent: Math.round(zoom * 100),
-      level: zoomLabel()
-    });
+  function publishZoom(force = false): void {
+    const percent = Math.round(zoom * 100);
+    const level = zoomLabel();
+    if (!force && percent === lastPublishedPercent && level === lastPublishedLevel) return;
+
+    lastPublishedPercent = percent;
+    lastPublishedLevel = level;
+    dispatch('zoomchange', { zoom, percent, level });
   }
 
-  function applyZoom(nextValue: number, anchorX = 0, anchorY = 0): void {
-    const previousZoom = zoom;
-    const nextZoom = clamp(nextValue, MIN_ZOOM, MAX_ZOOM);
-    if (nextZoom === previousZoom) return;
+  function stopCameraAnimation(): void {
+    if (cameraFrame) {
+      cancelAnimationFrame(cameraFrame);
+      cameraFrame = 0;
+    }
+  }
 
-    const ratio = nextZoom / previousZoom;
-    offsetX = anchorX - (anchorX - offsetX) * ratio;
-    offsetY = anchorY - (anchorY - offsetY) * ratio;
-    zoom = Number(nextZoom.toFixed(3));
+  function cameraStep(): void {
+    const zoomDistance = targetZoom - zoom;
+    const xDistance = targetOffsetX - offsetX;
+    const yDistance = targetOffsetY - offsetY;
 
-    if (zoom <= 1.01) {
-      offsetX = 0;
-      offsetY = 0;
+    zoom += zoomDistance * 0.2;
+    offsetX += xDistance * 0.24;
+    offsetY += yDistance * 0.24;
+
+    const settled = Math.abs(zoomDistance) < 0.001 && Math.abs(xDistance) < 0.1 && Math.abs(yDistance) < 0.1;
+    if (settled) {
+      zoom = targetZoom;
+      offsetX = targetOffsetX;
+      offsetY = targetOffsetY;
+      cameraFrame = 0;
+      publishZoom(true);
+      return;
     }
 
     publishZoom();
+    cameraFrame = requestAnimationFrame(cameraStep);
+  }
+
+  function ensureCameraAnimation(): void {
+    if (!cameraFrame) cameraFrame = requestAnimationFrame(cameraStep);
+  }
+
+  function setCameraTarget(nextZoom: number, anchorX = 0, anchorY = 0): void {
+    const clampedZoom = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM);
+    const previousTargetZoom = targetZoom;
+    if (Math.abs(clampedZoom - previousTargetZoom) < 0.0001) return;
+
+    const ratio = clampedZoom / previousTargetZoom;
+    targetOffsetX = anchorX - (anchorX - targetOffsetX) * ratio;
+    targetOffsetY = anchorY - (anchorY - targetOffsetY) * ratio;
+    targetZoom = clampedZoom;
+    ensureCameraAnimation();
+  }
+
+  function setCameraImmediate(nextZoom: number, nextOffsetX = 0, nextOffsetY = 0): void {
+    stopCameraAnimation();
+    zoom = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM);
+    targetZoom = zoom;
+    offsetX = nextOffsetX;
+    offsetY = nextOffsetY;
+    targetOffsetX = nextOffsetX;
+    targetOffsetY = nextOffsetY;
+    publishZoom(true);
   }
 
   function handleWheel(event: WheelEvent): void {
     event.preventDefault();
-    const viewport = event.currentTarget as HTMLElement;
-    const rect = viewport.getBoundingClientRect();
+    const rect = viewportElement.getBoundingClientRect();
     const cursorX = event.clientX - rect.left - rect.width / 2;
     const cursorY = event.clientY - rect.top - rect.height / 2;
-    applyZoom(zoom * (event.deltaY > 0 ? 0.84 : 1.18), cursorX, cursorY);
+    const factor = clamp(Math.exp(-event.deltaY * 0.00145), 0.82, 1.22);
+    setCameraTarget(targetZoom * factor, cursorX, cursorY);
   }
 
   function startDrag(event: PointerEvent): void {
     const target = event.target as HTMLElement;
     if (target.closest('.element-open-button, .series-placeholder')) return;
 
+    stopCameraAnimation();
     isDragging = true;
     dragStartX = event.clientX;
     dragStartY = event.clientY;
-    dragOriginX = offsetX;
-    dragOriginY = offsetY;
-    (event.currentTarget as HTMLElement).setPointerCapture(event.pointerId);
+    dragOriginX = targetOffsetX;
+    dragOriginY = targetOffsetY;
+    viewportElement.setPointerCapture(event.pointerId);
   }
 
   function dragCanvas(event: PointerEvent): void {
     if (!isDragging) return;
     offsetX = dragOriginX + event.clientX - dragStartX;
     offsetY = dragOriginY + event.clientY - dragStartY;
+    targetOffsetX = offsetX;
+    targetOffsetY = offsetY;
   }
 
   function stopDrag(): void {
     isDragging = false;
   }
 
+  function fitScale(): number {
+    if (!viewportElement || !gridElement) return 1;
+    const rect = gridElement.getBoundingClientRect();
+    const baseWidth = rect.width / Math.max(zoom, 0.001);
+    const baseHeight = rect.height / Math.max(zoom, 0.001);
+    const availableWidth = Math.max(240, viewportElement.clientWidth - 56);
+    const availableHeight = Math.max(220, viewportElement.clientHeight - 56);
+    return clamp(Math.min(availableWidth / baseWidth, availableHeight / baseHeight, 1) * 0.97, MIN_ZOOM, 1);
+  }
+
+  export async function fitToViewport(animated = true): Promise<void> {
+    await tick();
+    const nextZoom = fitScale();
+    if (animated) {
+      targetOffsetX = 0;
+      targetOffsetY = 0;
+      targetZoom = nextZoom;
+      ensureCameraAnimation();
+    } else {
+      setCameraImmediate(nextZoom, 0, 0);
+    }
+  }
+
   export function zoomIn(): void {
-    applyZoom(zoom * 1.22);
+    setCameraTarget(targetZoom * 1.2);
   }
 
   export function zoomOut(): void {
-    applyZoom(zoom * 0.82);
+    setCameraTarget(targetZoom / 1.2);
   }
 
   export function resetView(): void {
-    zoom = 1;
-    offsetX = 0;
-    offsetY = 0;
-    publishZoom();
+    void fitToViewport(true);
+  }
+
+  export function captureElementRects(): Record<string, RectSnapshot> {
+    const snapshots: Record<string, RectSnapshot> = {};
+    if (!gridElement) return snapshots;
+
+    gridElement.querySelectorAll<HTMLElement>('[data-element-symbol]').forEach((cell) => {
+      const symbol = cell.dataset.elementSymbol;
+      if (!symbol) return;
+      const rect = cell.getBoundingClientRect();
+      snapshots[symbol] = { left: rect.left, top: rect.top, width: rect.width, height: rect.height };
+    });
+    return snapshots;
+  }
+
+  export function animateLayoutFrom(previous: Record<string, RectSnapshot>): void {
+    if (!gridElement || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+
+    gridElement.querySelectorAll<HTMLElement>('[data-element-symbol]').forEach((cell) => {
+      const symbol = cell.dataset.elementSymbol;
+      const before = symbol ? previous[symbol] : undefined;
+      if (!before) return;
+
+      const after = cell.getBoundingClientRect();
+      const deltaX = before.left - after.left;
+      const deltaY = before.top - after.top;
+      const scaleX = before.width / Math.max(after.width, 1);
+      const scaleY = before.height / Math.max(after.height, 1);
+
+      cell.animate(
+        [
+          {
+            transformOrigin: 'top left',
+            transform: `translate(${deltaX}px, ${deltaY}px) scale(${scaleX}, ${scaleY})`,
+            filter: 'brightness(0.96)'
+          },
+          { transformOrigin: 'top left', transform: 'translate(0, 0) scale(1, 1)', filter: 'brightness(1)' }
+        ],
+        { duration: 760, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      );
+    });
+
+    gridElement.querySelectorAll<HTMLElement>('.series-placeholder, .series-guide').forEach((item) => {
+      item.animate(
+        [
+          { opacity: 0, transform: 'translateY(-8px) scale(0.96)' },
+          { opacity: 1, transform: 'translateY(0) scale(1)' }
+        ],
+        { duration: 520, delay: 120, easing: 'cubic-bezier(0.22, 1, 0.36, 1)' }
+      );
+    });
   }
 
   function categoryClass(category: string): string {
@@ -153,22 +283,32 @@
     const z = element.atomic_number;
     if (z >= 55 && z <= 86) return { column: z - 54, row: 6 };
     if (z >= 87 && z <= 118) return { column: z - 86, row: 7 };
-    return {
-      column: element.group <= 2 ? element.group : element.group + 14,
-      row: element.period
-    };
+    return { column: element.group <= 2 ? element.group : element.group + 14, row: element.period };
   }
 
   function positionStyle(element: ElementWithLines): string {
     const position = tableMode === 'long' ? longPosition(element) : shortPosition(element);
-    return `grid-column:${position.column};grid-row:${position.row};view-transition-name:element-${element.symbol};`;
+    return `grid-column:${position.column};grid-row:${position.row};`;
   }
 
-  onMount(publishZoom);
+  onMount(() => {
+    const resize = (): void => {
+      void fitToViewport(false);
+    };
+
+    window.addEventListener('resize', resize);
+    requestAnimationFrame(() => void fitToViewport(false));
+
+    return () => {
+      window.removeEventListener('resize', resize);
+      stopCameraAnimation();
+    };
+  });
 </script>
 
 <section class="periodic-card" aria-label="Tabla elementos">
   <div
+    bind:this={viewportElement}
     class={`periodic-viewport ${zoomClass} table-${tableMode}`}
     role="application"
     aria-label="Escenario interactivo de la tabla periódica"
@@ -182,11 +322,12 @@
   >
     <div
       class="periodic-pan"
-      style={`transform:translate(calc(-50% + ${offsetX.toFixed(1)}px), calc(-50% + ${offsetY.toFixed(1)}px));`}
+      style={`transform:translate(calc(-50% + ${offsetX.toFixed(2)}px), calc(-50% + ${offsetY.toFixed(2)}px));`}
     >
       <div
+        bind:this={gridElement}
         class={`periodic-grid mode-${tableMode}`}
-        style={`--zoom:${zoom};--content-scale:${contentScale.toFixed(3)};zoom:${zoom};`}
+        style={`--zoom:${zoom.toFixed(4)};--content-scale:${contentScale.toFixed(3)};zoom:${zoom.toFixed(4)};`}
       >
         {#if tableMode === 'short'}
           <article class="series-placeholder lanthanide-placeholder" style="grid-column:3;grid-row:6;">
@@ -201,6 +342,7 @@
 
         {#each elements as element (element.symbol)}
           <article
+            data-element-symbol={element.symbol}
             class:active={selectedSymbol === element.symbol}
             class={`element-cell ${categoryClass(element.category)} data-${dataState(element)}`}
             style={positionStyle(element)}
