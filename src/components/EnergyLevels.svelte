@@ -8,6 +8,7 @@
     new Set(lines.flatMap((line) => [line.lower_level_ev, line.upper_level_ev]).map((value) => Number(value.toFixed(2))))
   ).sort((a, b) => a - b);
 
+  $: hasLevels = levels.length > 0;
   $: minLevel = levels[0] ?? 0;
   $: maxLevel = levels[levels.length - 1] ?? 1;
 
@@ -33,27 +34,34 @@
     <span class="range-pill">{levels.length} niveles</span>
   </div>
 
-  <div class="energy-stage">
-    {#each levels as level}
-      <div class="energy-level" style={`top:${levelPosition(level)}%;`}>
-        <span>{formatEv(level)}</span>
-      </div>
-    {/each}
+  <div class:empty={!hasLevels} class="energy-stage">
+    {#if hasLevels}
+      {#each levels as level}
+        <div class="energy-level" style={`top:${levelPosition(level)}%;`}>
+          <span>{formatEv(level)}</span>
+        </div>
+      {/each}
 
-    {#each lines.slice(0, 8) as line, index}
-      <div
-        class="energy-transition"
-        style={`
-          left:${12 + index * 10}%;
-          top:${levelPosition(line.upper_level_ev)}%;
-          height:${levelPosition(line.lower_level_ev) - levelPosition(line.upper_level_ev)}%;
-          --transition-color:${transitionColor(line)};
-        `}
-        title={`${line.label}: ${formatNm(line.wavelength_nm)}`}
-      >
-        <span></span>
+      {#each lines.slice(0, 8) as line, index}
+        <div
+          class="energy-transition"
+          style={`
+            left:${12 + index * 10}%;
+            top:${levelPosition(line.upper_level_ev)}%;
+            height:${levelPosition(line.lower_level_ev) - levelPosition(line.upper_level_ev)}%;
+            --transition-color:${transitionColor(line)};
+          `}
+          title={`${line.label}: ${formatNm(line.wavelength_nm)}`}
+        >
+          <span></span>
+        </div>
+      {/each}
+    {:else}
+      <div class="spectrum-empty">
+        <strong>No hay niveles representables</strong>
+        <span>El archivo de niveles existe, pero no contiene una tabla científica procesable por ahora.</span>
       </div>
-    {/each}
+    {/if}
   </div>
 
   <p class="energy-note">
