@@ -76,6 +76,12 @@
     comparedSymbols = [];
   }
 
+  function nextPaint(): Promise<void> {
+    return new Promise((resolve) => {
+      requestAnimationFrame(() => requestAnimationFrame(() => resolve()));
+    });
+  }
+
   async function toggleTableMode(): Promise<void> {
     if (layoutBusy) return;
     layoutBusy = true;
@@ -86,6 +92,7 @@
       await tick();
 
       const layoutAnimation = gridView?.animateLayoutFrom?.(previousRects);
+      await nextPaint();
       const cameraAnimation = gridView?.fitToViewport?.(true);
       await Promise.allSettled([Promise.resolve(layoutAnimation), Promise.resolve(cameraAnimation)]);
     } finally {
