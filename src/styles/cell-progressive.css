@@ -1,4 +1,4 @@
-/* Fichas progresivas: la vista general es mínima y la inspección revela el resumen científico. */
+/* Fichas progresivas: lectura completa, sin elipsis y con escala compensada. */
 .element-open-button.progressive-element-button {
   position: relative;
   display: block !important;
@@ -19,9 +19,10 @@
 }
 
 .progressive-element-button .atomic-number {
-  color: rgba(255, 255, 255, 0.82);
+  color: rgba(255, 255, 255, 0.84);
   font-size: 0.65rem !important;
   font-weight: 820;
+  line-height: 1;
 }
 
 .progressive-element-button .element-core {
@@ -32,7 +33,7 @@
   display: grid;
   justify-items: center;
   gap: 3px;
-  width: 58%;
+  width: 72%;
   transform: translate(-50%, -48%);
   pointer-events: none;
 }
@@ -46,21 +47,36 @@
 .progressive-element-button .element-name {
   position: static;
   display: block;
-  width: 100%;
-  color: rgba(255, 255, 255, 0.82);
-  font-size: 0.63rem !important;
+  width: 140%;
+  max-width: none !important;
+  margin-left: -20%;
+  overflow: visible !important;
+  color: rgba(255, 255, 255, 0.84);
+  font-size: 0.61rem !important;
   line-height: 1.05;
   text-align: center;
+  text-overflow: clip !important;
+  white-space: nowrap !important;
+}
+
+.progressive-element-button .element-name.name-long {
+  font-size: 0.52rem !important;
+  letter-spacing: -0.025em;
+}
+
+.progressive-element-button .element-name.name-very-long {
+  font-size: 0.43rem !important;
+  letter-spacing: -0.04em;
 }
 
 .cell-science-grid {
   position: absolute;
   z-index: 2;
-  inset: 6px;
+  inset: calc(7px / var(--zoom, 1));
   display: grid;
-  grid-template-columns: 1fr 1.2fr 1fr;
-  grid-template-rows: auto 1fr 1fr auto;
-  gap: 4px 7px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.24fr) minmax(0, 1fr);
+  grid-template-rows: auto minmax(0, 1fr) minmax(0, 1fr) auto;
+  gap: calc(6px / var(--zoom, 1)) calc(9px / var(--zoom, 1));
   pointer-events: none;
 }
 
@@ -68,7 +84,7 @@
   display: none;
   min-width: 0;
   align-self: start;
-  color: rgba(255, 255, 255, 0.94);
+  color: rgba(255, 255, 255, 0.95);
   text-align: left;
 }
 
@@ -76,29 +92,39 @@
 .cell-fact b {
   display: block;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  overflow-wrap: anywhere;
+  hyphens: auto;
 }
 
 .cell-fact small {
-  color: rgba(255, 255, 255, 0.57);
-  font-size: 0.43rem;
+  color: rgba(255, 255, 255, 0.58);
+  font-size: calc(0.43rem / var(--zoom, 1));
   font-weight: 760;
-  letter-spacing: 0.035em;
+  letter-spacing: 0.025em;
   line-height: 1.05;
   text-transform: uppercase;
 }
 
 .cell-fact b {
-  margin-top: 1px;
-  font-size: 0.52rem;
+  margin-top: calc(1px / var(--zoom, 1));
+  font-size: calc(0.59rem / var(--zoom, 1));
   line-height: 1.08;
 }
 
+.cell-fact.fact-long b {
+  font-size: calc(0.51rem / var(--zoom, 1));
+}
+
+.cell-fact.fact-very-long b {
+  font-size: calc(0.43rem / var(--zoom, 1));
+  line-height: 1.03;
+}
+
 .fact-mass { grid-column: 3; grid-row: 1; text-align: right; }
-.fact-ciaaw { grid-column: 2; grid-row: 1; text-align: center; }
-.fact-config { grid-column: 1 / -1; grid-row: 1; padding: 0 25%; text-align: center; }
+.fact-config { grid-column: 1 / -1; grid-row: 1; padding: 0 24%; text-align: center; }
 .fact-electronegativity { grid-column: 1; grid-row: 2; align-self: center; }
 .fact-radius { grid-column: 3; grid-row: 2; align-self: center; text-align: right; }
 .fact-ionization { grid-column: 1; grid-row: 3; align-self: center; }
@@ -127,50 +153,42 @@
 .zoom-medium .progressive-element-button .element-core,
 .zoom-deep .progressive-element-button .element-core,
 .zoom-inspect .progressive-element-button .element-core {
-  width: 45%;
+  width: 42%;
 }
 
 .zoom-medium .progressive-element-button .element-core strong,
 .zoom-deep .progressive-element-button .element-core strong,
 .zoom-inspect .progressive-element-button .element-core strong {
-  font-size: 1.75rem !important;
+  font-size: calc(2.05rem / var(--zoom, 1)) !important;
 }
 
-.zoom-deep .cell-science-grid {
-  inset: 7px;
+.zoom-medium .progressive-element-button .element-name,
+.zoom-deep .progressive-element-button .element-name,
+.zoom-inspect .progressive-element-button .element-name {
+  font-size: calc(0.64rem / var(--zoom, 1)) !important;
 }
 
-.zoom-deep .cell-fact small {
-  font-size: 0.39rem;
+.zoom-medium .progressive-element-button .element-name.name-long,
+.zoom-deep .progressive-element-button .element-name.name-long,
+.zoom-inspect .progressive-element-button .element-name.name-long {
+  font-size: calc(0.54rem / var(--zoom, 1)) !important;
 }
 
-.zoom-deep .cell-fact b {
-  font-size: 0.48rem;
+.zoom-medium .progressive-element-button .element-name.name-very-long,
+.zoom-deep .progressive-element-button .element-name.name-very-long,
+.zoom-inspect .progressive-element-button .element-name.name-very-long {
+  font-size: calc(0.45rem / var(--zoom, 1)) !important;
+}
+
+.zoom-medium .progressive-element-button .atomic-number,
+.zoom-deep .progressive-element-button .atomic-number,
+.zoom-inspect .progressive-element-button .atomic-number {
+  font-size: calc(0.68rem / var(--zoom, 1)) !important;
 }
 
 .zoom-inspect .cell-science-grid {
-  inset: 8px;
-  gap: 6px 10px;
-}
-
-.zoom-inspect .progressive-element-button .element-core {
-  width: 38%;
-}
-
-.zoom-inspect .progressive-element-button .element-core strong {
-  font-size: 1.65rem !important;
-}
-
-.zoom-inspect .progressive-element-button .element-name {
-  font-size: 0.55rem !important;
-}
-
-.zoom-inspect .cell-fact small {
-  font-size: 0.35rem;
-}
-
-.zoom-inspect .cell-fact b {
-  font-size: 0.44rem;
+  grid-template-columns: minmax(0, 1.08fr) minmax(0, 1.34fr) minmax(0, 1.08fr);
+  gap: calc(8px / var(--zoom, 1)) calc(12px / var(--zoom, 1));
 }
 
 .cell-data-state,
@@ -178,8 +196,22 @@
   display: none !important;
 }
 
+/* Barra superior coherente: todos los controles son rectos y compactos. */
 .view-tools {
-  gap: 7px;
+  gap: 6px;
+}
+
+.view-tool-button,
+.view-zoom-hud,
+.view-zoom-hud.zoom-reset-chip,
+.layout-mode-button,
+.theme-mode-button {
+  border-radius: 0 !important;
+}
+
+.view-tool-button {
+  width: 41px;
+  height: 41px;
 }
 
 .view-tool-button .info-svg {
@@ -191,13 +223,13 @@
 }
 
 .view-zoom-hud.zoom-reset-chip {
-  min-width: 132px;
-  height: 43px;
+  width: 102px;
+  min-width: 102px;
+  height: 41px;
   display: grid;
   grid-template-columns: 1fr;
   place-items: center;
-  padding: 0 13px;
-  border-radius: 0;
+  padding: 0 8px;
   color: var(--app-ink);
   cursor: pointer;
 }
@@ -212,27 +244,36 @@
 .view-zoom-hud.zoom-reset-chip strong,
 .view-zoom-hud.zoom-reset-chip span {
   display: block;
-  max-width: 112px;
+  max-width: 88px;
   overflow: hidden;
   text-align: center;
-  text-overflow: ellipsis;
+  text-overflow: clip;
   white-space: nowrap;
 }
 
 .view-zoom-hud.zoom-reset-chip strong {
-  font-size: 0.78rem;
+  font-size: 0.75rem;
+  line-height: 1.05;
 }
 
 .view-zoom-hud.zoom-reset-chip span {
+  margin-top: 2px;
   color: var(--text-soft);
-  font-size: 0.61rem;
+  font-size: 0.56rem;
+  line-height: 1;
 }
 
 @media (max-width: 760px) {
-  .view-zoom-hud.zoom-reset-chip {
-    min-width: 82px;
+  .view-tool-button {
+    width: 38px;
     height: 38px;
-    padding: 0 8px;
+  }
+
+  .view-zoom-hud.zoom-reset-chip {
+    width: 74px;
+    min-width: 74px;
+    height: 38px;
+    padding: 0 6px;
   }
 
   .view-zoom-hud.zoom-reset-chip span {
