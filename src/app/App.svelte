@@ -63,9 +63,14 @@
     modalElement = null;
   }
 
-  function addCompared(detail: { symbol: string; scope: ComparisonScope }): void {
-    if (!comparedSymbols.includes(detail.symbol)) comparedSymbols = [...comparedSymbols, detail.symbol];
+  function toggleCompared(detail: { symbol: string; scope: ComparisonScope }): void {
     comparisonScope = detail.scope;
+    if (comparedSymbols.includes(detail.symbol)) {
+      comparedSymbols = comparedSymbols.filter((symbol) => symbol !== detail.symbol);
+      if (!comparedSymbols.length) comparisonScope = 'global';
+      return;
+    }
+    comparedSymbols = [...comparedSymbols, detail.symbol];
   }
 
   function removeCompared(symbol: string): void {
@@ -206,7 +211,7 @@
       element={modalElement}
       {comparedSymbols}
       on:close={closeModal}
-      on:compare={(event) => addCompared(event.detail)}
+      on:compare={(event) => toggleCompared(event.detail)}
     />
   {/if}
 </main>
