@@ -17,7 +17,9 @@ import './styles/filter-panel-v2.css';
 import './styles/visual-consistency.css';
 import './styles/layout-transition-v2.css';
 import './styles/layout-transition-v4.css';
+import './styles/zoom-stability.css';
 import './lib/progressiveCellEnhancer';
+import './lib/zoomRenderStabilizer';
 import App from './app/App.svelte';
 
 const target = document.getElementById('app');
