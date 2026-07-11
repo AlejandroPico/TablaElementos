@@ -3,6 +3,7 @@
   import AtomicStage from './AtomicStage.svelte';
   import DataDomainTable from './DataDomainTable.svelte';
   import ElementPanel from './ElementPanel.svelte';
+  import SpectralLinesTable from './SpectralLinesTable.svelte';
   import SpectrumViewer from './SpectrumViewer.svelte';
   import type {
     ComparisonScope,
@@ -10,12 +11,9 @@
     ElementDataPayload,
     ElementWithLines,
     NistFileStatus,
-    SpectralLine,
     SpectrumMode
   } from '../lib/atomicTypes';
   import { loadElementData } from '../lib/dataLoader';
-  import { getStrongestLines } from '../lib/filters';
-  import { formatEv, formatNm, wavelengthRegion } from '../lib/wavelengthColor';
 
   type TabId = Exclude<ComparisonScope, 'global'>;
 
@@ -24,16 +22,11 @@
   const CONTEXT_IDS = ['history', 'geochemistry', 'astrophysics', 'biology', 'environment', 'industry', 'analytical', 'radiation'];
 
   const tabs: Array<{ id: TabId; label: string }> = [
-    { id: 'summary', label: 'Resumen' },
-    { id: 'atom', label: 'Átomo 3D' },
-    { id: 'properties', label: 'Propiedades' },
-    { id: 'isotopes', label: 'Isótopos' },
-    { id: 'spectrum', label: 'Espectro' },
-    { id: 'lines', label: 'Líneas' },
-    { id: 'levels', label: 'Niveles' },
-    { id: 'chemistry', label: 'Química' },
-    { id: 'context', label: 'Contexto' },
-    { id: 'sources', label: 'Fuentes' }
+    { id: 'summary', label: 'Resumen' }, { id: 'atom', label: 'Átomo 3D' },
+    { id: 'properties', label: 'Propiedades' }, { id: 'isotopes', label: 'Isótopos' },
+    { id: 'spectrum', label: 'Espectro' }, { id: 'lines', label: 'Líneas' },
+    { id: 'levels', label: 'Niveles' }, { id: 'chemistry', label: 'Química' },
+    { id: 'context', label: 'Contexto' }, { id: 'sources', label: 'Fuentes' }
   ];
 
   export let element: ElementWithLines | null = null;
@@ -60,8 +53,6 @@
   }
 
   $: isCompared = element ? comparedSymbols.includes(element.symbol) : false;
-  $: strongestLines = element ? getStrongestLines(element.lines, 8) : [];
-  $: strongestLineIds = new Set(strongestLines.map(lineId));
   $: availableDomains = elementData ? Object.values(elementData.domains).filter((domain) => domain.available) : [];
   $: hasNistProblem = Boolean(
     element?.nist &&
@@ -94,14 +85,6 @@
     if (event.currentTarget === event.target) dispatch('close');
   }
 
-  function energyJump(line: SpectralLine): number {
-    return line.upper_level_ev - line.lower_level_ev;
-  }
-
-  function lineId(line: SpectralLine): string {
-    return [line.species, Number(line.wavelength_nm).toFixed(6), line.transition, line.label].join('|');
-  }
-
   function statusLabel(file: NistFileStatus): string {
     if (!file.present) return 'No encontrado';
     if (file.table_like) return 'CSV tabular válido';
@@ -118,12 +101,8 @@
       .filter((domain): domain is ElementDataDomain => Boolean(domain?.available));
   }
 
-  function compare(scope: ComparisonScope): void {
-    if (element) dispatch('compare', { symbol: element.symbol, scope });
-  }
-
-  function currentTabLabel(): string {
-    return tabs.find((tab) => tab.id === activeTab)?.label ?? 'sección';
+  function compareCurrent(): void {
+    if (element) dispatch('compare', { symbol: element.symbol, scope: activeTab });
   }
 </script>
 
@@ -140,21 +119,31 @@
           </div>
         </div>
 
-        <div class="modal-actions comparison-actions">
-          <button class:active={isCompared} type="button" on:click={() => compare('global')}>Comparar todo</button>
-          <button type="button" on:click={() => compare(activeTab)}>Comparar {currentTabLabel()}</button>
-          <button class="close-button" type="button" on:click={() => dispatch('close')} aria-label="Cerrar ficha">×</button>
+        <div class="modal-actions icon-modal-actions">
+          <button
+            class:active={isCompared}
+            class="modal-icon-button compare-icon-button"
+            type="button"
+            on:click={compareCurrent}
+            aria-label={isCompared ? `Quitar ${element.name_es} del comparador` : `Comparar ${element.name_es}`}
+            title={isCompared ? 'Quitar del comparador' : `Comparar desde ${tabs.find((tab) => tab.id === activeTab)?.label ?? 'esta sección'}`}
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="3.5" y="5" width="7" height="14"></rect><rect x="13.5" y="5" width="7" height="14"></rect>
+              <path d="M10.5 9h3M10.5 15h3"></path>
+            </svg>
+          </button>
+          <button class="modal-icon-button close-button" type="button" on:click={() => dispatch('close')} aria-label="Cerrar ficha" title="Cerrar">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 5l14 14M19 5 5 19"></path></svg>
+          </button>
         </div>
       </header>
 
       <nav class="modal-tabs master-tabs" aria-label="Secciones de la ficha maestra">
         {#each tabs as tab}
-          <button
-            class:active={activeTab === tab.id}
-            class:problem={tab.id === 'sources' && hasNistProblem}
-            type="button"
-            on:click={() => (activeTab = tab.id)}
-          >{tab.label}{tab.id === 'sources' && hasNistProblem ? ' · revisar' : ''}</button>
+          <button class:active={activeTab === tab.id} class:problem={tab.id === 'sources' && hasNistProblem} type="button" on:click={() => (activeTab = tab.id)}>
+            {tab.label}{tab.id === 'sources' && hasNistProblem ? ' · revisar' : ''}
+          </button>
         {/each}
       </nav>
 
@@ -162,7 +151,7 @@
         {#if dataError}<p class="empty-copy modal-data-error">{dataError}</p>{/if}
 
         {#if activeTab === 'summary'}
-          <div class="tab-pane tab-scroll"><ElementPanel {element} {elementData} {loadingData} /></div>
+          <div class="tab-pane summary-pane"><ElementPanel {element} {elementData} {loadingData} /></div>
         {:else if activeTab === 'atom'}
           <div class="tab-pane atom-tab"><AtomicStage {element} {elementData} /></div>
         {:else if activeTab === 'properties'}
@@ -173,7 +162,7 @@
         {:else if activeTab === 'isotopes'}
           <div class="tab-pane table-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando isótopos…</p></div>
-            {:else}<DataDomainTable domain={elementData?.domains.isotopes ?? null} pageSize={22} />{/if}
+            {:else}<DataDomainTable domain={elementData?.domains.isotopes ?? null} fitHeight={true} pageSize={18} />{/if}
           </div>
         {:else if activeTab === 'spectrum'}
           <div class="tab-pane spectrum-workspace">
@@ -187,24 +176,11 @@
             <SpectrumViewer lines={element.lines} {mode} title={`${element.name_es} (${element.symbol})`} />
           </div>
         {:else if activeTab === 'lines'}
-          <div class="tab-pane table-pane spectral-lines-panel">
-            {#if strongestLines.length}
-              <div class="featured-lines" aria-label="Líneas espectrales más intensas">
-                <p>Líneas destacadas</p>
-                <div>{#each strongestLines as line}<span class="featured-line"><i style={`--line-color:${line.approximate_color};`}></i><b>{formatNm(line.wavelength_nm)}</b><small>{line.label}</small></span>{/each}</div>
-              </div>
-            {/if}
-            <div class="technical-table modal-table single-scroll-table">
-              <table>
-                <thead><tr><th>Línea</th><th>Especie</th><th>λ</th><th>Región</th><th>Intensidad</th><th>Nivel inferior</th><th>Nivel superior</th><th>ΔE</th><th>Transición</th></tr></thead>
-                <tbody>{#each element.lines as line}<tr class:featured={strongestLineIds.has(lineId(line))}><td>{line.label}</td><td>{line.species}</td><td>{formatNm(line.wavelength_nm)}</td><td>{wavelengthRegion(line.wavelength_nm)}</td><td>{line.intensity.toFixed(2)}</td><td>{formatEv(line.lower_level_ev)}</td><td>{formatEv(line.upper_level_ev)}</td><td>{formatEv(energyJump(line))}</td><td>{line.transition}</td></tr>{/each}</tbody>
-              </table>
-            </div>
-          </div>
+          <div class="tab-pane table-pane"><SpectralLinesTable lines={element.lines} /></div>
         {:else if activeTab === 'levels'}
           <div class="tab-pane table-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando niveles…</p></div>
-            {:else}<DataDomainTable domain={elementData?.domains.nist_levels ?? null} pageSize={22} />{/if}
+            {:else}<DataDomainTable domain={elementData?.domains.nist_levels ?? null} fitHeight={true} pageSize={18} />{/if}
           </div>
         {:else if activeTab === 'chemistry'}
           <div class="tab-pane tab-scroll domain-list-pane">
@@ -217,12 +193,27 @@
             {:else}{#each domainList(CONTEXT_IDS) as domain}<DataDomainTable {domain} />{/each}{/if}
           </div>
         {:else if activeTab === 'sources'}
-          <div class="tab-pane tab-scroll sources-pane">
+          <div class="tab-pane tab-scroll sources-pane compact-sources-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando fuentes…</p></div>
             {:else}
-              <section class="dataset-coverage-panel"><header><div><p class="eyebrow">Información interna</p><h2>Cobertura del dataset local</h2></div><strong>{availableDomains.length} archivos con datos</strong></header><div class="dataset-coverage-rows">{#each availableDomains as domain}<div><span>{domain.label}</span><b>{domain.row_count.toLocaleString('es-ES')} registros</b></div>{/each}</div></section>
+              <section class="dataset-coverage-panel compact-dataset-coverage">
+                <header class="inline-summary-header"><div><strong>Cobertura local</strong><span>—</span><small>{availableDomains.length} archivos con datos</small></div></header>
+                <div class="dataset-coverage-rows">{#each availableDomains as domain}<div><span>{domain.label}</span><b>{domain.row_count.toLocaleString('es-ES')}</b></div>{/each}</div>
+              </section>
               <DataDomainTable domain={elementData?.domains.sources ?? null} />
-              <section class="modal-data-card nist-panel"><div class="section-title-row compact"><div><p class="eyebrow">Procedencia y validación</p><h2>Estado de los archivos NIST</h2></div><span class="range-pill">{element.nist?.imported_line_count ?? 0} líneas</span></div>{#if hasNistProblem}<p class="nist-inline-warning">Alguno de los archivos NIST no tiene estructura tabular válida.</p>{/if}{#if element.nist}<div class="nist-status-grid">{#each nistFiles as file}<article class:problem={file.item.present && !file.item.table_like} class="nist-status-card"><header><strong>{file.label}</strong><span>{statusLabel(file.item)}</span></header><dl><div><dt>Archivo</dt><dd>{file.item.file}</dd></div><div><dt>Filas</dt><dd>{file.item.row_count.toLocaleString('es-ES')}</dd></div><div><dt>Columnas</dt><dd>{file.item.columns.length ? file.item.columns.slice(0, 8).join(', ') : '—'}</dd></div></dl><p>{file.item.notes}</p></article>{/each}</div>{/if}</section>
+              <section class="nist-compact-panel">
+                <header class="inline-summary-header"><div><strong>Validación NIST</strong><span>—</span><small>{element.nist?.imported_line_count ?? 0} líneas interpretadas</small></div></header>
+                {#if hasNistProblem}<p class="nist-inline-warning">Alguno de los archivos NIST no tiene estructura tabular válida.</p>{/if}
+                {#if element.nist}
+                  <div class="nist-status-list">
+                    {#each nistFiles as file}
+                      <div class:problem={file.item.present && !file.item.table_like}>
+                        <strong>{file.label}</strong><span>{statusLabel(file.item)}</span><small>{file.item.row_count.toLocaleString('es-ES')} filas · {file.item.columns.length} columnas</small>
+                      </div>
+                    {/each}
+                  </div>
+                {/if}
+              </section>
             {/if}
           </div>
         {/if}
