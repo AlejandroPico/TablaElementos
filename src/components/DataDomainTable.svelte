@@ -97,13 +97,19 @@
     if (next !== measuredPageSize) measuredPageSize = next;
   }
 
-  afterUpdate(scheduleMeasurement);
+  function refreshMeasurementTargets(): void {
+    if (resizeObserver) {
+      if (sectionElement) resizeObserver.observe(sectionElement);
+      if (tableViewport) resizeObserver.observe(tableViewport);
+    }
+    scheduleMeasurement();
+  }
+
+  afterUpdate(refreshMeasurementTargets);
 
   onMount(() => {
     resizeObserver = new ResizeObserver(scheduleMeasurement);
-    resizeObserver.observe(sectionElement);
-    if (tableViewport) resizeObserver.observe(tableViewport);
-    scheduleMeasurement();
+    refreshMeasurementTargets();
     return () => {
       cancelAnimationFrame(measurementFrame);
       resizeObserver?.disconnect();
