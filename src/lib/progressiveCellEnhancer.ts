@@ -52,11 +52,18 @@ function clean(value: unknown): string {
   return text || '—';
 }
 
-function lengthClass(value: string, prefix: string): string {
+function factLengthClass(value: string): string {
   const length = value.replace(/\s+/g, '').length;
-  if (length >= 25) return `${prefix}-very-long`;
-  if (length >= 16) return `${prefix}-long`;
-  return `${prefix}-normal`;
+  if (length >= 25) return 'fact-very-long';
+  if (length >= 16) return 'fact-long';
+  return 'fact-normal';
+}
+
+function nameLengthClass(value: string): string {
+  const length = value.trim().length;
+  if (length >= 12) return 'name-very-long';
+  if (length >= 9) return 'name-long';
+  return 'name-normal';
 }
 
 function factsFor(
@@ -87,7 +94,7 @@ function addFact(
   value: string
 ): void {
   const item = document.createElement('span');
-  item.className = `cell-fact fact-${className} level-${level} ${lengthClass(value, 'fact')}`;
+  item.className = `cell-fact fact-${className} level-${level} ${factLengthClass(value)}`;
   item.title = `${label}: ${value}`;
 
   const caption = document.createElement('small');
@@ -116,7 +123,7 @@ function decorateCell(
   const core = button.querySelector<HTMLElement>('.element-core');
   const name = button.querySelector<HTMLElement>('.element-name');
   if (name) {
-    name.classList.add(lengthClass(name.textContent ?? '', 'name'));
+    name.classList.add(nameLengthClass(name.textContent ?? ''));
     name.title = name.textContent?.trim() ?? '';
   }
   if (core && name && name.parentElement !== core) core.append(name);
