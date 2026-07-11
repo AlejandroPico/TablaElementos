@@ -1,10 +1,11 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import ElementFilterPanel from './ElementFilterPanel.svelte';
+  import ElementFilterPanelV2 from './ElementFilterPanelV2.svelte';
   import PeriodicInfoGuideExpanded from './PeriodicInfoGuideExpanded.svelte';
 
   type TableMode = 'short' | 'long';
   type ThemeMode = 'auto' | 'light' | 'dark';
+  type ResolvedTheme = 'light' | 'dark';
 
   export let zoomPercent = 100;
   export let zoomLevel = 'Vista general';
@@ -14,6 +15,7 @@
   export let tableMode: TableMode = 'short';
   export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
+  export let resolvedTheme: ResolvedTheme = 'dark';
 
   let guideOpen = false;
   let internalInfoOpen = false;
@@ -32,7 +34,13 @@
   function themeLabel(): string {
     if (themeMode === 'light') return 'Tema claro';
     if (themeMode === 'dark') return 'Tema oscuro';
-    return 'Tema automático';
+    return `Tema automático · ahora ${resolvedTheme === 'dark' ? 'oscuro' : 'claro'}`;
+  }
+
+  function themeTooltip(): string {
+    if (themeMode === 'auto') return `${themeLabel()}. Siguiente: tema claro.`;
+    if (themeMode === 'light') return 'Tema claro. Siguiente: tema oscuro.';
+    return 'Tema oscuro. Siguiente: tema automático.';
   }
 
   function handleFilterClick(): void {
@@ -71,8 +79,8 @@
   <button
     class="view-tool-button theme-mode-button"
     type="button"
-    title={`${themeLabel()}. Pulsar para cambiar.`}
-    aria-label={`${themeLabel()}. Cambiar tema.`}
+    data-tooltip={themeTooltip()}
+    aria-label={themeTooltip()}
     on:click={() => dispatch('theme')}
   >
     {#if themeMode === 'light'}
@@ -97,8 +105,8 @@
     class:active={filterOpen || activeFilterCount > 0}
     class="view-tool-button filter-tool-button"
     type="button"
-    title={activeFilterCount ? `${activeFilterCount} grupos de filtros activos · ${filterMatches} coincidencias` : 'Abrir filtros científicos'}
-    aria-label={activeFilterCount ? `Abrir filtros. ${activeFilterCount} grupos activos y ${filterMatches} elementos coincidentes.` : 'Abrir filtros científicos'}
+    title={activeFilterCount ? `${activeFilterCount} criterios activos · ${filterMatches} coincidencias` : 'Abrir filtros científicos'}
+    aria-label={activeFilterCount ? `Abrir filtros. ${activeFilterCount} criterios activos y ${filterMatches} elementos coincidentes.` : 'Abrir filtros científicos'}
     on:click={handleFilterClick}
   >
     <svg class="filter-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -150,7 +158,7 @@
     <div class="view-info-copy">
       <p><strong>Distribución:</strong> {tableMode === 'short' ? 'corta, 18 columnas' : 'larga, 32 columnas'}.</p>
       <p><strong>Tema:</strong> {themeLabel().toLowerCase()}.</p>
-      <p><strong>Filtros:</strong> {activeFilterCount ? `${activeFilterCount} grupos; ${filterMatches} coincidencias` : 'ninguno'}.</p>
+      <p><strong>Filtros:</strong> {activeFilterCount ? `${activeFilterCount} criterios; ${filterMatches} coincidencias` : 'ninguno'}.</p>
       <p><strong>Rueda:</strong> cámara GPU continua y centrada en el cursor.</p>
       <p><strong>Arrastre:</strong> desplaza el escenario, incluso comenzando sobre una ficha.</p>
       <p><strong>Doble clic o porcentaje:</strong> vuelve a encajar la tabla completa.</p>
@@ -158,7 +166,7 @@
   </aside>
 {/if}
 
-<ElementFilterPanel
+<ElementFilterPanelV2
   open={filterOpen}
   on:close={() => (filterOpen = false)}
   on:change={(event) => {
