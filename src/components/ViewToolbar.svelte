@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import ElementFilterPanel from './ElementFilterPanel.svelte';
   import PeriodicInfoGuideExpanded from './PeriodicInfoGuideExpanded.svelte';
 
   type TableMode = 'short' | 'long';
@@ -16,6 +17,9 @@
 
   let guideOpen = false;
   let internalInfoOpen = false;
+  let filterOpen = false;
+  let activeFilterCount = 0;
+  let filterMatches = 0;
 
   const dispatch = createEventDispatcher<{
     zoomin: void;
@@ -31,7 +35,14 @@
     return 'Tema automático';
   }
 
+  function handleFilterClick(): void {
+    filterOpen = !filterOpen;
+    guideOpen = false;
+    internalInfoOpen = false;
+  }
+
   function handleInfoClick(event: MouseEvent): void {
+    filterOpen = false;
     if (event.altKey) {
       internalInfoOpen = !internalInfoOpen;
       guideOpen = false;
@@ -83,6 +94,20 @@
   </button>
 
   <button
+    class:active={filterOpen || activeFilterCount > 0}
+    class="view-tool-button filter-tool-button"
+    type="button"
+    title={activeFilterCount ? `${activeFilterCount} grupos de filtros activos · ${filterMatches} coincidencias` : 'Abrir filtros científicos'}
+    aria-label={activeFilterCount ? `Abrir filtros. ${activeFilterCount} grupos activos y ${filterMatches} elementos coincidentes.` : 'Abrir filtros científicos'}
+    on:click={handleFilterClick}
+  >
+    <svg class="filter-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3 5h18l-7 8v5.5l-4 2V13L3 5Z"></path>
+    </svg>
+    {#if activeFilterCount > 0}<span class="filter-count" aria-hidden="true">{activeFilterCount}</span>{/if}
+  </button>
+
+  <button
     class:active={guideOpen || internalInfoOpen}
     class="view-tool-button"
     type="button"
@@ -125,11 +150,21 @@
     <div class="view-info-copy">
       <p><strong>Distribución:</strong> {tableMode === 'short' ? 'corta, 18 columnas' : 'larga, 32 columnas'}.</p>
       <p><strong>Tema:</strong> {themeLabel().toLowerCase()}.</p>
+      <p><strong>Filtros:</strong> {activeFilterCount ? `${activeFilterCount} grupos; ${filterMatches} coincidencias` : 'ninguno'}.</p>
       <p><strong>Rueda:</strong> cámara GPU continua y centrada en el cursor.</p>
       <p><strong>Arrastre:</strong> desplaza el escenario, incluso comenzando sobre una ficha.</p>
       <p><strong>Doble clic o porcentaje:</strong> vuelve a encajar la tabla completa.</p>
     </div>
   </aside>
 {/if}
+
+<ElementFilterPanel
+  open={filterOpen}
+  on:close={() => (filterOpen = false)}
+  on:change={(event) => {
+    activeFilterCount = event.detail.active;
+    filterMatches = event.detail.matches;
+  }}
+/>
 
 <PeriodicInfoGuideExpanded open={guideOpen} on:close={() => (guideOpen = false)} />
