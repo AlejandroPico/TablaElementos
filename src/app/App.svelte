@@ -6,6 +6,7 @@
   import ViewToolbar from '../components/ViewToolbar.svelte';
   import type { ComparisonScope, ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
+  import { animatePeriodicLayout } from '../lib/layoutTransitionV4';
 
   type TableMode = 'short' | 'long';
   type ThemeMode = 'auto' | 'light' | 'dark';
@@ -82,18 +83,23 @@
   async function toggleTableMode(): Promise<void> {
     if (layoutBusy) return;
 
-    const target: TableMode = tableMode === 'short' ? 'long' : 'short';
+    const source = tableMode;
+    const target: TableMode = source === 'short' ? 'long' : 'short';
     layoutBusy = true;
 
     try {
-      await Promise.resolve(gridView?.transitionTo?.(target));
+      await animatePeriodicLayout({
+        source,
+        target,
+        fitToViewport: (animated, stage) => gridView?.fitToViewport?.(animated, stage)
+      });
       tableMode = target;
     } catch (error) {
-      console.warn('[TablaElementos] No se pudo completar la transición; se aplicará el modo final.', error);
+      console.warn('[TablaElementos] No se pudo completar la transición animada; se aplicará el modo final.', error);
       tableMode = target;
       await Promise.resolve(gridView?.fitToViewport?.(false, target));
     } finally {
-      window.setTimeout(() => (layoutBusy = false), 90);
+      window.setTimeout(() => (layoutBusy = false), 120);
     }
   }
 
