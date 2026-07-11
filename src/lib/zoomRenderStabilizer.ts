@@ -1,3 +1,5 @@
+export {};
+
 let gridObserver: MutationObserver | null = null;
 let documentObserver: MutationObserver | null = null;
 let attachedGrid: HTMLElement | null = null;
@@ -51,7 +53,7 @@ function locateGrid(): void {
   if (grid) attachToGrid(grid);
 }
 
-function start(): void {
+function startZoomRenderStabilizer(): void {
   locateGrid();
   documentObserver = new MutationObserver(locateGrid);
   documentObserver.observe(document.documentElement, {
@@ -61,9 +63,9 @@ function start(): void {
 }
 
 if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', start, { once: true });
+  document.addEventListener('DOMContentLoaded', startZoomRenderStabilizer, { once: true });
 } else {
-  start();
+  startZoomRenderStabilizer();
 }
 
 window.addEventListener('beforeunload', () => {
