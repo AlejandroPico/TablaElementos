@@ -188,6 +188,7 @@
       {tableMode}
       {layoutBusy}
       {themeMode}
+      {resolvedTheme}
       on:zoomin={() => gridView?.zoomIn()}
       on:zoomout={() => gridView?.zoomOut()}
       on:reset={() => gridView?.resetView()}
