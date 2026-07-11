@@ -52,6 +52,13 @@ function clean(value: unknown): string {
   return text || '—';
 }
 
+function lengthClass(value: string, prefix: string): string {
+  const length = value.replace(/\s+/g, '').length;
+  if (length >= 25) return `${prefix}-very-long`;
+  if (length >= 16) return `${prefix}-long`;
+  return `${prefix}-normal`;
+}
+
 function factsFor(
   element: LightweightElementRecord,
   index: LightweightDataIndex | undefined
@@ -80,7 +87,7 @@ function addFact(
   value: string
 ): void {
   const item = document.createElement('span');
-  item.className = `cell-fact fact-${className} level-${level}`;
+  item.className = `cell-fact fact-${className} level-${level} ${lengthClass(value, 'fact')}`;
   item.title = `${label}: ${value}`;
 
   const caption = document.createElement('small');
@@ -108,6 +115,10 @@ function decorateCell(
 
   const core = button.querySelector<HTMLElement>('.element-core');
   const name = button.querySelector<HTMLElement>('.element-name');
+  if (name) {
+    name.classList.add(lengthClass(name.textContent ?? '', 'name'));
+    name.title = name.textContent?.trim() ?? '';
+  }
   if (core && name && name.parentElement !== core) core.append(name);
 
   const facts = factsFor(element, index);
