@@ -44,6 +44,7 @@
 /* Las referencias del bloque f son fichas informativas, no conectores incompletos. */
 .series-placeholder {
   pointer-events: auto !important;
+  overflow: visible !important;
   padding: 7px 5px !important;
   border-style: solid !important;
   border-radius: 0 !important;
