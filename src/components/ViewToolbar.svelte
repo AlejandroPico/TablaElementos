@@ -1,6 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
-  import PeriodicInfoGuide from './PeriodicInfoGuide.svelte';
+  import PeriodicInfoGuideExpanded from './PeriodicInfoGuideExpanded.svelte';
 
   type TableMode = 'short' | 'long';
   type ThemeMode = 'auto' | 'light' | 'dark';
@@ -132,4 +132,4 @@
   </aside>
 {/if}
 
-<PeriodicInfoGuide open={guideOpen} on:close={() => (guideOpen = false)} />
+<PeriodicInfoGuideExpanded open={guideOpen} on:close={() => (guideOpen = false)} />
