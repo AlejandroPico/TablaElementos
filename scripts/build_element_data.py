@@ -1,8 +1,10 @@
 #!/usr/bin/env python3
 """Genera un JSON perezoso por elemento y amplía el índice principal.
 
-Se ejecuta después de ``scripts/build_data.py``. No duplica todos los CSV dentro
-del índice inicial: cada ficha descarga únicamente ``data/elements/<símbolo>.json``.
+Se ejecuta después de ``scripts/build_data.py``. Cada ficha descarga únicamente
+``data/elements/<símbolo>.json``. El índice inicial conserva además un resumen
+ligero de propiedades para alimentar las casillas durante el zoom sin cargar los
+CSV completos de los 118 elementos.
 """
 
 from __future__ import annotations
@@ -39,6 +41,20 @@ DOMAINS: tuple[tuple[str, str, str], ...] = (
     ("industry", "industry_economy.csv", "Industria y economía"),
     ("history", "history.csv", "Historia"),
     ("sources", "sources.csv", "Fuentes"),
+)
+
+SUMMARY_FIELDS: tuple[tuple[str, str, str], ...] = (
+    ("atomic_mass", "atomic", "atomic_mass"),
+    ("standard_atomic_weight", "atomic", "standard_atomic_weight"),
+    ("electron_configuration", "atomic", "electron_configuration"),
+    ("electronegativity", "atomic", "electronegativity"),
+    ("atomic_radius", "atomic", "atomic_radius"),
+    ("ionization_energy", "atomic", "ionization_energy"),
+    ("electron_affinity", "atomic", "electron_affinity"),
+    ("standard_state", "physical", "standard_state"),
+    ("density", "physical", "density"),
+    ("melting_point", "physical", "melting_point"),
+    ("boiling_point", "physical", "boiling_point"),
 )
 
 
@@ -88,6 +104,33 @@ def read_domain(folder: Path, domain_id: str, filename: str, label: str) -> dict
     return result
 
 
+def property_value(domains: dict[str, dict[str, Any]], domain_id: str, property_name: str) -> str:
+    domain = domains.get(domain_id, {})
+    for row in domain.get("rows", []):
+        if clean(row.get("property")) != property_name:
+            continue
+        value = clean(row.get("value"))
+        unit = clean(row.get("unit"))
+        if not value:
+            return ""
+        return f"{value} {unit}".strip()
+    return ""
+
+
+def summary_values(domains: dict[str, dict[str, Any]]) -> dict[str, str]:
+    values = {
+        output_name: property_value(domains, domain_id, property_name)
+        for output_name, domain_id, property_name in SUMMARY_FIELDS
+    }
+
+    if not values.get("standard_state"):
+        identity_rows = domains.get("identity", {}).get("rows", [])
+        if identity_rows:
+            values["standard_state"] = clean(identity_rows[0].get("standard_state"))
+
+    return values
+
+
 def write_json(path: Path, payload: Any, *, compact: bool = True) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
     if compact:
@@ -109,8 +152,8 @@ def enrich_index(index_path: Path, manifest: list[dict[str, str]], data_index: d
         if row.get("period"):
             element["period"] = int(row["period"])
     payload["data_index_by_element"] = data_index
-    payload.setdefault("metadata", {})["element_data_strategy"] = "one-json-per-element"
-    payload["metadata"]["dataset"] = "elements-v5-lazy-domains"
+    payload.setdefault("metadata", {})["element_data_strategy"] = "one-json-per-element-with-light-summary"
+    payload["metadata"]["dataset"] = "elements-v6-progressive-cells"
     write_json(index_path, payload)
 
 
@@ -142,6 +185,7 @@ def main() -> None:
             "available_domains": available,
             "domain_counts": {domain_id: domain["row_count"] for domain_id, domain in domains.items()},
             "available_file_count": len(available),
+            "summary_values": summary_values(domains),
         }
 
     enrich_index(PROCESSED / "spectra.sample.json", manifest, data_index)
@@ -149,6 +193,7 @@ def main() -> None:
 
     populated = sum(1 for item in data_index.values() if item["available_file_count"])
     print(f"Datos detallados generados para 118 elementos; {populated} contienen al menos un bloque con registros.")
+    print("El índice inicial incluye propiedades resumidas para el zoom progresivo.")
     print(f"- {public_elements.relative_to(ROOT)}/<símbolo>.json")
 
 
