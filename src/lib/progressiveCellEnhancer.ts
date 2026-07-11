@@ -17,7 +17,6 @@ interface LightweightDataset {
 
 interface CellFacts {
   atomicMass: string;
-  ciaaw: string;
   configuration: string;
   electronegativity: string;
   radius: string;
@@ -59,8 +58,7 @@ function factsFor(
 ): CellFacts {
   const values = index?.summary_values ?? {};
   return {
-    atomicMass: clean(values.atomic_mass || values.standard_atomic_weight),
-    ciaaw: clean(values.standard_atomic_weight),
+    atomicMass: clean(values.standard_atomic_weight || values.atomic_mass),
     configuration: clean(values.electron_configuration),
     electronegativity: clean(values.electronegativity),
     radius: clean(values.atomic_radius),
@@ -125,7 +123,6 @@ function decorateCell(
   addFact(grid, 'radius', 'deep', 'Radio atómico', facts.radius);
   addFact(grid, 'density', 'deep', 'Densidad', facts.density);
 
-  addFact(grid, 'ciaaw', 'inspect', 'Peso CIAAW', facts.ciaaw);
   addFact(grid, 'ionization', 'inspect', 'Ionización', facts.ionization);
   addFact(grid, 'affinity', 'inspect', 'Afinidad electrónica', facts.affinity);
   addFact(grid, 'thermal', 'inspect', 'Fusión / ebullición', facts.thermal);
