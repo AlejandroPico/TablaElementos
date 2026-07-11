@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
+  import PeriodicInfoGuide from './PeriodicInfoGuide.svelte';
 
   type TableMode = 'short' | 'long';
   type ThemeMode = 'auto' | 'light' | 'dark';
@@ -13,7 +14,8 @@
   export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
 
-  let infoOpen = false;
+  let guideOpen = false;
+  let internalInfoOpen = false;
 
   const dispatch = createEventDispatcher<{
     zoomin: void;
@@ -27,6 +29,17 @@
     if (themeMode === 'light') return 'Tema claro';
     if (themeMode === 'dark') return 'Tema oscuro';
     return 'Tema automático';
+  }
+
+  function handleInfoClick(event: MouseEvent): void {
+    if (event.altKey) {
+      internalInfoOpen = !internalInfoOpen;
+      guideOpen = false;
+      return;
+    }
+
+    guideOpen = !guideOpen;
+    internalInfoOpen = false;
   }
 </script>
 
@@ -70,38 +83,37 @@
   </button>
 
   <button
-    class:active={infoOpen}
+    class:active={guideOpen || internalInfoOpen}
     class="view-tool-button"
     type="button"
-    title="Información de la vista"
-    aria-label="Mostrar información de la vista"
-    on:click={() => (infoOpen = !infoOpen)}
+    title="Guía completa de la tabla. Alt + clic: diagnóstico interno."
+    aria-label="Abrir guía de la tabla periódica. Alt más clic abre el diagnóstico interno."
+    on:click={handleInfoClick}
   >
-    <span class="info-icon" aria-hidden="true">i</span>
+    <svg class="info-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <circle cx="12" cy="12" r="9"></circle>
+      <path d="M12 10v7"></path>
+      <path d="M12 7h.01"></path>
+    </svg>
   </button>
 
   <button
-    class="view-tool-button"
+    class="view-zoom-hud zoom-reset-chip"
     type="button"
     title="Restablecer y encajar la tabla"
-    aria-label="Restablecer zoom, posición y encaje"
+    aria-label={`Zoom ${zoomPercent} por ciento. ${zoomLevel}. Pulsar para restablecer la vista.`}
     on:click={() => dispatch('reset')}
   >
-    <span class="reset-icon" aria-hidden="true">↺</span>
+    <strong>{zoomPercent}%</strong>
+    <span>{zoomLevel}</span>
   </button>
-
-  <div class="view-zoom-hud" aria-label="Control de zoom">
-    <button type="button" aria-label="Alejar" on:click={() => dispatch('zoomout')}>−</button>
-    <div><strong>{zoomPercent}%</strong><span>{zoomLevel}</span></div>
-    <button type="button" aria-label="Acercar" on:click={() => dispatch('zoomin')}>+</button>
-  </div>
 </div>
 
-{#if infoOpen}
-  <aside class="view-info-popover" aria-label="Información de Tabla elementos">
+{#if internalInfoOpen}
+  <aside class="view-info-popover internal-diagnostics" aria-label="Diagnóstico interno de Tabla elementos">
     <header>
-      <div><p>Tabla elementos</p><strong>Vista científica progresiva</strong></div>
-      <button type="button" aria-label="Cerrar información" on:click={() => (infoOpen = false)}>×</button>
+      <div><p>Diagnóstico interno</p><strong>Vista científica progresiva</strong></div>
+      <button type="button" aria-label="Cerrar diagnóstico" on:click={() => (internalInfoOpen = false)}>×</button>
     </header>
 
     <div class="view-info-stats">
@@ -115,7 +127,9 @@
       <p><strong>Tema:</strong> {themeLabel().toLowerCase()}.</p>
       <p><strong>Rueda:</strong> cámara GPU continua y centrada en el cursor.</p>
       <p><strong>Arrastre:</strong> desplaza el escenario, incluso comenzando sobre una ficha.</p>
-      <p><strong>Doble clic:</strong> vuelve a encajar la tabla completa.</p>
+      <p><strong>Doble clic o porcentaje:</strong> vuelve a encajar la tabla completa.</p>
     </div>
   </aside>
 {/if}
+
+<PeriodicInfoGuide open={guideOpen} on:close={() => (guideOpen = false)} />
