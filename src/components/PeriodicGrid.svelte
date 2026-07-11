@@ -4,17 +4,24 @@
 
   type TableLayout = 'short' | 'opening' | 'long';
   type LayoutAnimationStage = 'spread' | 'series-in' | 'series-out' | 'collapse';
-
-  interface RectSnapshot {
-    left: number;
-    top: number;
-    width: number;
-    height: number;
-  }
+  type SeriesKind = '' | 'lanthanide' | 'actinide';
 
   interface GridPosition {
     column: number;
     row: number;
+  }
+
+  interface LayoutSnapshot {
+    key: string;
+    left: number;
+    top: number;
+    width: number;
+    height: number;
+    className: string;
+    html: string;
+    tagName: string;
+    atomicNumber: number;
+    group: number;
   }
 
   export let elements: ElementWithLines[] = [];
@@ -30,6 +37,7 @@
   let viewportElement: HTMLDivElement;
   let panElement: HTMLDivElement;
   let gridElement: HTMLDivElement;
+  let transitionOverlay: HTMLDivElement;
 
   let zoom = 1;
   let targetZoom = 1;
@@ -53,6 +61,7 @@
   let dragOriginY = 0;
   let pressedSymbol = '';
   let suppressClickUntil = 0;
+  let seriesFocus: SeriesKind = '';
 
   $: zoomClass =
     committedZoom >= 7.5
@@ -239,6 +248,7 @@
   }
 
   function handleWheel(event: WheelEvent): void {
+    if (viewportElement.classList.contains('layout-animating')) return;
     event.preventDefault();
     const rect = viewportElement.getBoundingClientRect();
     const anchorX = event.clientX - rect.left - rect.width / 2;
@@ -253,6 +263,7 @@
   }
 
   function startDrag(event: PointerEvent): void {
+    if (viewportElement.classList.contains('layout-animating')) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
 
     event.preventDefault();
@@ -272,7 +283,6 @@
 
     const deltaX = event.clientX - dragStartX;
     const deltaY = event.clientY - dragStartY;
-
     if (!dragActivated && Math.hypot(deltaX, deltaY) < DRAG_THRESHOLD_PX) return;
 
     if (!dragActivated) {
@@ -371,6 +381,21 @@
     return shortPosition(element);
   }
 
+  function isLanthanide(atomicNumber: number): boolean {
+    return atomicNumber >= 57 && atomicNumber <= 71;
+  }
+
+  function isActinide(atomicNumber: number): boolean {
+    return atomicNumber >= 89 && atomicNumber <= 103;
+  }
+
+  function isFocusedSeries(atomicNumber: number): boolean {
+    return (
+      (seriesFocus === 'lanthanide' && isLanthanide(atomicNumber)) ||
+      (seriesFocus === 'actinide' && isActinide(atomicNumber))
+    );
+  }
+
   function fitScale(): number {
     if (!viewportElement || !gridElement) return 1;
     const rect = gridElement.getBoundingClientRect();
@@ -413,86 +438,184 @@
     void fitToViewport(true);
   }
 
-  export function captureElementRects(): Record<string, RectSnapshot> {
-    const snapshots: Record<string, RectSnapshot> = {};
-    gridElement
-      ?.querySelectorAll<HTMLElement>('[data-element-symbol]')
-      .forEach((cell) => {
-        const symbol = cell.dataset.elementSymbol;
-        if (!symbol) return;
-        const rect = cell.getBoundingClientRect();
-        snapshots[symbol] = {
-          left: rect.left,
-          top: rect.top,
-          width: rect.width,
-          height: rect.height
-        };
-      });
+  function layoutNodes(): HTMLElement[] {
+    return Array.from(gridElement?.querySelectorAll<HTMLElement>('[data-layout-key]') ?? []);
+  }
+
+  export function captureElementRects(): Record<string, LayoutSnapshot> {
+    const snapshots: Record<string, LayoutSnapshot> = {};
+    layoutNodes().forEach((node) => {
+      const key = node.dataset.layoutKey;
+      if (!key) return;
+      const rect = node.getBoundingClientRect();
+      snapshots[key] = {
+        key,
+        left: rect.left,
+        top: rect.top,
+        width: rect.width,
+        height: rect.height,
+        className: node.className,
+        html: node.innerHTML,
+        tagName: node.tagName.toLowerCase(),
+        atomicNumber: Number(node.dataset.atomicNumber ?? 0),
+        group: Number(node.dataset.group ?? 0)
+      };
+    });
     return snapshots;
   }
 
+  function nodeFromSnapshot(snapshot: LayoutSnapshot): HTMLElement {
+    const node = document.createElement(snapshot.tagName || 'div');
+    node.className = snapshot.className;
+    node.innerHTML = snapshot.html;
+    return node;
+  }
+
+  function ghostDelay(stage: LayoutAnimationStage, atomicNumber: number, group: number): number {
+    if (stage === 'series-in' || stage === 'series-out') {
+      if (isLanthanide(atomicNumber)) return 45 + (atomicNumber - 57) * 13;
+      if (isActinide(atomicNumber)) return 75 + (atomicNumber - 89) * 13;
+      return 0;
+    }
+    if (stage === 'spread' && group > 2) return Math.min(80, Math.max(0, group - 3) * 5);
+    if (stage === 'collapse' && group > 2) return Math.min(80, Math.max(0, 18 - group) * 5);
+    return 0;
+  }
+
+  function ghostDuration(stage: LayoutAnimationStage, atomicNumber: number): number {
+    if ((stage === 'series-in' || stage === 'series-out') && (isLanthanide(atomicNumber) || isActinide(atomicNumber))) {
+      return 880;
+    }
+    return stage === 'spread' || stage === 'collapse' ? 790 : 540;
+  }
+
   export async function animateLayoutFrom(
-    previous: Record<string, RectSnapshot>,
+    previous: Record<string, LayoutSnapshot>,
     stage: LayoutAnimationStage
   ): Promise<void> {
-    if (!gridElement || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if (!gridElement || !viewportElement || !transitionOverlay) {
+      await fitToViewport(false);
+      return;
+    }
 
-    const animations: Animation[] = [];
     viewportElement.classList.add('layout-animating');
+    stopCamera();
 
-    gridElement
-      .querySelectorAll<HTMLElement>('[data-element-symbol]')
-      .forEach((cell) => {
-        const symbol = cell.dataset.elementSymbol;
-        const before = symbol ? previous[symbol] : undefined;
-        if (!before) return;
+    try {
+      await fitToViewport(false);
+      await tick();
 
-        const atomicNumber = Number(cell.dataset.atomicNumber ?? 0);
-        const innerSeries =
-          (atomicNumber >= 57 && atomicNumber <= 71) ||
-          (atomicNumber >= 89 && atomicNumber <= 103);
+      if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
 
-        if ((stage === 'spread' || stage === 'collapse') && innerSeries) return;
-        if ((stage === 'series-in' || stage === 'series-out') && !innerSeries) return;
+      const viewportRect = viewportElement.getBoundingClientRect();
+      const currentNodes = new Map<string, HTMLElement>();
+      layoutNodes().forEach((node) => {
+        const key = node.dataset.layoutKey;
+        if (key) currentNodes.set(key, node);
+      });
 
-        const after = cell.getBoundingClientRect();
-        const localScale = Math.max(zoom, 0.0001);
-        const deltaX = (before.left - after.left) / localScale;
-        const deltaY = (before.top - after.top) / localScale;
-        const deltaScaleX = before.width / Math.max(after.width, 0.0001);
-        const deltaScaleY = before.height / Math.max(after.height, 0.0001);
+      transitionOverlay.replaceChildren();
+      const keys = new Set([...Object.keys(previous), ...currentNodes.keys()]);
+      const animations: Animation[] = [];
 
-        if (Math.hypot(deltaX, deltaY) < 0.5) return;
+      keys.forEach((key) => {
+        const before = previous[key];
+        const current = currentNodes.get(key);
+        const currentRect = current?.getBoundingClientRect();
+        if (!before && !currentRect) return;
 
-        const seriesIndex =
-          atomicNumber >= 57 && atomicNumber <= 71
-            ? atomicNumber - 57
-            : atomicNumber >= 89 && atomicNumber <= 103
-              ? atomicNumber - 89
-              : 0;
+        const start = before ?? {
+          key,
+          left: currentRect!.left,
+          top: currentRect!.top,
+          width: currentRect!.width,
+          height: currentRect!.height,
+          className: current?.className ?? '',
+          html: current?.innerHTML ?? '',
+          tagName: current?.tagName.toLowerCase() ?? 'div',
+          atomicNumber: Number(current?.dataset.atomicNumber ?? 0),
+          group: Number(current?.dataset.group ?? 0)
+        };
+        const end = currentRect ?? {
+          left: start.left,
+          top: start.top,
+          width: start.width,
+          height: start.height
+        };
 
-        const animation = cell.animate(
+        const ghost = current
+          ? (current.cloneNode(true) as HTMLElement)
+          : nodeFromSnapshot(start);
+
+        ghost.removeAttribute('style');
+        ghost.removeAttribute('id');
+        ghost.classList.add('layout-transition-ghost');
+        ghost.querySelectorAll<HTMLElement>('button, [tabindex]').forEach((child) => {
+          child.setAttribute('tabindex', '-1');
+          child.setAttribute('aria-hidden', 'true');
+        });
+
+        const startLeft = start.left - viewportRect.left;
+        const startTop = start.top - viewportRect.top;
+        const endLeft = end.left - viewportRect.left;
+        const endTop = end.top - viewportRect.top;
+        const scaleX = end.width / Math.max(start.width, 0.0001);
+        const scaleY = end.height / Math.max(start.height, 0.0001);
+
+        Object.assign(ghost.style, {
+          position: 'absolute',
+          left: `${startLeft}px`,
+          top: `${startTop}px`,
+          width: `${start.width}px`,
+          height: `${start.height}px`,
+          margin: '0',
+          transformOrigin: '0 0',
+          pointerEvents: 'none',
+          willChange: 'transform, opacity'
+        });
+
+        transitionOverlay.appendChild(ghost);
+
+        const atomicNumber = Number(current?.dataset.atomicNumber ?? start.atomicNumber ?? 0);
+        const group = Number(current?.dataset.group ?? start.group ?? 0);
+        const isAppearing = !before && Boolean(currentRect);
+        const isDisappearing = Boolean(before) && !currentRect;
+        const delay = ghostDelay(stage, atomicNumber, group);
+        const duration = ghostDuration(stage, atomicNumber);
+
+        const fromOpacity = isAppearing ? 0 : 1;
+        const toOpacity = isDisappearing ? 0 : 1;
+        const fromTransform = isAppearing ? 'scale3d(0.86, 0.86, 1)' : 'translate3d(0, 0, 0) scale3d(1, 1, 1)';
+        const toTransform = isDisappearing
+          ? 'scale3d(0.86, 0.86, 1)'
+          : `translate3d(${(endLeft - startLeft).toFixed(2)}px, ${(endTop - startTop).toFixed(2)}px, 0) scale3d(${scaleX.toFixed(5)}, ${scaleY.toFixed(5)}, 1)`;
+
+        const animation = ghost.animate(
           [
-            {
-              transform: `translate3d(${deltaX}px, ${deltaY}px, 0) scale(${deltaScaleX}, ${deltaScaleY})`,
-              opacity: 0.86
-            },
-            { transform: 'translate3d(0, 0, 0) scale(1, 1)', opacity: 1 }
+            { transform: fromTransform, opacity: fromOpacity },
+            { transform: toTransform, opacity: toOpacity }
           ],
           {
-            duration: innerSeries ? 900 : 760,
-            delay: innerSeries ? Math.min(210, seriesIndex * 14) : 0,
-            easing: 'cubic-bezier(0.22, 1, 0.36, 1)',
+            duration,
+            delay,
+            easing: stage === 'series-in' || stage === 'series-out'
+              ? 'cubic-bezier(0.18, 0.82, 0.2, 1)'
+              : 'cubic-bezier(0.22, 1, 0.36, 1)',
             fill: 'both'
           }
         );
-
         animations.push(animation);
       });
 
-    await Promise.allSettled(animations.map((animation) => animation.finished));
-    animations.forEach((animation) => animation.cancel());
-    viewportElement.classList.remove('layout-animating');
+      gridElement.classList.add('layout-live-hidden');
+      transitionOverlay.classList.add('active');
+      await Promise.allSettled(animations.map((animation) => animation.finished));
+    } finally {
+      gridElement.classList.remove('layout-live-hidden');
+      transitionOverlay.classList.remove('active');
+      transitionOverlay.replaceChildren();
+      viewportElement.classList.remove('layout-animating');
+    }
   }
 
   onMount(() => {
@@ -513,6 +636,7 @@
     return () => {
       observer.disconnect();
       stopCamera();
+      transitionOverlay?.replaceChildren();
     };
   });
 </script>
@@ -533,29 +657,43 @@
     <div
       bind:this={gridElement}
       class={`periodic-grid mode-${layoutMode}`}
+      class:series-focus-lanthanide={seriesFocus === 'lanthanide'}
+      class:series-focus-actinide={seriesFocus === 'actinide'}
       style={`zoom:${renderBucket};--zoom:${renderBucket};--content-scale:${Math.pow(Math.max(committedZoom, 1), 0.36).toFixed(4)};`}
     >
       {#if layoutMode !== 'long'}
-        <div
+        <button
           class="series-placeholder lanthanide-placeholder"
+          type="button"
+          data-layout-key="placeholder-lanthanides"
           style="grid-column:3;grid-row:6;"
-          aria-hidden="true"
+          aria-label="Resaltar lantánidos, elementos 57 a 71"
+          on:pointerdown|stopPropagation
+          on:mouseenter={() => (seriesFocus = 'lanthanide')}
+          on:mouseleave={() => (seriesFocus = '')}
+          on:focus={() => (seriesFocus = 'lanthanide')}
+          on:blur={() => (seriesFocus = '')}
         >
-          <span class="series-tree-mark"></span>
           <strong>57–71</strong>
-          <span>La–Lu</span>
-          <small>Fila inferior</small>
-        </div>
-        <div
+          <span>Lantánidos</span>
+          <small>La–Lu · fila inferior</small>
+        </button>
+        <button
           class="series-placeholder actinide-placeholder"
+          type="button"
+          data-layout-key="placeholder-actinides"
           style="grid-column:3;grid-row:7;"
-          aria-hidden="true"
+          aria-label="Resaltar actínidos, elementos 89 a 103"
+          on:pointerdown|stopPropagation
+          on:mouseenter={() => (seriesFocus = 'actinide')}
+          on:mouseleave={() => (seriesFocus = '')}
+          on:focus={() => (seriesFocus = 'actinide')}
+          on:blur={() => (seriesFocus = '')}
         >
-          <span class="series-tree-mark"></span>
           <strong>89–103</strong>
-          <span>Ac–Lr</span>
-          <small>Fila inferior</small>
-        </div>
+          <span>Actínidos</span>
+          <small>Ac–Lr · fila inferior</small>
+        </button>
       {/if}
 
       {#each elements as element (element.symbol)}
@@ -563,8 +701,12 @@
         <article
           class={`element-cell ${categoryClass(element.category)}`}
           class:active={selectedSymbol === element.symbol}
+          class:series-related={isFocusedSeries(element.atomic_number)}
+          class:series-unrelated={Boolean(seriesFocus) && !isFocusedSeries(element.atomic_number)}
+          data-layout-key={`element-${element.symbol}`}
           data-element-symbol={element.symbol}
           data-atomic-number={element.atomic_number}
+          data-group={element.group}
           style={`grid-column:${position.column};grid-row:${position.row};`}
         >
           <button
@@ -588,6 +730,8 @@
       {/each}
     </div>
   </div>
+
+  <div bind:this={transitionOverlay} class="layout-transition-overlay" aria-hidden="true"></div>
 </div>
 
 <style>
@@ -613,6 +757,7 @@
   }
 
   .periodic-viewport {
+    position: relative;
     touch-action: none;
     cursor: grab;
   }
@@ -629,7 +774,11 @@
     transform-origin: center center;
   }
 
-  .layout-animating .element-cell {
+  .layout-animating {
+    cursor: progress;
+  }
+
+  .layout-animating .periodic-pan {
     pointer-events: none;
   }
 </style>
