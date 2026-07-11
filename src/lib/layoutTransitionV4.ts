@@ -22,10 +22,6 @@ interface LayoutTransitionOptions {
 
 const SHORT_COLUMN_OFFSET = 7;
 
-function pause(milliseconds: number): Promise<void> {
-  return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
-}
-
 function nextFrame(): Promise<void> {
   return new Promise((resolve) => requestAnimationFrame(() => resolve()));
 }
@@ -58,14 +54,32 @@ function correctRow(position: Position, article: HTMLElement): Position {
   const period = Number(article.dataset.period ?? article.getAttribute('data-period') ?? 0);
   if (period > 0) return { ...position, row: period };
 
-  // Respaldo estable cuando el dataset antiguo todavía no expone data-period.
-  const inferredPeriod = atomicNumber <= 2 ? 1 : atomicNumber <= 10 ? 2 : atomicNumber <= 18 ? 3 : atomicNumber <= 36 ? 4 : atomicNumber <= 54 ? 5 : atomicNumber <= 86 ? 6 : 7;
+  const inferredPeriod = atomicNumber <= 2
+    ? 1
+    : atomicNumber <= 10
+      ? 2
+      : atomicNumber <= 18
+        ? 3
+        : atomicNumber <= 36
+          ? 4
+          : atomicNumber <= 54
+            ? 5
+            : atomicNumber <= 86
+              ? 6
+              : 7;
   return { ...position, row: inferredPeriod };
 }
 
 function positionFor(record: SlotRecord, stage: VisualStage): Position {
   const article = record.slot.querySelector<HTMLElement>('.element-cell')!;
   return correctRow(elementPosition(record.atomicNumber, record.group, stage), article);
+}
+
+function placeholderPosition(index: number, stage: VisualStage): Position {
+  return {
+    column: stage === 'short' ? 3 + SHORT_COLUMN_OFFSET : 3,
+    row: index === 0 ? 6 : 7
+  };
 }
 
 function transformFor(position: Position, step: number): string {
@@ -147,6 +161,13 @@ function placeholderSlots(grid: HTMLElement): HTMLElement[] {
   return Array.from(grid.querySelectorAll<HTMLElement>(':scope > .series-slot'));
 }
 
+function positionPlaceholders(grid: HTMLElement, stage: VisualStage, step: number): void {
+  placeholderSlots(grid).forEach((slot, index) => {
+    slot.getAnimations().forEach((animation) => animation.cancel());
+    slot.style.transform = transformFor(placeholderPosition(index, stage), step);
+  });
+}
+
 async function fadePlaceholders(grid: HTMLElement, visible: boolean): Promise<void> {
   const slots = placeholderSlots(grid);
   if (visible) {
@@ -207,30 +228,34 @@ export async function animatePeriodicLayout(options: LayoutTransitionOptions): P
   try {
     if (reducedMotion) {
       setSlotsImmediately(records, targetStage, step);
+      positionPlaceholders(grid, targetStage, step);
       await fadePlaceholders(grid, options.target === 'short');
       await Promise.resolve(options.fitToViewport?.(false, targetStage));
       return;
     }
 
     if (options.source === 'short' && options.target === 'long') {
-      // Primero se encaja el lienzo ancho; después el usuario ve abrirse el hueco.
       await Promise.resolve(options.fitToViewport?.(true, 'opening'));
       await nextFrame();
       await animateSlots(records, 'opening', step, 'spread');
       await fadePlaceholders(grid, false);
+      positionPlaceholders(grid, 'opening', step);
       await animateSlots(records, 'long', step, 'series', true);
       await Promise.resolve(options.fitToViewport?.(true, 'long'));
     } else {
+      positionPlaceholders(grid, 'opening', step);
       await Promise.resolve(options.fitToViewport?.(true, 'opening'));
       await nextFrame();
       await animateSlots(records, 'opening', step, 'series', true);
-      await fadePlaceholders(grid, true);
       await animateSlots(records, 'short', step, 'collapse');
+      positionPlaceholders(grid, 'short', step);
+      await fadePlaceholders(grid, true);
       await Promise.resolve(options.fitToViewport?.(true, 'short'));
     }
   } catch (error) {
     console.warn('[TablaElementos] La animación explícita falló; se aplicará el diseño final.', error);
     setSlotsImmediately(records, targetStage, step);
+    positionPlaceholders(grid, targetStage, step);
     await fadePlaceholders(grid, options.target === 'short');
     await Promise.resolve(options.fitToViewport?.(false, targetStage));
     throw error;
