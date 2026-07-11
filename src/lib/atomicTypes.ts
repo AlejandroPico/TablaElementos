@@ -1,5 +1,18 @@
 export type SpectrumMode = 'emission' | 'absorption';
 
+export type ComparisonScope =
+  | 'global'
+  | 'summary'
+  | 'atom'
+  | 'properties'
+  | 'isotopes'
+  | 'spectrum'
+  | 'lines'
+  | 'levels'
+  | 'chemistry'
+  | 'context'
+  | 'sources';
+
 export interface ElementRecord {
   symbol: string;
   name_es: string;

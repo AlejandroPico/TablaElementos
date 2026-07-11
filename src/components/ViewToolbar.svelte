@@ -9,7 +9,6 @@
   export let elementCount = 0;
   export let spectralLineCount = 0;
   export let nistProblemCount = 0;
-  export let softCells = false;
   export let tableMode: TableMode = 'short';
   export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
@@ -20,7 +19,6 @@
     zoomin: void;
     zoomout: void;
     reset: void;
-    corners: void;
     layout: void;
     theme: void;
   }>();
@@ -33,17 +31,6 @@
 </script>
 
 <div class="view-tools" aria-label="Herramientas de la tabla">
-  <button
-    class:active={softCells}
-    class="view-tool-button"
-    type="button"
-    title={softCells ? 'Usar celdas cuadradas' : 'Usar esquinas suaves'}
-    aria-label={softCells ? 'Usar celdas cuadradas' : 'Usar esquinas suaves'}
-    on:click={() => dispatch('corners')}
-  >
-    <span class="corners-icon" aria-hidden="true"></span>
-  </button>
-
   <button
     class:active={tableMode === 'long'}
     class:busy={layoutBusy}

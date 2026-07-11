@@ -1,9 +1,18 @@
 <script lang="ts">
-  import type { ElementDataDomain } from '../lib/atomicTypes';
+  import type { DataRow, ElementDataDomain } from '../lib/atomicTypes';
+
+  interface PropertyItem {
+    label: string;
+    value: string;
+    unit: string;
+    source: string;
+    sourceUrl: string;
+    tooltip: string;
+  }
 
   export let domain: ElementDataDomain | null = null;
+  export let pageSize = 24;
 
-  const PAGE_SIZE = 100;
   let page = 0;
   let lastDomainId = '';
 
@@ -12,13 +21,14 @@
     page = 0;
   }
 
-  $: totalPages = Math.max(1, Math.ceil((domain?.rows.length ?? 0) / PAGE_SIZE));
-  $: if (page >= totalPages) page = totalPages - 1;
-  $: visibleRows = domain?.rows.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE) ?? [];
-  $: isPropertyList = Boolean(
-    domain?.columns.some((column) => column.toLowerCase() === 'property') &&
-      domain?.columns.some((column) => column.toLowerCase() === 'value')
+  $: propertyItems = buildPropertyItems(domain);
+  $: isPropertyList = propertyItems.length > 0;
+  $: displayColumns = (domain?.columns ?? []).filter(
+    (column) => !['source_url', 'retrieved_at', 'notes'].includes(column.toLowerCase())
   );
+  $: totalPages = Math.max(1, Math.ceil((domain?.rows.length ?? 0) / Math.max(1, pageSize)));
+  $: if (page >= totalPages) page = totalPages - 1;
+  $: visibleRows = domain?.rows.slice(page * pageSize, (page + 1) * pageSize) ?? [];
 
   function isUrl(value: string): boolean {
     return /^https?:\/\//i.test(value);
@@ -30,9 +40,6 @@
       value: 'Valor',
       unit: 'Unidad',
       source: 'Fuente',
-      source_url: 'Enlace oficial',
-      retrieved_at: 'Consultado',
-      notes: 'Notas',
       atomic_number: 'Z',
       symbol: 'Símbolo',
       name_en: 'Nombre (EN)',
@@ -50,46 +57,84 @@
     };
     return labels[column] ?? column.replaceAll('_', ' ');
   }
+
+  function tooltipFor(row: DataRow): string {
+    return [row.notes, row.source ? `Fuente: ${row.source}` : '', row.retrieved_at ? `Consultado: ${row.retrieved_at}` : '']
+      .filter(Boolean)
+      .join('\n');
+  }
+
+  function buildPropertyItems(current: ElementDataDomain | null): PropertyItem[] {
+    if (!current?.available || !current.rows.length) return [];
+
+    const hasPropertyValue = current.columns.includes('property') && current.columns.includes('value');
+    if (hasPropertyValue) {
+      return current.rows.map((row) => ({
+        label: columnLabel(row.property || 'property'),
+        value: row.value || '—',
+        unit: row.unit || '',
+        source: row.source || '',
+        sourceUrl: row.source_url || '',
+        tooltip: tooltipFor(row)
+      }));
+    }
+
+    if (current.id !== 'identity') return [];
+    const row = current.rows[0];
+    const metadata = new Set(['source', 'source_url', 'retrieved_at', 'notes']);
+    return current.columns
+      .filter((column) => !metadata.has(column.toLowerCase()))
+      .map((column) => ({
+        label: columnLabel(column),
+        value: row[column] || '—',
+        unit: '',
+        source: row.source || '',
+        sourceUrl: row.source_url || '',
+        tooltip: tooltipFor(row)
+      }));
+  }
 </script>
 
 {#if domain?.available}
-  <section class="domain-section" aria-label={domain.label}>
-    <header class="domain-header">
+  <section class:property-domain={isPropertyList} class:table-domain={!isPropertyList} class="domain-section flat-domain" aria-label={domain.label}>
+    <header class="domain-header compact-domain-header">
       <div>
         <p class="eyebrow">{domain.file}</p>
         <h3>{domain.label}</h3>
       </div>
-      <span class="range-pill">{domain.row_count.toLocaleString('es-ES')} registros</span>
+      <span class="domain-count">{domain.row_count.toLocaleString('es-ES')} registros</span>
     </header>
 
     {#if isPropertyList}
-      <div class="property-record-grid">
-        {#each visibleRows as row}
-          <article>
-            <span>{row.property || 'Propiedad'}</span>
-            <strong>{row.value || '—'}{row.unit ? ` ${row.unit}` : ''}</strong>
-            {#if row.notes}<p>{row.notes}</p>{/if}
-            {#if row.source_url && isUrl(row.source_url)}
-              <a href={row.source_url} target="_blank" rel="noreferrer">{row.source || 'Fuente oficial'}</a>
-            {:else if row.source}
-              <small>{row.source}</small>
-            {/if}
-          </article>
+      <dl class="property-list">
+        {#each propertyItems as item}
+          <div title={item.tooltip || undefined}>
+            <dt>{item.label}</dt>
+            <dd>
+              {#if item.sourceUrl && isUrl(item.sourceUrl)}
+                <a href={item.sourceUrl} target="_blank" rel="noreferrer">
+                  {item.value}{item.unit ? ` ${item.unit}` : ''}
+                </a>
+              {:else}
+                <span>{item.value}{item.unit ? ` ${item.unit}` : ''}</span>
+              {/if}
+            </dd>
+          </div>
         {/each}
-      </div>
+      </dl>
     {:else}
-      <div class="technical-table domain-table">
+      <div class="technical-table domain-table single-scroll-table">
         <table>
           <thead>
             <tr>
-              {#each domain.columns as column}<th>{columnLabel(column)}</th>{/each}
+              {#each displayColumns as column}<th>{columnLabel(column)}</th>{/each}
             </tr>
           </thead>
           <tbody>
             {#each visibleRows as row}
               <tr>
-                {#each domain.columns as column}
-                  <td>
+                {#each displayColumns as column}
+                  <td title={row[column] || undefined}>
                     {#if isUrl(row[column] ?? '')}
                       <a href={row[column] ?? '#'} target="_blank" rel="noreferrer">Abrir fuente</a>
                     {:else}
@@ -105,15 +150,15 @@
     {/if}
 
     {#if totalPages > 1}
-      <footer class="domain-pagination">
+      <footer class="domain-pagination compact-pagination">
         <button type="button" disabled={page === 0} on:click={() => (page -= 1)}>Anterior</button>
-        <span>Página {page + 1} de {totalPages}</span>
+        <span>{page + 1} / {totalPages}</span>
         <button type="button" disabled={page >= totalPages - 1} on:click={() => (page += 1)}>Siguiente</button>
       </footer>
     {/if}
   </section>
 {:else if domain?.present}
-  <section class="domain-section domain-empty">
+  <section class="domain-section domain-empty flat-domain">
     <p><strong>{domain.label}:</strong> el archivo existe, pero todavía no contiene registros.</p>
   </section>
 {/if}

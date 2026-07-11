@@ -1,0 +1,368 @@
+/* Refactor funcional de ficha, tablas y comparador. Cargado al final para neutralizar estilos heredados. */
+
+/* Geometría fija: se elimina definitivamente el modo de esquinas suaves. */
+.element-cell,
+.element-open-button,
+.series-placeholder,
+.master-modal,
+.master-modal *,
+.comparison-workspace,
+.comparison-workspace * {
+  border-radius: 0 !important;
+}
+
+/* La ficha usa una sola zona de contenido; cada pestaña decide dónde desplazar. */
+.master-modal {
+  width: min(1480px, calc(100vw - 28px));
+  height: min(900px, calc(100vh - 28px));
+  max-height: calc(100vh - 28px);
+  grid-template-rows: auto auto minmax(0, 1fr);
+}
+
+.master-content {
+  min-height: 0;
+  padding: 0 !important;
+  overflow: hidden !important;
+}
+
+.tab-pane {
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.tab-scroll {
+  overflow: auto;
+  padding: 16px 18px 20px;
+  overscroll-behavior: contain;
+}
+
+.table-pane {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+
+.table-pane > .flat-domain,
+.table-pane > .single-scroll-table {
+  min-height: 0;
+  flex: 1 1 auto;
+}
+
+.single-scroll-table {
+  min-height: 0;
+  overflow: auto !important;
+  overscroll-behavior: contain;
+  scrollbar-gutter: stable;
+}
+
+.comparison-actions {
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.comparison-actions button:not(.close-button) {
+  min-width: 116px;
+}
+
+/* Átomo: solo el escenario, clicable, con información superpuesta. */
+.atom-tab {
+  padding: 0;
+}
+
+.atomic-stage {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  min-height: 420px;
+  padding: 0;
+  overflow: hidden;
+  border: 0;
+  color: var(--app-ink);
+  background:
+    linear-gradient(var(--surface-soft) 1px, transparent 1px),
+    linear-gradient(90deg, var(--surface-soft) 1px, transparent 1px),
+    var(--panel-strong);
+  background-size: 28px 28px;
+  cursor: pointer;
+}
+
+.atomic-stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.atomic-overlay {
+  position: absolute;
+  z-index: 2;
+  top: 14px;
+  left: 14px;
+  display: grid;
+  grid-template-columns: auto auto;
+  align-items: baseline;
+  gap: 2px 12px;
+  max-width: min(520px, calc(100% - 28px));
+  padding: 9px 12px;
+  border: 1px solid var(--line);
+  color: var(--app-ink);
+  background: color-mix(in srgb, var(--panel-strong) 86%, transparent);
+  backdrop-filter: blur(10px);
+  text-align: left;
+  pointer-events: none;
+}
+
+.atomic-overlay b {
+  grid-row: 1 / span 2;
+  font-size: 1.75rem;
+  line-height: 1;
+}
+
+.atomic-overlay span,
+.atomic-overlay small {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.atomic-overlay span { font-size: 0.8rem; font-weight: 750; }
+.atomic-overlay small { color: var(--text-soft); font-size: 0.68rem; }
+
+.atomic-paused-state {
+  position: absolute;
+  right: 14px;
+  top: 14px;
+  padding: 6px 9px;
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  background: var(--panel-strong);
+}
+
+/* Propiedades: lista técnica continua, sin tarjetas repetidas. */
+.flat-domain {
+  margin: 0 0 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  backdrop-filter: none !important;
+}
+
+.compact-domain-header {
+  margin: 0 !important;
+  padding: 12px 14px;
+  border: 1px solid var(--line);
+  border-bottom: 0;
+  background: var(--surface-soft);
+}
+
+.compact-domain-header h3,
+.compact-domain-header p { margin: 0; }
+
+.domain-count {
+  color: var(--text-soft);
+  font-size: 0.72rem;
+  white-space: nowrap;
+}
+
+.property-list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border: 1px solid var(--line);
+}
+
+.property-list > div {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.9fr) minmax(0, 1.1fr);
+  align-items: baseline;
+  gap: 12px;
+  min-width: 0;
+  padding: 10px 13px;
+  border-bottom: 1px solid var(--line);
+}
+
+.property-list > div:nth-child(odd) { border-right: 1px solid var(--line); }
+.property-list dt { color: var(--text-soft); font-size: 0.72rem; font-weight: 750; text-transform: uppercase; letter-spacing: 0.035em; }
+.property-list dd { min-width: 0; margin: 0; text-align: right; font-weight: 720; overflow-wrap: anywhere; }
+.property-list a { color: var(--app-ink); text-decoration-color: var(--accent); text-underline-offset: 3px; }
+
+.table-domain {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  margin: 0 !important;
+}
+
+.table-domain .domain-table {
+  flex: 1 1 auto;
+  border: 1px solid var(--line);
+}
+
+.compact-pagination {
+  flex: 0 0 auto;
+  margin: 0 !important;
+  padding: 9px 0 0;
+}
+
+/* Espectro: ocupa el espacio completo; controles compactos. */
+.spectrum-workspace {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  min-height: 0;
+  padding: 12px 14px 14px;
+  gap: 8px;
+}
+
+.spectrum-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 36px;
+}
+
+.spectrum-toolbar > strong { font-size: 0.82rem; }
+.spectrum-toolbar .segmented-control { padding: 2px; gap: 0; }
+.spectrum-toolbar .segmented-control button { padding: 5px 10px; font-size: 0.72rem; }
+
+.spectrum-workspace .spectrum-card {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  min-height: 0;
+  height: 100%;
+  padding: 0 !important;
+  overflow: hidden;
+}
+
+.spectrum-workspace .spectrum-card > .section-title-row { display: none; }
+.spectrum-workspace .region-labels { padding: 9px 12px 4px; }
+.spectrum-workspace .spectrum-stage { height: auto !important; min-height: 0; border-left: 0; border-right: 0; }
+.spectrum-workspace .axis-footer { padding: 8px 12px 10px; }
+
+/* Líneas y niveles: una sola barra de desplazamiento. */
+.spectral-lines-panel { padding: 0 !important; border: 0 !important; box-shadow: none !important; }
+.spectral-lines-panel .featured-lines { flex: 0 0 auto; }
+.spectral-lines-panel .single-scroll-table { flex: 1 1 auto; border-top: 1px solid var(--line); }
+.table-pane .technical-table table { margin: 0; }
+.table-pane .technical-table thead th { position: sticky; top: 0; z-index: 2; }
+
+/* Comparador total. */
+.app-shell.with-comparator {
+  grid-template-rows: minmax(0, 1fr) minmax(330px, 46vh) !important;
+}
+
+.comparison-drawer {
+  min-height: 0;
+  overflow: hidden;
+}
+
+.comparison-workspace {
+  display: grid;
+  grid-template-rows: auto auto auto minmax(0, 1fr);
+  height: 100%;
+  padding: 0 !important;
+  border: 1px solid var(--line);
+  background: var(--panel-strong) !important;
+}
+
+.comparison-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+}
+
+.comparison-header p,
+.comparison-header strong { margin: 0; }
+.comparison-header-actions button { padding: 7px 10px; border: 1px solid var(--line); color: var(--app-ink); background: var(--surface-soft); }
+
+.comparison-scopes,
+.comparison-selection {
+  display: flex;
+  gap: 0;
+  overflow-x: auto;
+  border-bottom: 1px solid var(--line);
+}
+
+.comparison-scopes button {
+  flex: 0 0 auto;
+  padding: 7px 11px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  color: var(--text-soft);
+  background: transparent;
+}
+
+.comparison-scopes button.active {
+  color: var(--app-ink);
+  background: var(--surface-soft);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.comparison-selection { padding: 6px 8px; gap: 6px; }
+.comparison-selection button {
+  flex: 0 0 auto;
+  display: grid;
+  grid-template-columns: auto auto auto;
+  gap: 6px;
+  align-items: center;
+  padding: 5px 8px;
+  border: 1px solid var(--line);
+  color: var(--app-ink);
+  background: var(--surface-soft);
+}
+.comparison-selection span { color: var(--text-soft); font-size: 0.7rem; }
+.comparison-selection i { font-style: normal; color: var(--text-soft); }
+
+.comparison-body { min-height: 0; overflow: hidden; }
+.comparison-matrix-wrap,
+.comparison-spectra,
+.comparison-domain-grid { width: 100%; height: 100%; overflow: auto; }
+
+.comparison-matrix { min-width: 100%; border-collapse: separate; border-spacing: 0; }
+.comparison-matrix th,
+.comparison-matrix td { min-width: 180px; padding: 8px 10px; border-right: 1px solid var(--line); border-bottom: 1px solid var(--line); vertical-align: top; }
+.comparison-matrix thead th { position: sticky; top: 0; z-index: 2; background: var(--panel-strong); }
+.comparison-matrix thead th:first-child,
+.comparison-matrix tbody th { position: sticky; left: 0; z-index: 3; min-width: 170px; background: var(--panel-strong); text-align: left; }
+.comparison-matrix thead th:first-child { z-index: 4; }
+.comparison-matrix thead span { display: block; color: var(--text-soft); font-size: 0.68rem; }
+
+.comparison-spectra { display: grid; align-content: start; gap: 1px; background: var(--line); }
+.comparison-spectra article { display: grid; grid-template-columns: 150px minmax(320px, 1fr); gap: 10px; align-items: center; padding: 9px 12px; background: var(--panel); }
+.comparison-spectra article > header { display: grid; }
+.comparison-spectra header span,
+.comparison-spectra header small { color: var(--text-soft); font-size: 0.68rem; }
+.comparison-spectrum-track { position: relative; height: 36px; overflow: hidden; border: 1px solid var(--line); background: #03050c; }
+.comparison-spectrum-track > span { position: absolute; top: 4px; bottom: 4px; width: 2px; transform: translateX(-50%); background: var(--line-color); box-shadow: 0 0 8px var(--line-color); }
+.comparison-strong-lines { grid-column: 2; display: flex; flex-wrap: wrap; gap: 5px 10px; }
+.comparison-strong-lines span { display: inline-flex; align-items: center; gap: 5px; color: var(--text-soft); font-size: 0.68rem; }
+.comparison-strong-lines i { width: 2px; height: 14px; background: var(--line-color); }
+
+.comparison-domain-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(230px, 1fr)); align-content: start; gap: 1px; background: var(--line); }
+.comparison-domain-grid article { padding: 10px 12px; background: var(--panel); }
+.comparison-domain-grid article > header { display: flex; align-items: baseline; gap: 8px; margin-bottom: 8px; }
+.comparison-domain-grid header span { color: var(--text-soft); font-size: 0.72rem; }
+.comparison-domain-grid article > div { display: flex; justify-content: space-between; gap: 10px; padding: 5px 0; border-top: 1px solid var(--line); }
+.comparison-domain-grid article > div span { color: var(--text-soft); font-size: 0.72rem; }
+
+@media (max-width: 900px) {
+  .master-modal { width: calc(100vw - 12px); height: calc(100vh - 12px); max-height: calc(100vh - 12px); }
+  .modal-header { align-items: flex-start; }
+  .comparison-actions { max-width: 48%; }
+  .property-list { grid-template-columns: 1fr; }
+  .property-list > div:nth-child(odd) { border-right: 0; }
+  .app-shell.with-comparator { grid-template-rows: minmax(0, 1fr) minmax(310px, 52vh) !important; }
+}
+
+@media (max-width: 620px) {
+  .modal-identity small { display: none; }
+  .comparison-actions button:not(.close-button) { min-width: 0; padding: 7px 8px; font-size: 0.68rem; }
+  .atomic-overlay { grid-template-columns: auto 1fr; }
+  .comparison-spectra article { grid-template-columns: 90px minmax(260px, 1fr); }
+}

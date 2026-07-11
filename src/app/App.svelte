@@ -4,7 +4,7 @@
   import ElementModal from '../components/ElementModal.svelte';
   import PeriodicGrid from '../components/PeriodicGrid.svelte';
   import ViewToolbar from '../components/ViewToolbar.svelte';
-  import type { ElementWithLines } from '../lib/atomicTypes';
+  import type { ComparisonScope, ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
 
   type TableMode = 'short' | 'long';
@@ -17,12 +17,12 @@
   let selectedSymbol = '';
   let modalElement: ElementWithLines | null = null;
   let comparedSymbols: string[] = [];
+  let comparisonScope: ComparisonScope = 'global';
   let loading = true;
   let errorMessage = '';
   let gridView: any;
   let zoomPercent = 100;
   let zoomLevel = 'Vista general';
-  let softCells = true;
   let tableMode: TableMode = 'short';
   let layoutMode: TableLayout = 'short';
   let layoutBusy = false;
@@ -63,12 +63,9 @@
     modalElement = null;
   }
 
-  function toggleCompared(symbol: string): void {
-    if (comparedSymbols.includes(symbol)) {
-      removeCompared(symbol);
-      return;
-    }
-    comparedSymbols = [...comparedSymbols, symbol];
+  function addCompared(detail: { symbol: string; scope: ComparisonScope }): void {
+    if (!comparedSymbols.includes(detail.symbol)) comparedSymbols = [...comparedSymbols, detail.symbol];
+    comparisonScope = detail.scope;
   }
 
   function removeCompared(symbol: string): void {
@@ -77,6 +74,7 @@
 
   function clearCompared(): void {
     comparedSymbols = [];
+    comparisonScope = 'global';
   }
 
   function pause(milliseconds: number): Promise<void> {
@@ -87,16 +85,11 @@
     return new Promise((resolve) => requestAnimationFrame(() => resolve()));
   }
 
-  async function runLayoutStage(
-    nextLayout: TableLayout,
-    stage: LayoutAnimationStage,
-    settleDelay = 90
-  ): Promise<void> {
+  async function runLayoutStage(nextLayout: TableLayout, stage: LayoutAnimationStage, settleDelay = 90): Promise<void> {
     const previousRects = gridView?.captureElementRects?.() ?? {};
     layoutMode = nextLayout;
     await tick();
     await nextFrame();
-
     await Promise.resolve(gridView?.animateLayoutFrom?.(previousRects, stage));
     await pause(settleDelay);
     await Promise.resolve(gridView?.fitToViewport?.(true));
@@ -105,7 +98,6 @@
   async function toggleTableMode(): Promise<void> {
     if (layoutBusy) return;
     layoutBusy = true;
-
     try {
       if (tableMode === 'short') {
         tableMode = 'long';
@@ -120,16 +112,13 @@
       }
     } finally {
       layoutMode = tableMode;
-      window.setTimeout(() => {
-        layoutBusy = false;
-      }, 120);
+      window.setTimeout(() => (layoutBusy = false), 120);
     }
   }
 
   function resolveAutomaticTheme(): ResolvedTheme {
     const hour = new Date().getHours();
-    const nightByClock = hour >= 20 || hour < 7;
-    return systemTheme?.matches || nightByClock ? 'dark' : 'light';
+    return systemTheme?.matches || hour >= 20 || hour < 7 ? 'dark' : 'light';
   }
 
   function applyTheme(): void {
@@ -140,11 +129,7 @@
 
   function cycleTheme(): void {
     themeMode = themeMode === 'auto' ? 'light' : themeMode === 'light' ? 'dark' : 'auto';
-    try {
-      localStorage.setItem('tabla-elementos-theme', themeMode);
-    } catch (_) {
-      // La aplicación puede funcionar aunque el navegador bloquee almacenamiento local.
-    }
+    try { localStorage.setItem('tabla-elementos-theme', themeMode); } catch (_) {}
     applyTheme();
   }
 
@@ -152,15 +137,10 @@
     try {
       const savedTheme = localStorage.getItem('tabla-elementos-theme');
       if (savedTheme === 'auto' || savedTheme === 'light' || savedTheme === 'dark') themeMode = savedTheme;
-    } catch (_) {
-      themeMode = 'auto';
-    }
+    } catch (_) { themeMode = 'auto'; }
 
     systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-    const refreshTheme = (): void => {
-      if (themeMode === 'auto') applyTheme();
-    };
-
+    const refreshTheme = (): void => { if (themeMode === 'auto') applyTheme(); };
     systemTheme.addEventListener('change', refreshTheme);
     themeTimer = window.setInterval(refreshTheme, 60_000);
     applyTheme();
@@ -174,24 +154,13 @@
   init();
 </script>
 
-<svelte:head>
-  <title>Tabla elementos</title>
-</svelte:head>
+<svelte:head><title>Tabla elementos</title></svelte:head>
 
-<main
-  class:with-comparator={comparedElements.length > 0}
-  class:soft-cells={softCells}
-  class={`app-shell theme-${resolvedTheme}`}
->
+<main class:with-comparator={comparedElements.length > 0} class={`app-shell theme-${resolvedTheme}`}>
   {#if loading}
-    <section class="state-card">
-      <h2>Cargando dataset local…</h2>
-    </section>
+    <section class="state-card"><h2>Cargando dataset local…</h2></section>
   {:else if errorMessage}
-    <section class="state-card error">
-      <h2>No se pudo iniciar la aplicación</h2>
-      <p>{errorMessage}</p>
-    </section>
+    <section class="state-card error"><h2>No se pudo iniciar la aplicación</h2><p>{errorMessage}</p></section>
   {:else}
     <PeriodicGrid
       bind:this={gridView}
@@ -211,22 +180,22 @@
       elementCount={elements.length}
       {spectralLineCount}
       {nistProblemCount}
-      {softCells}
       {tableMode}
       {layoutBusy}
       {themeMode}
       on:zoomin={() => gridView?.zoomIn()}
       on:zoomout={() => gridView?.zoomOut()}
       on:reset={() => gridView?.resetView()}
-      on:corners={() => (softCells = !softCells)}
       on:layout={toggleTableMode}
       on:theme={cycleTheme}
     />
 
     {#if comparedElements.length > 0}
-      <aside class="comparison-drawer" aria-label="Comparador espectral">
+      <aside class="comparison-drawer" aria-label="Comparador de elementos">
         <CompareElements
           selected={comparedElements}
+          scope={comparisonScope}
+          on:scope={(event) => (comparisonScope = event.detail)}
           on:remove={(event) => removeCompared(event.detail)}
           on:clear={clearCompared}
         />
@@ -237,7 +206,7 @@
       element={modalElement}
       {comparedSymbols}
       on:close={closeModal}
-      on:compare={(event) => toggleCompared(event.detail)}
+      on:compare={(event) => addCompared(event.detail)}
     />
   {/if}
 </main>
