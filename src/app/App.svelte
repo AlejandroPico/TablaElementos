@@ -86,38 +86,44 @@
     return new Promise((resolve) => window.setTimeout(resolve, milliseconds));
   }
 
-  function nextFrame(): Promise<void> {
-    return new Promise((resolve) => requestAnimationFrame(() => resolve()));
-  }
-
-  async function runLayoutStage(nextLayout: TableLayout, stage: LayoutAnimationStage, settleDelay = 90): Promise<void> {
+  async function runLayoutStage(
+    nextLayout: TableLayout,
+    stage: LayoutAnimationStage,
+    settleDelay = 70
+  ): Promise<void> {
     const previousRects = gridView?.captureElementRects?.() ?? {};
     layoutMode = nextLayout;
     await tick();
-    await nextFrame();
     await Promise.resolve(gridView?.animateLayoutFrom?.(previousRects, stage));
-    await pause(settleDelay);
-    await Promise.resolve(gridView?.fitToViewport?.(true));
+    if (settleDelay > 0) await pause(settleDelay);
+  }
+
+  async function recoverLayout(): Promise<void> {
+    layoutMode = tableMode;
+    await tick();
+    await Promise.resolve(gridView?.fitToViewport?.(false));
   }
 
   async function toggleTableMode(): Promise<void> {
     if (layoutBusy) return;
     layoutBusy = true;
+
     try {
       if (tableMode === 'short') {
         tableMode = 'long';
-        await runLayoutStage('opening', 'spread', 130);
-        await pause(110);
+        await runLayoutStage('opening', 'spread', 95);
         await runLayoutStage('long', 'series-in', 70);
       } else {
         tableMode = 'short';
-        await runLayoutStage('opening', 'series-out', 100);
-        await pause(110);
+        await runLayoutStage('opening', 'series-out', 95);
         await runLayoutStage('short', 'collapse', 70);
       }
+    } catch (error) {
+      console.warn('[TablaElementos] La transición animada falló; se aplicará el cambio inmediato.', error);
+      await recoverLayout();
     } finally {
       layoutMode = tableMode;
-      window.setTimeout(() => (layoutBusy = false), 120);
+      window.setTimeout(() => (layoutBusy = false), 100);
     }
   }
 
