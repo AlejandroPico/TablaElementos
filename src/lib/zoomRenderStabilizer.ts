@@ -1,15 +1,49 @@
 export {};
 
 let gridObserver: MutationObserver | null = null;
+let viewportObserver: MutationObserver | null = null;
 let documentObserver: MutationObserver | null = null;
 let attachedGrid: HTMLElement | null = null;
+let attachedViewport: HTMLElement | null = null;
+let rasterFrame = 0;
+let cleanupFrame = 0;
+let repaintTimer = 0;
+
+function pulseRaster(grid: HTMLElement): void {
+  cancelAnimationFrame(rasterFrame);
+  cancelAnimationFrame(cleanupFrame);
+  window.clearTimeout(repaintTimer);
+
+  const pan = grid.closest<HTMLElement>('.periodic-pan');
+  grid.classList.remove('zoom-raster-refresh');
+  pan?.classList.remove('zoom-raster-refresh');
+
+  // Obliga al navegador a registrar el estado previo antes de volver a pintar.
+  void grid.offsetWidth;
+
+  grid.classList.add('zoom-raster-refresh');
+  pan?.classList.add('zoom-raster-refresh');
+
+  rasterFrame = requestAnimationFrame(() => {
+    cleanupFrame = requestAnimationFrame(() => {
+      grid.classList.remove('zoom-raster-refresh');
+      pan?.classList.remove('zoom-raster-refresh');
+    });
+  });
+}
+
+function scheduleRasterRefresh(grid: HTMLElement, delay = 36): void {
+  window.clearTimeout(repaintTimer);
+  repaintTimer = window.setTimeout(() => pulseRaster(grid), delay);
+}
 
 function applyRenderBucket(grid: HTMLElement): void {
   const rawZoom = grid.style.zoom;
   const currentBucket = grid.style.getPropertyValue('--render-bucket-scale').trim();
 
-  // Cuando PeriodicGrid publica un nuevo escalón, lo trasladamos a una escala
-  // visual interna y neutralizamos CSS zoom antes del siguiente pintado.
+  // PeriodicGrid publica cada escalón mediante la propiedad inline zoom. La hoja
+  // zoom-stability.css impide que ese zoom altere el layout; aquí se traslada de
+  // forma atómica a una escala visual centrada.
   if (rawZoom && rawZoom !== '1') {
     const parsed = Number.parseFloat(rawZoom);
     if (!Number.isFinite(parsed) || parsed <= 0) return;
@@ -18,34 +52,51 @@ function applyRenderBucket(grid: HTMLElement): void {
     if (currentBucket !== normalized) {
       grid.style.setProperty('--render-bucket-scale', normalized);
       grid.dataset.renderBucket = normalized;
+      scheduleRasterRefresh(grid, 0);
     }
+
     grid.style.zoom = '1';
     return;
   }
 
-  // El valor 1 escrito por este mismo estabilizador no debe borrar el último
-  // escalón real. Solo inicializamos cuando todavía no existe ninguno.
   if (!currentBucket) {
     grid.style.setProperty('--render-bucket-scale', '1.000');
     grid.dataset.renderBucket = '1.000';
   }
 }
 
+function attachViewport(viewport: HTMLElement): void {
+  if (attachedViewport === viewport) return;
+
+  viewportObserver?.disconnect();
+  attachedViewport = viewport;
+  viewportObserver = new MutationObserver(() => {
+    if (!viewport.classList.contains('camera-moving') && attachedGrid) {
+      // El repintado final sucede cuando la interpolación de cámara ha terminado,
+      // no mientras las fichas están desplazándose.
+      scheduleRasterRefresh(attachedGrid, 28);
+    }
+  });
+  viewportObserver.observe(viewport, {
+    attributes: true,
+    attributeFilter: ['class']
+  });
+}
+
 function attachToGrid(grid: HTMLElement): void {
-  if (attachedGrid === grid) {
-    applyRenderBucket(grid);
-    return;
+  if (attachedGrid !== grid) {
+    gridObserver?.disconnect();
+    attachedGrid = grid;
+    gridObserver = new MutationObserver(() => applyRenderBucket(grid));
+    gridObserver.observe(grid, {
+      attributes: true,
+      attributeFilter: ['style']
+    });
   }
 
-  gridObserver?.disconnect();
-  attachedGrid = grid;
   applyRenderBucket(grid);
-
-  gridObserver = new MutationObserver(() => applyRenderBucket(grid));
-  gridObserver.observe(grid, {
-    attributes: true,
-    attributeFilter: ['style']
-  });
+  const viewport = grid.closest<HTMLElement>('.periodic-viewport');
+  if (viewport) attachViewport(viewport);
 }
 
 function locateGrid(): void {
@@ -69,6 +120,10 @@ if (document.readyState === 'loading') {
 }
 
 window.addEventListener('beforeunload', () => {
+  cancelAnimationFrame(rasterFrame);
+  cancelAnimationFrame(cleanupFrame);
+  window.clearTimeout(repaintTimer);
   gridObserver?.disconnect();
+  viewportObserver?.disconnect();
   documentObserver?.disconnect();
 });
