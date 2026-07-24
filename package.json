@@ -6,7 +6,7 @@
   "description": "Tabla periódica científica para explorar estructura electrónica, radios, cristales, espectros, núcleos y propiedades por elemento.",
   "scripts": {
     "dev": "npm run build:data && vite --host 0.0.0.0",
-    "build:data": "python scripts/build_data.py && python scripts/enrich_advanced_properties.py && python scripts/build_element_data.py",
+    "build:data": "python scripts/build_data.py && python scripts/enrich_advanced_properties.py --pubchem-annotations && python scripts/build_element_data.py",
     "enrich:advanced": "python scripts/enrich_advanced_properties.py --pubchem-annotations",
     "enrich:advanced:offline": "python scripts/enrich_advanced_properties.py --offline",
     "init:elements": "python scripts/init_elements_structure.py",
