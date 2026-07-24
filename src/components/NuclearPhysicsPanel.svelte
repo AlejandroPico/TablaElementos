@@ -35,13 +35,9 @@
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  function isotopeRows(): DataRow[] {
-    return elementData?.domains.isotopes?.rows ?? [];
-  }
-
-  function buildNuclides(): Nuclide[] {
-    return isotopeRows().flatMap((row) => {
-      const z = num(row.z) ?? element?.atomic_number ?? 0;
+  function buildNuclides(sourceRows: DataRow[], currentElement: ElementWithLines | null): Nuclide[] {
+    return sourceRows.flatMap((row) => {
+      const z = num(row.z) ?? currentElement?.atomic_number ?? 0;
       const n = num(row.n);
       if (n === null) return [];
       const a = z + n;
@@ -54,7 +50,7 @@
         z,
         n,
         a,
-        label: `${element?.symbol ?? row.symbol ?? ''}-${a}`,
+        label: `${currentElement?.symbol ?? row.symbol ?? ''}-${a}`,
         stable,
         halfLifeSeconds,
         halfLifeText: stable ? 'Estable' : [halfLifeText, row.unit_hl].filter(Boolean).join(' ') || 'Sin dato',
@@ -115,7 +111,8 @@
     }
   }
 
-  $: nuclides = buildNuclides();
+  $: isotopeDataRows = elementData?.domains.isotopes?.rows ?? [];
+  $: nuclides = buildNuclides(isotopeDataRows, element);
   $: if ((element?.symbol ?? '') !== lastSymbol) {
     lastSymbol = element?.symbol ?? '';
     selectedLabel = preferredNuclide(nuclides)?.label ?? '';
