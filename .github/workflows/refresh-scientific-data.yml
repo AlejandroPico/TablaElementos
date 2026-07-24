@@ -8,9 +8,19 @@ on:
         required: false
         type: boolean
         default: false
+  push:
+    branches:
+      - main
+    paths:
+      - 'scripts/enrich_advanced_properties.py'
+      - 'scripts/enrich_science_phase_2.py'
+      - 'scripts/enrich_science_phase_2_v2.py'
+      - 'scripts/repair_iron_spectrum.py'
+      - '.github/workflows/refresh-scientific-data.yml'
 
 permissions:
   contents: write
+  actions: write
 
 concurrency:
   group: scientific-data-refresh
@@ -23,6 +33,7 @@ jobs:
     timeout-minutes: 90
     env:
       MP_API_KEY: ${{ secrets.MP_API_KEY }}
+      GH_TOKEN: ${{ github.token }}
 
     steps:
       - name: Checkout repository
@@ -51,7 +62,7 @@ jobs:
         run: npm run repair:iron-spectrum
 
       - name: Optionally repair every empty optical spectrum
-        if: ${{ inputs.repair_all_optical_spectra }}
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.repair_all_optical_spectra }}
         run: npm run repair:spectra:all
 
       - name: Regenerate local datasets
@@ -64,6 +75,7 @@ jobs:
         run: npm run build
 
       - name: Commit per-element CSV changes
+        id: persist
         shell: bash
         run: |
           git config user.name 'github-actions[bot]'
@@ -71,7 +83,13 @@ jobs:
           git add data/elements
           if git diff --cached --quiet; then
             echo 'No scientific CSV changes to commit.'
+            echo 'changed=false' >> "$GITHUB_OUTPUT"
             exit 0
           fi
           git commit -m 'data: refresh scientific datasets by element'
           git push
+          echo 'changed=true' >> "$GITHUB_OUTPUT"
+
+      - name: Publish the refreshed scientific data
+        if: ${{ steps.persist.outputs.changed == 'true' }}
+        run: gh workflow run deploy-pages.yml --ref main
