@@ -73,7 +73,7 @@
   function decayColor(decay: string): string {
     const normalized = decay.toUpperCase();
     if (normalized.includes('ESTABLE')) return '#6fc79a';
-    if (normalized.includes('A') || normalized.includes('ALPHA')) return '#e0a865';
+    if (normalized.includes('ALPHA') || normalized === 'A') return '#e0a865';
     if (normalized.includes('B-')) return '#79c5d9';
     if (normalized.includes('B+') || normalized.includes('EC')) return '#d87988';
     if (normalized.includes('SF')) return '#c58bd8';
@@ -106,6 +106,13 @@
       if (a.stable !== b.stable) return a.stable ? -1 : 1;
       return Math.abs(a.n - a.z) - Math.abs(b.n - b.z);
     })[0];
+  }
+
+  function selectOnKey(event: KeyboardEvent, label: string): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      selectedLabel = label;
+    }
   }
 
   $: nuclides = buildNuclides();
@@ -155,16 +162,18 @@
               {/each}
             </g>
             {#each nuclides as nuclide}
-              <button
+              <g
                 class:active={selected?.label === nuclide.label}
-                type="button"
+                role="button"
+                tabindex="0"
                 aria-label={`Seleccionar ${nuclide.label}`}
                 on:click={() => (selectedLabel = nuclide.label)}
+                on:keydown={(event) => selectOnKey(event, nuclide.label)}
               >
                 <circle cx={xFor(nuclide, nuclides)} cy={yFor(nuclide)} r={selected?.label === nuclide.label ? 7 : 5} style={`--nuclide-color:${decayColor(nuclide.decay)};`}>
                   <title>{nuclide.label} · {nuclide.halfLifeText} · {nuclide.decay}</title>
                 </circle>
-              </button>
+              </g>
             {/each}
             <text class="axis-caption" x="360" y="265" text-anchor="middle">Número de neutrones N</text>
           </svg>
