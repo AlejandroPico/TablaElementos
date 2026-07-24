@@ -1,18 +1,17 @@
 #!/usr/bin/env python3
-"""Correcciones de normalización para la fase científica 2.
+"""Correcciones de normalización y persistencia para la fase científica 2.
 
-Este lanzador conserva el importador principal y sustituye únicamente dos
-parsers cuya fuente HTML requiere interpretación estructural explícita:
+Este lanzador conserva el importador principal y sustituye tres puntos sensibles:
 
 - transiciones de rayos X con subcapas como K-L3 o L2-M4;
-- tabla NCNR con filas de elemento natural y filas isotópicas bajo rowspan.
+- tabla NCNR con filas naturales e isotópicas bajo rowspan;
+- fusión conservadora: una consulta vacía no borra datos ya versionados.
 """
 
 from __future__ import annotations
 
 import re
 import urllib.error
-from typing import Any
 
 import enrich_science_phase_2 as phase2
 
@@ -85,12 +84,10 @@ def parse_neutron_table(elements: list[dict[str, str]]) -> dict[str, list[dict[s
         if cells and phase2.clean(cells[0]) == phase2.clean(z_text):
             cells.pop(0)
 
-        # Cabeceras y filas incompletas no contienen la estructura mínima.
         if not cells or phase2.clean(cells[0]).lower() in {"a", "isotope"}:
             continue
 
-        # Conservamos vacíos intermedios: son significativos en las filas de
-        # abundancia natural. Se completa a la derecha, nunca a la izquierda.
+        # Los vacíos intermedios son significativos en las filas naturales.
         cells = cells + [""] * max(0, 10 - len(cells))
         mass_number, _spin, abundance, bc, _b_plus, _b_minus, sigma_c, sigma_i, sigma_s, sigma_a = cells[:10]
 
@@ -103,8 +100,6 @@ def parse_neutron_table(elements: list[dict[str, str]]) -> dict[str, list[dict[s
             ("neutron_absorption_cross_section", sigma_a, "barn"),
         )
         for property_id, value, unit in fields:
-            # Los valores complejos se conservan como texto cuando tienen una
-            # parte numérica; la interfaz usa el valor real inicial para barras.
             if phase2.numeric(value) is None:
                 continue
             result[current_symbol].append(
@@ -121,7 +116,34 @@ def parse_neutron_table(elements: list[dict[str, str]]) -> dict[str, list[dict[s
     return {symbol: records for symbol, records in result.items() if records}
 
 
+def write_radiation(element: dict[str, str], generated: list[dict[str, str]]) -> None:
+    """Reemplaza solo los proveedores que hayan devuelto datos nuevos.
+
+    Si NIST X-Ray, NCNR o una importación XPS falla temporalmente, las filas
+    oficiales ya guardadas en la carpeta del elemento permanecen intactas.
+    """
+
+    if not generated:
+        return
+
+    path = phase2.ELEMENTS_ROOT / element["folder"] / "radiation_interaction.csv"
+    rows = phase2.read_csv(path)
+    incoming_sources = {
+        phase2.clean(row.get("source"))
+        for row in generated
+        if phase2.clean(row.get("source"))
+    }
+    if incoming_sources:
+        rows = [
+            row for row in rows
+            if phase2.clean(row.get("source")) not in incoming_sources
+        ]
+    rows.extend(generated)
+    phase2.write_csv(path, rows, phase2.RADIATION_FIELDS)
+
+
 phase2.parse_neutron_table = parse_neutron_table
+phase2.write_radiation = write_radiation
 
 
 if __name__ == "__main__":
