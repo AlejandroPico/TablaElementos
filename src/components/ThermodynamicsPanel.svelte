@@ -13,13 +13,6 @@
     rawY: number;
   }
 
-  function rows(): DataRow[] {
-    return [
-      ...(elementData?.domains.thermodynamics?.rows ?? []),
-      ...(elementData?.domains.physical?.rows ?? []),
-    ];
-  }
-
   function num(value: unknown): number | null {
     const text = String(value ?? '').replace(/−/g, '-').replace(/,/g, '.');
     const match = text.match(/[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?/i);
@@ -28,12 +21,12 @@
     return Number.isFinite(parsed) ? parsed : null;
   }
 
-  function findRow(...properties: string[]): DataRow | null {
-    return rows().find((row) => properties.includes(String(row.property ?? ''))) ?? null;
+  function findRow(sourceRows: DataRow[], ...properties: string[]): DataRow | null {
+    return sourceRows.find((row) => properties.includes(String(row.property ?? ''))) ?? null;
   }
 
-  function textValue(properties: string[], fallback = '—'): string {
-    const row = findRow(...properties);
+  function textValue(sourceRows: DataRow[], properties: string[], fallback = '—'): string {
+    const row = findRow(sourceRows, ...properties);
     if (!row?.value) return fallback;
     return `${row.value}${row.unit ? ` ${row.unit}` : ''}`;
   }
@@ -50,8 +43,8 @@
     return value;
   }
 
-  function series(propertyNames: string[], xKeys: string[]): Array<{ x: number; y: number; label: string }> {
-    return rows().flatMap((row) => {
+  function series(sourceRows: DataRow[], propertyNames: string[], xKeys: string[]): Array<{ x: number; y: number; label: string }> {
+    return sourceRows.flatMap((row) => {
       if (!propertyNames.includes(String(row.property ?? ''))) return [];
       const y = num(row.value);
       const x = xKeys.map((key) => num(row[key])).find((value) => value !== null) ?? null;
@@ -68,7 +61,7 @@
     const maxX = Math.max(...xs);
     const minY = Math.min(...ys);
     const maxY = Math.max(...ys);
-    return values.map((item, index) => {
+    return values.map((item) => {
       const normalizedY = logY ? Math.log10(item.y) : item.y;
       return {
         x: maxX === minX ? 360 : 44 + ((item.x - minX) / (maxX - minX)) * 632,
@@ -88,20 +81,22 @@
     return 52 + Math.max(0, Math.min(1, value / Math.max(max, 1))) * 616;
   }
 
-  $: meltingRow = findRow('melting_point');
-  $: boilingRow = findRow('boiling_point');
-  $: tripleRow = findRow('triple_point', 'triple_point_temperature');
-  $: criticalRow = findRow('critical_temperature');
+  $: thermodynamicRows = elementData?.domains.thermodynamics?.rows ?? [];
+  $: physicalRows = elementData?.domains.physical?.rows ?? [];
+  $: allRows = [...thermodynamicRows, ...physicalRows];
+  $: meltingRow = findRow(allRows, 'melting_point');
+  $: boilingRow = findRow(allRows, 'boiling_point');
+  $: tripleRow = findRow(allRows, 'triple_point', 'triple_point_temperature');
+  $: criticalRow = findRow(allRows, 'critical_temperature');
   $: melting = kelvin(meltingRow);
   $: boiling = kelvin(boilingRow);
   $: triple = kelvin(tripleRow);
   $: critical = kelvin(criticalRow);
   $: phaseMax = Math.max(melting ?? 0, boiling ?? 0, triple ?? 0, critical ?? 0, 300);
-  $: cpSeries = series(['heat_capacity_cp', 'specific_heat', 'specific_heat_capacity'], ['temperature_k']);
-  $: vaporSeries = series(['vapor_pressure'], ['temperature_k']);
+  $: cpSeries = series(allRows, ['heat_capacity_cp', 'specific_heat', 'specific_heat_capacity'], ['temperature_k']);
+  $: vaporSeries = series(allRows, ['vapor_pressure'], ['temperature_k']);
   $: cpPoints = plotPoints(cpSeries);
   $: vaporPoints = plotPoints(vaporSeries, true);
-  $: thermodynamicRows = elementData?.domains.thermodynamics?.rows ?? [];
 </script>
 
 <div class="advanced-science-pane thermodynamics-pane">
@@ -114,18 +109,18 @@
         <h3>Materia, energía y transiciones</h3>
         <small>Las magnitudes conservan fase, temperatura, presión, fuente y condiciones cuando la fuente las proporciona.</small>
       </div>
-      <div class="thermo-gauge" aria-label={`Estado estándar: ${textValue(['standard_state'])}`}><strong>{element?.symbol}</strong><span>{textValue(['standard_state'])}</span></div>
+      <div class="thermo-gauge" aria-label={`Estado estándar: ${textValue(allRows, ['standard_state'])}`}><strong>{element?.symbol}</strong><span>{textValue(allRows, ['standard_state'])}</span></div>
     </section>
 
     <section class="science-card-grid thermo-summary-grid">
-      <article><small>Punto de fusión</small><strong>{textValue(['melting_point'])}</strong></article>
-      <article><small>Punto de ebullición</small><strong>{textValue(['boiling_point'])}</strong></article>
-      <article><small>Entalpía de fusión</small><strong>{textValue(['enthalpy_fusion'])}</strong></article>
-      <article><small>Entalpía de vaporización</small><strong>{textValue(['enthalpy_vaporization'])}</strong></article>
-      <article><small>Capacidad calorífica Cp</small><strong>{textValue(['heat_capacity_cp', 'specific_heat'])}</strong></article>
-      <article><small>Entropía molar estándar</small><strong>{textValue(['standard_molar_entropy'])}</strong></article>
-      <article><small>Punto triple</small><strong>{textValue(['triple_point', 'triple_point_temperature'])}</strong></article>
-      <article><small>Punto crítico</small><strong>{textValue(['critical_temperature'])}</strong></article>
+      <article><small>Punto de fusión</small><strong>{textValue(allRows, ['melting_point'])}</strong></article>
+      <article><small>Punto de ebullición</small><strong>{textValue(allRows, ['boiling_point'])}</strong></article>
+      <article><small>Entalpía de fusión</small><strong>{textValue(allRows, ['enthalpy_fusion'])}</strong></article>
+      <article><small>Entalpía de vaporización</small><strong>{textValue(allRows, ['enthalpy_vaporization'])}</strong></article>
+      <article><small>Capacidad calorífica Cp</small><strong>{textValue(allRows, ['heat_capacity_cp', 'specific_heat'])}</strong></article>
+      <article><small>Entropía molar estándar</small><strong>{textValue(allRows, ['standard_molar_entropy'])}</strong></article>
+      <article><small>Punto triple</small><strong>{textValue(allRows, ['triple_point', 'triple_point_temperature'])}</strong></article>
+      <article><small>Punto crítico</small><strong>{textValue(allRows, ['critical_temperature'])}</strong></article>
     </section>
 
     <section class="science-visual-card phase-landmark-card">
