@@ -7,6 +7,9 @@ export type ComparisonScope =
   | 'electronic'
   | 'radii'
   | 'crystal'
+  | 'nuclear'
+  | 'thermodynamics'
+  | 'radiation'
   | 'properties'
   | 'isotopes'
   | 'spectrum'
@@ -105,6 +108,7 @@ export interface SpectraDataset {
     nist_files_present?: number;
     nist_files_malformed_or_non_tabular?: number;
     nist_imported_spectral_lines?: number;
+    spectral_fallback_elements?: number;
     element_data_strategy?: string;
   };
   elements: ElementRecord[];
