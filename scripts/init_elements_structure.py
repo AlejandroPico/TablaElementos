@@ -11,14 +11,14 @@ PROPERTY_HEADER = "property,value,unit,source,source_url,retrieved_at,notes\n"
 
 CSV_TEMPLATES: dict[str, str] = {
     "identity.csv": "atomic_number,symbol,name_en,name_es,group,period,block,category,folder,pubchem_name,standard_state,group_block,source,source_url,retrieved_at\n",
-    "spectra_nist_lines.csv": "wavelength_nm,intensity,species,transition,lower_level,upper_level,source,source_url,retrieved_at,notes\n",
+    "spectra_nist_lines.csv": "element,species,obs_wl_nm,ritz_wl_nm,intensity,transition,lower_level,upper_level,source,source_url,retrieved_at,notes\n",
     "spectra_nist_levels.csv": "level_id,energy,energy_unit,configuration,term,j,source,source_url,retrieved_at,notes\n",
     "atomic_properties.csv": PROPERTY_HEADER,
     "isotopes.csv": "isotope,mass_number,atomic_mass_u,abundance_percent,half_life,decay_mode,spin,source,source_url,retrieved_at,notes\n",
     "physical_properties.csv": PROPERTY_HEADER,
     "chemical_properties.csv": PROPERTY_HEADER,
     "materials.csv": "property,value,unit,source,source_url,retrieved_at,notes,material_id,phase,structure,space_group,lattice_a,lattice_b,lattice_c,lattice_alpha,lattice_beta,lattice_gamma\n",
-    "thermodynamics.csv": "property,value,unit,temperature_k,pressure_pa,phase,source,source_url,retrieved_at,notes\n",
+    "thermodynamics.csv": "property,value,unit,temperature_k,pressure,phase,source,source_url,retrieved_at,notes\n",
     "geochemistry.csv": "property,value,unit,environment,source,source_url,retrieved_at,notes\n",
     "astrophysics.csv": "property,value,unit,context,source,source_url,retrieved_at,notes\n",
     "biology_medicine.csv": "property,value,unit,organism_or_use,source,source_url,retrieved_at,notes\n",
@@ -27,7 +27,7 @@ CSV_TEMPLATES: dict[str, str] = {
     "history.csv": "property,value,unit,source,source_url,retrieved_at,notes\n",
     "compounds.csv": "formula,name,compound_type,oxidation_state,source,source_url,retrieved_at,notes\n",
     "analytical_methods.csv": "method,signal,limit_of_detection,unit,source,source_url,retrieved_at,notes\n",
-    "radiation_interaction.csv": "property,value,unit,energy,particle_or_photon,source,source_url,retrieved_at,notes\n",
+    "radiation_interaction.csv": "property,value,unit,energy,particle_or_photon,isotope,transition,process,source,source_url,retrieved_at,notes\n",
     "photonics_color.csv": "property,value,unit,wavelength_nm,color,source,source_url,retrieved_at,notes\n",
     "computational.csv": "property,value,unit,method,basis_or_model,source,source_url,retrieved_at,notes\n",
     "sources.csv": "provider,dataset,target_file,source_url,retrieved_at,status,sha256,notes\n",
@@ -54,8 +54,10 @@ Carpeta de datos brutos, normalizados y derivados para el elemento **{name_es}**
 - `physical_properties.csv`: estado, densidad y cambios de fase.
 - `materials.csv`: alótropos, fases, estructuras, grupos espaciales y parámetros de red.
 - `isotopes.csv`: nucleídos y propiedades nucleares.
-- `spectra_nist_lines.csv` y `spectra_nist_levels.csv`: espectroscopia NIST.
-- Resto de CSV: termodinámica, contexto, radiación, biología, industria y fuentes.
+- `thermodynamics.csv`: entalpías, capacidades caloríficas, presión de vapor y transiciones de fase.
+- `radiation_interaction.csv`: rayos X, XPS/Auger, atenuación y datos neutrónicos.
+- `spectra_nist_lines.csv` y `spectra_nist_levels.csv`: espectroscopia óptica NIST.
+- Resto de CSV: contexto, biología, industria, análisis y fuentes.
 
 ## Campos avanzados incorporados
 
@@ -73,6 +75,8 @@ Carpeta de datos brutos, normalizados y derivados para el elemento **{name_es}**
 - `ionic_radius_<carga>_<coordinación>`.
 
 `materials.csv` conserva cada fase con `material_id`, `phase`, `structure`, `space_group` y parámetros de red.
+
+`radiation_interaction.csv` conserva cada magnitud con su energía, partícula, isótopo, transición, proceso y procedencia.
 """
 
 
