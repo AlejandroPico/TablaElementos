@@ -15,6 +15,7 @@ on:
       - 'scripts/enrich_advanced_properties.py'
       - 'scripts/enrich_science_phase_2.py'
       - 'scripts/enrich_science_phase_2_v2.py'
+      - 'scripts/enrich_nist_webbook.py'
       - 'scripts/repair_iron_spectrum.py'
       - '.github/workflows/refresh-scientific-data.yml'
 
@@ -30,7 +31,7 @@ jobs:
   refresh:
     name: Download, validate and persist element data
     runs-on: ubuntu-latest
-    timeout-minutes: 90
+    timeout-minutes: 120
     env:
       MP_API_KEY: ${{ secrets.MP_API_KEY }}
       GH_TOKEN: ${{ github.token }}
@@ -87,7 +88,8 @@ jobs:
             exit 0
           fi
           git commit -m 'data: refresh scientific datasets by element'
-          git push
+          git pull --rebase origin main
+          git push origin HEAD:main
           echo 'changed=true' >> "$GITHUB_OUTPUT"
 
       - name: Publish the refreshed scientific data
