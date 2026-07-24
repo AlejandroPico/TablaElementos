@@ -16,6 +16,7 @@ on:
       - 'scripts/enrich_science_phase_2.py'
       - 'scripts/enrich_science_phase_2_v2.py'
       - 'scripts/enrich_nist_webbook.py'
+      - 'scripts/register_webbook_sources.py'
       - 'scripts/repair_iron_spectrum.py'
       - '.github/workflows/refresh-scientific-data.yml'
 
