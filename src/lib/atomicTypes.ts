@@ -16,6 +16,7 @@ export type ComparisonScope =
   | 'spectrum'
   | 'lines'
   | 'levels'
+  | 'trends'
   | 'chemistry'
   | 'context'
   | 'sources';

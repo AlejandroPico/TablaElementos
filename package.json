@@ -14,6 +14,7 @@
     "enrich:context": "python scripts/enrich_material_context.py",
     "enrich:all": "python scripts/enrich_advanced_properties.py --pubchem-annotations && python scripts/enrich_science_phase_2_v2.py --network && python scripts/enrich_nist_webbook.py --workers 3 && python scripts/register_webbook_sources.py && python scripts/enrich_material_context.py",
     "repair:iron-spectrum": "python scripts/repair_iron_spectrum.py",
+    "audit:spectra": "python scripts/audit_spectral_coverage.py",
     "repair:spectra:all": "python scripts/enrich_science_phase_2_v2.py --network --repair-spectra",
     "refresh:data": "npm run enrich:all && npm run repair:iron-spectrum && npm run build:data",
     "init:elements": "python scripts/init_elements_structure.py",

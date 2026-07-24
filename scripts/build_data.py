@@ -395,12 +395,48 @@ def parse_nist_spectral_lines(element: Element, path: Path | None, status: NistF
                     )
                 )
 
-                if len(lines) >= MAX_IMPORTED_LINES_PER_ELEMENT:
-                    break
     except csv.Error:
         return []
 
-    return lines
+    return select_representative_spectral_lines(lines, MAX_IMPORTED_LINES_PER_ELEMENT)
+
+
+def evenly_spaced_lines(lines: list[SpectralLine], limit: int) -> list[SpectralLine]:
+    if limit <= 0 or not lines:
+        return []
+    ordered = sorted(lines, key=lambda line: line.wavelength_nm)
+    if len(ordered) <= limit:
+        return ordered
+    if limit == 1:
+        return [ordered[len(ordered) // 2]]
+    return [ordered[round(index * (len(ordered) - 1) / (limit - 1))] for index in range(limit)]
+
+
+def select_representative_spectral_lines(lines: list[SpectralLine], limit: int) -> list[SpectralLine]:
+    """Conserva cobertura UV/visible/IR sin cargar miles de nodos en el navegador.
+
+    Los CSV NIST suelen estar ordenados por longitud de onda. Cortar las primeras
+    filas ocultaba por completo la región visible de elementos como Fe, Ti o Cu.
+    La selección combina líneas visibles intensas, muestreo visible uniforme y
+    muestreo uniforme del intervalo completo.
+    """
+    if len(lines) <= limit:
+        return sorted(lines, key=lambda line: line.wavelength_nm)
+
+    visible = [line for line in lines if line.visible]
+    candidates = [
+        *sorted(visible, key=lambda line: line.intensity, reverse=True)[:220],
+        *evenly_spaced_lines(visible, 260),
+        *evenly_spaced_lines(lines, 220),
+        *sorted(lines, key=lambda line: line.intensity, reverse=True),
+    ]
+    selected: dict[tuple[str, float, str], SpectralLine] = {}
+    for line in candidates:
+        key = (line.species, round(line.wavelength_nm, 8), line.transition)
+        selected.setdefault(key, line)
+        if len(selected) >= limit:
+            break
+    return sorted(selected.values(), key=lambda line: line.wavelength_nm)
 
 
 def analyze_nist_for_element(element: Element) -> tuple[NistElementStatus, list[SpectralLine]]:

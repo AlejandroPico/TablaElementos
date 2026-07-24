@@ -135,7 +135,7 @@
     </section>
 
     {#if nuclides.length}
-      <section class="science-visual-card nuclide-map-card">
+      <section class="flat-science-section nuclide-map-card">
         <header>
           <div><small>Número de neutrones frente a vida media</small><h3>Cartografía isotópica</h3></div>
           <span>Escala vertical log₁₀(s) · los estables se sitúan arriba</span>
@@ -173,8 +173,8 @@
         </div>
       </section>
 
-      <div class="nuclear-lower-grid">
-        <section class="science-visual-card abundance-card">
+      <div class="nuclear-lower-grid flat-split-workspace">
+        <section class="flat-science-section abundance-card">
           <header><div><small>Composición natural</small><h3>Abundancias isotópicas</h3></div><span>%</span></header>
           <div class="abundance-bars">
             {#each nuclides.filter((item) => (item.abundance ?? 0) > 0) as nuclide}
@@ -188,7 +188,7 @@
           </div>
         </section>
 
-        <section class="science-visual-card nuclide-detail-card">
+        <section class="flat-science-section nuclide-detail-card">
           <header><div><small>Nucleído seleccionado</small><h3>{selected?.label ?? '—'}</h3></div><span>{selected?.stable ? 'Estable' : selected?.decay}</span></header>
           {#if selected}
             <dl class="nuclide-detail-grid">

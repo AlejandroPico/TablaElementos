@@ -113,7 +113,7 @@
     </section>
 
     {#if records.length}
-      <section class="crystal-workspace">
+      <section class="crystal-workspace flat-split-workspace">
         <div class="crystal-viewer-shell">
           <div
             class="crystal-stage"

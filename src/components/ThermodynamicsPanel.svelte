@@ -4,6 +4,8 @@
   export let element: ElementWithLines | null = null;
   export let elementData: ElementDataPayload | null = null;
   export let loading = false;
+  let recordPage = 0;
+  const recordPageSize = 8;
 
   interface Point {
     x: number;
@@ -179,6 +181,8 @@
   $: vaporSeries = series(allRows, ['vapor_pressure'], ['temperature_k']);
   $: cpPoints = plotPoints(cpSeries);
   $: vaporPoints = plotPoints(vaporSeries, true);
+  $: recordPages = Math.max(1, Math.ceil(thermodynamicRows.length / recordPageSize));
+  $: visibleRecords = thermodynamicRows.slice(recordPage * recordPageSize, (recordPage + 1) * recordPageSize);
 </script>
 
 <div class="advanced-science-pane thermodynamics-pane">
@@ -203,7 +207,7 @@
       </dl>
     </details>
 
-    <section class="science-visual-card phase-landmark-card">
+    <section class="flat-science-section phase-landmark-card">
       <header>
         <div><small>Temperatura absoluta</small><h3>Mapa de transiciones de fase</h3></div>
         <span>Solo se dibujan puntos publicados</span>
@@ -231,7 +235,7 @@
     </section>
 
     <div class="thermo-chart-grid">
-      <section class="science-visual-card thermo-series-card">
+      <section class="flat-science-section thermo-series-card">
         <header>
           <div><small>Respuesta térmica</small><h3>Cp frente a temperatura</h3></div>
           <span>{cpSeries.length} puntos{cpDerivedFromShomate ? ' · NIST Shomate' : ''}</span>
@@ -249,7 +253,7 @@
         {/if}
       </section>
 
-      <section class="science-visual-card thermo-series-card">
+      <section class="flat-science-section thermo-series-card">
         <header><div><small>Equilibrio líquido–vapor</small><h3>Presión de vapor</h3></div><span>{vaporSeries.length} puntos · escala log</span></header>
         {#if vaporPoints.length > 1}
           <svg class="thermo-line-chart vapor-chart" viewBox="0 0 720 260" role="img" aria-label="Presión de vapor frente a temperatura">
@@ -265,17 +269,25 @@
     </div>
 
     {#if thermodynamicRows.length}
-      <section class="science-visual-card thermo-record-list">
+      <section class="flat-science-section thermo-record-list">
         <header><div><small>Registros y condiciones</small><h3>Dataset termodinámico</h3></div><span>{thermodynamicRows.length} filas</span></header>
-        <div>
-          {#each thermodynamicRows as row}
-            <article title={row.notes || undefined}>
-              <span>{String(row.property ?? '').replaceAll('_', ' ')}</span>
-              <strong>{row.value || '—'}{row.unit ? ` ${row.unit}` : ''}</strong>
-              <small>{[row.temperature_k ? `${row.temperature_k} K` : '', row.pressure, row.phase, row.source].filter(Boolean).join(' · ')}</small>
-            </article>
-          {/each}
+        <div class="compact-science-table">
+          <table>
+            <thead><tr><th>Magnitud</th><th>Valor</th><th>Temperatura</th><th>Presión / fase</th><th>Fuente</th></tr></thead>
+            <tbody>
+              {#each visibleRecords as row}
+                <tr title={row.notes || undefined}>
+                  <td>{String(row.property ?? '').replaceAll('_', ' ')}</td>
+                  <td>{row.value || '—'}{row.unit ? ` ${row.unit}` : ''}</td>
+                  <td>{row.temperature_k ? `${row.temperature_k} K` : '—'}</td>
+                  <td>{[row.pressure, row.phase].filter(Boolean).join(' · ') || '—'}</td>
+                  <td>{row.source || '—'}</td>
+                </tr>
+              {/each}
+            </tbody>
+          </table>
         </div>
+        {#if recordPages > 1}<div class="inline-pagination"><button type="button" disabled={recordPage === 0} on:click={() => (recordPage -= 1)}>Anterior</button><span>{recordPage + 1} / {recordPages}</span><button type="button" disabled={recordPage >= recordPages - 1} on:click={() => (recordPage += 1)}>Siguiente</button></div>{/if}
       </section>
     {/if}
 

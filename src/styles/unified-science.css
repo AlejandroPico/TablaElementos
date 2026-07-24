@@ -1,0 +1,774 @@
+/* Lenguaje de ficha unificado: gráficos dominantes, datos en filas y un único contenedor por ámbito. */
+.master-modal .flat-science-section,
+.master-modal .science-visual-card {
+  margin: 0;
+  padding: 10px 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.master-modal .flat-science-section > header,
+.master-modal .science-visual-card > header {
+  min-height: 34px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 0 7px;
+  padding: 0 2px 7px;
+  border-bottom: 1px solid var(--line);
+}
+
+.master-modal .flat-science-section > header h3,
+.master-modal .flat-science-section > header small,
+.master-modal .science-visual-card > header h3,
+.master-modal .science-visual-card > header small {
+  margin: 0;
+}
+
+.master-modal .flat-science-section > header span,
+.master-modal .science-visual-card > header > span {
+  color: var(--text-soft);
+  font-size: 0.6rem;
+  text-align: right;
+}
+
+.science-inline-stats {
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.science-inline-stats > span {
+  padding: 6px 10px;
+  border-right: 1px solid var(--line);
+  background: transparent;
+}
+
+.science-detail-drawer {
+  margin: 0;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.science-detail-drawer summary {
+  padding: 7px 3px;
+  background: transparent;
+}
+
+.science-detail-drawer dl div {
+  padding: 7px 5px;
+}
+
+.science-card-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.science-card-grid article,
+.science-definition-grid article {
+  min-height: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.science-card-grid article:nth-child(2n),
+.science-definition-grid article:last-child {
+  border-right: 0;
+}
+
+.science-definition-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  border-top: 1px solid var(--line);
+}
+
+.science-definition-grid p {
+  margin-top: 4px;
+}
+
+.radii-workspace {
+  gap: 0;
+  border: 1px solid var(--line);
+}
+
+.radii-concentric {
+  border-right: 1px solid var(--line);
+}
+
+.radii-list article {
+  min-height: 0;
+  padding: 8px 10px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.radii-list article:last-child {
+  border-bottom: 0;
+}
+
+.flat-split-workspace,
+.crystal-workspace {
+  gap: 0;
+  border: 1px solid var(--line);
+  background: transparent;
+}
+
+.crystal-viewer-shell,
+.crystal-data-panel {
+  min-height: 410px;
+  border: 0;
+  background: transparent;
+}
+
+.crystal-viewer-shell {
+  border-right: 1px solid var(--line);
+}
+
+.crystal-stage {
+  min-height: 410px;
+}
+
+.crystal-data-panel {
+  padding: 12px 14px;
+}
+
+.allotrope-selector {
+  gap: 0;
+  border: 1px solid var(--line);
+  border-top: 0;
+}
+
+.allotrope-selector button {
+  padding: 8px 10px;
+  border: 0;
+  border-right: 1px solid var(--line);
+  background: transparent;
+}
+
+.allotrope-selector button:last-child {
+  border-right: 0;
+}
+
+.allotrope-selector button.active {
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.nuclear-lower-grid,
+.neutron-workspace {
+  gap: 0;
+  margin-top: 0;
+}
+
+.nuclear-lower-grid > section:first-child,
+.neutron-workspace > section:first-child {
+  padding-right: 12px;
+  border-right: 1px solid var(--line);
+}
+
+.nuclear-lower-grid > section:last-child,
+.neutron-workspace > section:last-child {
+  padding-left: 12px;
+}
+
+.abundance-bars button,
+.neutron-bars article,
+.material-bars article,
+.abundance-context-chart article {
+  min-height: 39px;
+  padding: 6px 3px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.nuclide-detail-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0;
+  background: transparent;
+  border-top: 1px solid var(--line);
+}
+
+.nuclide-detail-grid > div {
+  min-height: 46px;
+  padding: 7px 9px;
+  border-right: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  background: transparent;
+}
+
+.nuclide-detail-grid > div:nth-child(2n) {
+  border-right: 0;
+}
+
+.thermo-chart-grid {
+  gap: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.thermo-chart-grid > section:first-child {
+  padding-right: 12px;
+  border-right: 1px solid var(--line);
+}
+
+.thermo-chart-grid > section:last-child {
+  padding-left: 12px;
+}
+
+.compact-science-table {
+  min-width: 0;
+  overflow: auto;
+}
+
+.compact-science-table table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.64rem;
+}
+
+.compact-science-table th,
+.compact-science-table td {
+  padding: 6px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+  vertical-align: top;
+}
+
+.compact-science-table th {
+  color: var(--text-soft);
+  font-size: 0.54rem;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.compact-science-table td:first-child {
+  color: var(--app-ink);
+  font-weight: 740;
+}
+
+.inline-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-height: 32px;
+  padding-top: 5px;
+}
+
+.inline-pagination button {
+  padding: 4px 8px;
+  border: 0;
+  border-bottom: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-soft);
+  background: transparent;
+  font-size: 0.6rem;
+}
+
+.inline-pagination button:hover:not(:disabled) {
+  color: var(--app-ink);
+  border-bottom-color: var(--accent);
+}
+
+.inline-pagination span {
+  color: var(--text-soft);
+  font-size: 0.6rem;
+}
+
+.xray-stick-spectrum,
+.xps-card {
+  min-height: 0;
+}
+
+.xray-sticks,
+.xps-line-track {
+  height: 165px;
+  margin-bottom: 10px;
+}
+
+.science-selection-readout {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 6px 2px;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+  font-size: 0.62rem;
+}
+
+.science-selection-readout span {
+  color: var(--text-soft);
+}
+
+.attenuation-chart g[role='button'] {
+  cursor: pointer;
+  outline: none;
+}
+
+.attenuation-chart g[role='button'].active circle,
+.attenuation-chart g[role='button']:focus-visible circle {
+  fill: var(--accent);
+  stroke: var(--app-ink);
+}
+
+.neutron-table-scroll {
+  max-height: 260px;
+}
+
+.material-dashboard {
+  min-height: 0;
+  gap: 0;
+}
+
+.material-plot,
+.material-reading {
+  padding: 12px;
+}
+
+.material-reading {
+  background: transparent;
+}
+
+.abundance-context-chart,
+.context-table-sheet {
+  margin-top: 8px;
+  padding: 10px 12px;
+  background: transparent;
+}
+
+.context-table-sheet dl > div {
+  padding-block: 8px;
+}
+
+.spectrum-toolbar {
+  align-items: center;
+}
+
+.spectrum-toolbar-controls {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.spectrum-stage .spectral-line.selected {
+  z-index: 3;
+  opacity: 1 !important;
+  filter: drop-shadow(0 0 5px var(--line-color));
+}
+
+.spectrum-coverage-note {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  flex-wrap: wrap;
+  margin: 0;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: 0.65rem;
+}
+
+.spectrum-coverage-note a {
+  color: var(--accent);
+}
+
+.lines-overview {
+  flex: 0 0 auto;
+  padding: 7px 10px 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.lines-overview-axis {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 4px;
+  color: var(--text-soft);
+  font-size: 0.56rem;
+}
+
+.lines-overview-axis strong {
+  color: var(--app-ink);
+  font-weight: 680;
+}
+
+.lines-overview-track {
+  position: relative;
+  height: 62px;
+  overflow: hidden;
+  border-bottom: 1px solid var(--line);
+  background: linear-gradient(to right, transparent 24.9%, var(--line) 25%, transparent 25.1%, transparent 49.9%, var(--line) 50%, transparent 50.1%, transparent 74.9%, var(--line) 75%, transparent 75.1%);
+}
+
+.lines-overview-track button {
+  position: absolute;
+  bottom: 0;
+  width: 2px;
+  height: 80%;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  transform: translateX(-50%);
+  opacity: var(--line-opacity);
+  background: var(--line-color);
+}
+
+.lines-overview-track button:hover,
+.lines-overview-track button.selected {
+  width: 4px;
+  opacity: 1;
+  filter: drop-shadow(0 0 5px var(--line-color));
+}
+
+.lines-table-viewport tbody tr.selected {
+  background: color-mix(in srgb, var(--accent) 13%, transparent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.line-table-link {
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--app-ink);
+  background: transparent;
+  font: inherit;
+  font-weight: 760;
+  text-align: left;
+}
+
+.line-table-link:hover {
+  color: var(--accent);
+}
+
+.levels-workspace {
+  min-height: 0;
+  display: grid;
+  grid-template-columns: minmax(380px, 0.95fr) minmax(0, 1.05fr);
+  overflow: hidden;
+}
+
+.energy-levels-visual {
+  min-width: 0;
+  padding-right: 12px !important;
+  border-right: 1px solid var(--line) !important;
+  border-bottom: 0 !important;
+}
+
+.energy-levels-visual svg {
+  width: 100%;
+  max-height: 100%;
+}
+
+.energy-level-row line {
+  stroke: color-mix(in srgb, var(--accent) 58%, var(--line));
+  stroke-width: 1.4;
+}
+
+.energy-level-row text,
+.energy-axis-label {
+  fill: var(--text-soft);
+  font-size: 8px;
+}
+
+.energy-transition-line {
+  cursor: pointer;
+  outline: none;
+}
+
+.energy-transition-line line {
+  stroke: var(--transition-color);
+  stroke-width: 2;
+}
+
+.energy-transition-line circle {
+  fill: var(--transition-color);
+}
+
+.energy-transition-line:hover line,
+.energy-transition-line.selected line,
+.energy-transition-line:focus-visible line {
+  stroke-width: 5;
+  filter: drop-shadow(0 0 4px var(--transition-color));
+}
+
+.levels-table-pane {
+  min-width: 0;
+  min-height: 0;
+  padding-left: 12px;
+  overflow: hidden;
+}
+
+.trend-inline-toolbar {
+  display: flex;
+  align-items: end;
+  gap: 14px;
+  padding: 2px 0 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.trend-inline-toolbar label {
+  display: grid;
+  gap: 4px;
+  min-width: min(360px, 60%);
+}
+
+.trend-inline-toolbar label span {
+  color: var(--text-soft);
+  font-size: 0.56rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.trend-inline-toolbar select,
+.filter-v2-visualization select {
+  min-height: 34px;
+  padding: 0 8px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--app-ink);
+  background: var(--panel-strong);
+}
+
+.trend-inline-toolbar p {
+  margin: 0 0 8px auto;
+  color: var(--text-soft);
+  font-size: 0.62rem;
+}
+
+.trend-element-chart svg {
+  width: 100%;
+  max-height: 330px;
+}
+
+.trend-element-chart .chart-grid line {
+  stroke: var(--line);
+}
+
+.trend-element-chart polyline {
+  fill: none;
+  stroke: color-mix(in srgb, var(--accent) 72%, var(--line));
+  stroke-width: 1.5;
+}
+
+.trend-element-chart circle {
+  fill: var(--panel-strong);
+  stroke: var(--accent);
+  stroke-width: 1.5;
+}
+
+.trend-element-chart circle.selected {
+  fill: var(--accent);
+  stroke: var(--app-ink);
+  stroke-width: 2.5;
+}
+
+.trend-element-chart text {
+  fill: var(--text-soft);
+  font-size: 10px;
+}
+
+.trend-current-reading {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 0;
+  border-top: 1px solid var(--line);
+}
+
+.trend-current-reading div {
+  display: grid;
+  gap: 4px;
+  padding: 8px 10px;
+  border-right: 1px solid var(--line);
+}
+
+.trend-current-reading div:last-child {
+  border-right: 0;
+}
+
+.trend-current-reading dt {
+  color: var(--text-soft);
+  font-size: 0.56rem;
+}
+
+.trend-current-reading dd {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 760;
+}
+
+.filter-v2-tabs {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.filter-v2-visualization {
+  padding: 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-v2-visualization > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  padding-bottom: 9px;
+  border-bottom: 1px solid var(--line);
+}
+
+.filter-v2-visualization h3,
+.filter-v2-visualization small {
+  margin: 0;
+}
+
+.filter-v2-visualization > header span,
+.filter-v2-visualization > p {
+  color: var(--text-soft);
+  font-size: 0.61rem;
+}
+
+.filter-v2-visualization label {
+  display: grid;
+  gap: 5px;
+  margin-top: 12px;
+}
+
+.filter-v2-visualization label > span {
+  color: var(--text-soft);
+  font-size: 0.56rem;
+  font-weight: 780;
+  text-transform: uppercase;
+}
+
+.filter-v2-trend-scale {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 4px;
+  margin-top: 12px;
+  opacity: 0.35;
+  color: var(--text-soft);
+  font-size: 0.55rem;
+}
+
+.filter-v2-trend-scale.active {
+  opacity: 1;
+}
+
+.filter-v2-trend-scale i {
+  grid-column: 1 / -1;
+  height: 9px;
+  background: linear-gradient(90deg, hsl(215 44% 52%), hsl(120 38% 50%), hsl(25 44% 52%));
+}
+
+.filter-v2-trend-scale span:nth-of-type(2) {
+  text-align: center;
+}
+
+.filter-v2-trend-scale span:last-child {
+  text-align: right;
+}
+
+.element-trend-active .element-cell.trend-mapped {
+  background: linear-gradient(180deg, color-mix(in srgb, white 12%, var(--trend-color)), color-mix(in srgb, black 16%, var(--trend-color))) !important;
+}
+
+.element-trend-active .element-cell.trend-missing {
+  opacity: 0.32;
+  filter: grayscale(0.8);
+}
+
+.element-trend-active .element-cell.trend-mapped::after {
+  content: attr(data-trend-display);
+  left: 4px;
+  right: 4px;
+  bottom: 3px;
+  height: auto;
+  overflow: hidden;
+  color: rgba(255, 255, 255, 0.88);
+  background: transparent;
+  font-size: clamp(0.38rem, 0.43vw, 0.52rem);
+  font-weight: 760;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  opacity: 1;
+}
+
+@media (max-width: 980px) {
+  .science-definition-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nuclear-lower-grid > section:first-child,
+  .neutron-workspace > section:first-child,
+  .thermo-chart-grid > section:first-child {
+    padding-right: 0;
+    border-right: 0;
+  }
+
+  .nuclear-lower-grid > section:last-child,
+  .neutron-workspace > section:last-child,
+  .thermo-chart-grid > section:last-child {
+    padding-left: 0;
+  }
+
+  .levels-workspace {
+    grid-template-columns: 1fr;
+    overflow: auto;
+  }
+
+  .energy-levels-visual {
+    padding-right: 0 !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--line) !important;
+  }
+
+  .levels-table-pane {
+    min-height: 420px;
+    padding-left: 0;
+  }
+}
+
+@media (max-width: 680px) {
+  .science-card-grid,
+  .science-definition-grid,
+  .trend-current-reading {
+    grid-template-columns: 1fr;
+  }
+
+  .science-card-grid article,
+  .science-definition-grid article,
+  .trend-current-reading div {
+    border-right: 0;
+  }
+
+  .crystal-viewer-shell {
+    border-right: 0;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .spectrum-toolbar,
+  .trend-inline-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .spectrum-toolbar-controls {
+    justify-content: space-between;
+  }
+
+  .trend-inline-toolbar label {
+    min-width: 0;
+  }
+
+  .trend-inline-toolbar p {
+    margin: 0;
+  }
+}

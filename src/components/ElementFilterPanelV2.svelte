@@ -1,7 +1,7 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
 
-  type SectionId = 'classification' | 'atomic' | 'physical' | 'dataset';
+  type SectionId = 'classification' | 'atomic' | 'physical' | 'dataset' | 'visualization';
 
   interface DatasetElement {
     symbol: string;
@@ -44,7 +44,7 @@
     id: string;
     label: string;
     unit: string;
-    section: Exclude<SectionId, 'classification'>;
+    section: Exclude<SectionId, 'classification' | 'visualization'>;
     step: number;
     domainMin: number;
     domainMax: number;
@@ -63,6 +63,7 @@
     periods?: number[];
     oxidationStates?: string[];
     domains?: string[];
+    visualProperty?: string;
     ranges?: Record<string, { min: number; max: number; includeMissing: boolean }>;
   }
 
@@ -86,6 +87,18 @@
     { id: 'boiling_point', label: 'Punto de ebullición', unit: 'K', section: 'physical', step: 1 },
     { id: 'density', label: 'Densidad', unit: 'g/cm³', section: 'physical', step: 0.001 },
     { id: 'specific_heat', label: 'Calor específico', unit: 'J/(g·K)', section: 'physical', step: 0.01 },
+    { id: 'thermal_conductivity', label: 'Conductividad térmica', unit: 'W/(m·K)', section: 'physical', step: 0.01 },
+    { id: 'electrical_conductivity', label: 'Conductividad eléctrica', unit: 'MS/m', section: 'physical', step: 0.001 },
+    { id: 'electrical_resistivity', label: 'Resistividad eléctrica', unit: 'Ω·m', section: 'physical', step: 0.000001 },
+    { id: 'young_modulus', label: 'Módulo de Young', unit: 'GPa', section: 'physical', step: 0.1 },
+    { id: 'shear_modulus', label: 'Módulo de cizallamiento', unit: 'GPa', section: 'physical', step: 0.1 },
+    { id: 'bulk_modulus', label: 'Módulo volumétrico', unit: 'GPa', section: 'physical', step: 0.1 },
+    { id: 'abundance_universe', label: 'Abundancia en el Universo', unit: '%', section: 'dataset', step: 0.000001 },
+    { id: 'abundance_crust', label: 'Abundancia en la corteza', unit: '%', section: 'dataset', step: 0.000001 },
+    { id: 'abundance_ocean', label: 'Abundancia en el océano', unit: '%', section: 'dataset', step: 0.000001 },
+    { id: 'abundance_human', label: 'Abundancia en el cuerpo humano', unit: '%', section: 'dataset', step: 0.000001 },
+    { id: 'relative_supply_risk', label: 'Riesgo de suministro', unit: '1–10', section: 'dataset', step: 0.1 },
+    { id: 'price_per_kg', label: 'Precio orientativo', unit: 'USD/kg', section: 'dataset', step: 0.01 },
     { id: 'discovery_year', label: 'Año de descubrimiento', unit: 'año', section: 'dataset', step: 1 },
     { id: 'spectral_line_count', label: 'Líneas espectrales', unit: 'registros', section: 'dataset', step: 1 },
     { id: 'isotope_count', label: 'Isótopos', unit: 'registros', section: 'dataset', step: 1 },
@@ -108,7 +121,8 @@
     { id: 'classification', label: 'Clasificación', short: 'Clases' },
     { id: 'atomic', label: 'Propiedades atómicas', short: 'Atómicas' },
     { id: 'physical', label: 'Propiedades físicas', short: 'Físicas' },
-    { id: 'dataset', label: 'Datos y cobertura', short: 'Datos' }
+    { id: 'dataset', label: 'Datos y cobertura', short: 'Datos' },
+    { id: 'visualization', label: 'Visualización', short: 'Color' }
   ];
 
   let activeSection: SectionId = 'classification';
@@ -133,6 +147,7 @@
   let selectedPeriods = new Set<number>();
   let selectedOxidationStates = new Set<string>();
   let selectedDomains = new Set<string>();
+  let visualProperty = '';
 
   function datasetUrl(): string {
     return new URL('./data/spectra.sample.json', document.baseURI).toString();
@@ -297,6 +312,14 @@
     const currentActiveCount = countActiveFilters();
     const active = currentActiveCount > 0;
     const recordBySymbol = new Map(records.map((record) => [record.symbol, record]));
+    const visualRange = ranges.find((range) => range.id === visualProperty);
+    const visualValues = visualRange
+      ? records.map((record) => record.numeric[visualRange.id]).filter((value): value is number => value !== null && value > 0)
+      : [];
+    const visualLog = visualValues.length > 1 && Math.max(...visualValues) / Math.min(...visualValues) >= 1000;
+    const transformedVisual = visualValues.map((value) => visualLog ? Math.log10(value) : value);
+    const visualMin = transformedVisual.length ? Math.min(...transformedVisual) : 0;
+    const visualMax = transformedVisual.length ? Math.max(...transformedVisual) : 1;
     let matches = 0;
 
     document.querySelectorAll<HTMLElement>('.element-cell[data-element-symbol]').forEach((cell) => {
@@ -306,11 +329,28 @@
       cell.classList.toggle('filter-match', active && matched);
       cell.classList.toggle('filter-dimmed', active && !matched);
       cell.dataset.filterMatch = matched ? 'true' : 'false';
+
+      const trendValue = record && visualRange ? record.numeric[visualRange.id] : null;
+      const trendPlot = trendValue !== null && visualLog && trendValue > 0 ? Math.log10(trendValue) : trendValue;
+      const trendRatio = trendPlot === null ? 0 : visualMax === visualMin ? 0.65 : Math.max(0, Math.min(1, (trendPlot - visualMin) / (visualMax - visualMin)));
+      cell.classList.toggle('trend-mapped', Boolean(visualRange && trendValue !== null));
+      cell.classList.toggle('trend-missing', Boolean(visualRange && trendValue === null));
+      if (visualRange && trendValue !== null) {
+        const hue = 215 - trendRatio * 190;
+        cell.style.setProperty('--trend-color', `hsl(${hue.toFixed(1)} 44% 52%)`);
+        cell.dataset.trendDisplay = `${formatValue(trendValue, visualRange.step)} ${visualRange.unit}`;
+        cell.title = `${visualRange.label}: ${cell.dataset.trendDisplay}`;
+      } else {
+        cell.style.removeProperty('--trend-color');
+        delete cell.dataset.trendDisplay;
+        cell.removeAttribute('title');
+      }
     });
 
     activeCount = currentActiveCount;
     matchingCount = active ? matches : records.length;
     document.documentElement.classList.toggle('element-filters-active', active);
+    document.documentElement.classList.toggle('element-trend-active', Boolean(visualRange));
     dispatch('change', { active: activeCount, matches: matchingCount, total: records.length });
     saveFilters();
   }
@@ -362,6 +402,7 @@
     selectedCategories = new Set(); selectedBlocks = new Set(); selectedMetalTypes = new Set();
     selectedStates = new Set(); selectedGroups = new Set(); selectedPeriods = new Set();
     selectedOxidationStates = new Set(); selectedDomains = new Set();
+    visualProperty = '';
     ranges = ranges.map((range) => ({ ...range, min: range.domainMin, max: range.domainMax, includeMissing: false }));
     expandedRangeId = '';
     applyFilters();
@@ -381,6 +422,7 @@
       categories: [...selectedCategories], blocks: [...selectedBlocks], metalTypes: [...selectedMetalTypes],
       states: [...selectedStates], groups: [...selectedGroups], periods: [...selectedPeriods],
       oxidationStates: [...selectedOxidationStates], domains: [...selectedDomains],
+      visualProperty,
       ranges: Object.fromEntries(ranges.map((range) => [range.id, { min: range.min, max: range.max, includeMissing: range.includeMissing }]))
     };
     try { localStorage.setItem(STORAGE_KEY, JSON.stringify(snapshot)); } catch { /* opcional */ }
@@ -395,6 +437,7 @@
       selectedMetalTypes = new Set(saved.metalTypes ?? []); selectedStates = new Set(saved.states ?? []);
       selectedGroups = new Set(saved.groups ?? []); selectedPeriods = new Set(saved.periods ?? []);
       selectedOxidationStates = new Set(saved.oxidationStates ?? []); selectedDomains = new Set(saved.domains ?? []);
+      visualProperty = saved.visualProperty ?? '';
       ranges = ranges.map((range) => {
         const savedRange = saved.ranges?.[range.id];
         if (!savedRange) return range;
@@ -452,7 +495,7 @@
     <header class="filter-v2-head">
       <div><p>Selección científica</p><h2>Filtros</h2></div>
       <div class="filter-v2-head-actions">
-        <button type="button" aria-label="Restablecer filtros" title="Restablecer filtros" disabled={!activeCount} on:click={clearAll}>
+        <button type="button" aria-label="Restablecer filtros y color" title="Restablecer filtros y color" disabled={!activeCount && !visualProperty} on:click={clearAll}>
           <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 12a8 8 0 1 0 2.35-5.65L4 8.7M4 4v4.7h4.7"></path></svg>
         </button>
         <button type="button" aria-label="Cerrar filtros" title="Cerrar" on:click={() => dispatch('close')}>
@@ -463,7 +506,7 @@
 
     <div class="filter-v2-status">
       <div><strong>{matchingCount}</strong><span>de {records.length}</span></div>
-      <p>{activeCount ? `${activeCount} criterios activos` : 'Tabla completa'}</p>
+      <p>{activeCount ? `${activeCount} criterios activos` : visualProperty ? 'Visualización activa' : 'Tabla completa'}</p>
     </div>
 
     <div class="filter-v2-logic">
@@ -550,7 +593,7 @@
               </div>
             </section>
           {/if}
-        {:else}
+        {:else if activeSection !== 'visualization'}
           {#each ranges.filter((range) => range.section === activeSection) as range}
             <article class:active={rangeActive(range)} class="filter-v2-range-card">
               <button class="filter-v2-range-title" type="button" aria-expanded={expandedRangeId === range.id} on:click={() => (expandedRangeId = expandedRangeId === range.id ? '' : range.id)}>
@@ -591,6 +634,24 @@
               </div>
             </section>
           {/if}
+        {:else}
+          <section class="filter-v2-visualization">
+            <header>
+              <div><small>La tabla existente</small><h3>Colorear por propiedad</h3></div>
+              <span>{visualProperty ? `${records.filter((record) => record.numeric[visualProperty] !== null).length}/118` : 'Desactivado'}</span>
+            </header>
+            <label>
+              <span>Propiedad numérica</span>
+              <select bind:value={visualProperty} on:change={applyFilters}>
+                <option value="">Color químico original</option>
+                {#each ranges as range}<option value={range.id}>{range.label} · {range.unit}</option>{/each}
+              </select>
+            </label>
+            <div class="filter-v2-trend-scale" class:active={Boolean(visualProperty)}>
+              <i></i><span>menor</span><span>intermedio</span><span>mayor</span>
+            </div>
+            <p>Esta vista recolorea la tabla principal; no crea una segunda tabla. Los elementos sin dato permanecen atenuados y cada casilla muestra el valor seleccionado.</p>
+          </section>
         {/if}
       </div>
     {/if}

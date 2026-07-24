@@ -6,6 +6,8 @@
   import ContextAbundancePanel from './ContextAbundancePanel.svelte';
   import DataDomainTable from './DataDomainTable.svelte';
   import ElectronicStructurePanel from './ElectronicStructurePanel.svelte';
+  import ElementTrendsPanel from './ElementTrendsPanel.svelte';
+  import EnergyLevels from './EnergyLevels.svelte';
   import ElementPanel from './ElementPanel.svelte';
   import NuclearPhysicsPanel from './NuclearPhysicsPanel.svelte';
   import MaterialPropertiesPanel from './MaterialPropertiesPanel.svelte';
@@ -19,6 +21,7 @@
     ElementDataPayload,
     ElementWithLines,
     NistFileStatus,
+    SpectralLine,
     SpectrumMode
   } from '../lib/atomicTypes';
   import { loadElementData } from '../lib/dataLoader';
@@ -43,16 +46,20 @@
     { id: 'spectrum', label: 'Espectro' },
     { id: 'lines', label: 'Líneas' },
     { id: 'levels', label: 'Niveles' },
+    { id: 'trends', label: 'Tendencias' },
     { id: 'chemistry', label: 'Química' },
     { id: 'context', label: 'Contexto' },
     { id: 'sources', label: 'Fuentes' }
   ];
 
   export let element: ElementWithLines | null = null;
+  export let elements: ElementWithLines[] = [];
   export let comparedSymbols: string[] = [];
 
   let activeTab: TabId = 'summary';
   let mode: SpectrumMode = 'emission';
+  let spectrumRange: 'complete' | 'visible' = 'complete';
+  let selectedLineId = '';
   let lastSymbol = '';
   let elementData: ElementDataPayload | null = null;
   let loadingData = false;
@@ -67,6 +74,8 @@
   $: if (element && element.symbol !== lastSymbol) {
     activeTab = 'summary';
     mode = 'emission';
+    spectrumRange = 'complete';
+    selectedLineId = '';
     lastSymbol = element.symbol;
     void loadDataFor(element);
   }
@@ -123,6 +132,15 @@
 
   function compareCurrent(): void {
     if (element) dispatch('compare', { symbol: element.symbol, scope: activeTab });
+  }
+
+  function spectralLineId(line: SpectralLine): string {
+    return [line.species, Number(line.wavelength_nm).toFixed(6), line.transition, line.label].join('|');
+  }
+
+  function selectSpectralLine(line: SpectralLine, destination: 'lines' | 'levels' = 'lines'): void {
+    selectedLineId = spectralLineId(line);
+    activeTab = destination;
   }
 </script>
 
@@ -202,20 +220,56 @@
           <div class="tab-pane spectrum-workspace">
             <div class="spectrum-toolbar">
               <strong>{element.name_es} · {element.lines.length.toLocaleString('es-ES')} líneas</strong>
-              <div class="segmented-control small">
-                <button class:active={mode === 'emission'} type="button" on:click={() => (mode = 'emission')}>Emisión</button>
-                <button class:active={mode === 'absorption'} type="button" on:click={() => (mode = 'absorption')}>Absorción</button>
+              <div class="spectrum-toolbar-controls">
+                <div class="segmented-control small">
+                  <button class:active={spectrumRange === 'complete'} type="button" on:click={() => (spectrumRange = 'complete')}>Completo</button>
+                  <button class:active={spectrumRange === 'visible'} type="button" on:click={() => (spectrumRange = 'visible')}>Visible</button>
+                </div>
+                <div class="segmented-control small">
+                  <button class:active={mode === 'emission'} type="button" on:click={() => (mode = 'emission')}>Emisión</button>
+                  <button class:active={mode === 'absorption'} type="button" on:click={() => (mode = 'absorption')}>Absorción</button>
+                </div>
               </div>
             </div>
-            <SpectrumViewer lines={element.lines} {mode} title={`${element.name_es} (${element.symbol})`} />
+            <SpectrumViewer
+              lines={element.lines}
+              {mode}
+              rangeMode={spectrumRange}
+              {selectedLineId}
+              title={`${element.name_es} (${element.symbol})`}
+              on:select={(event) => selectSpectralLine(event.detail)}
+            />
+            {#if !element.lines.length}
+              <p class="spectrum-coverage-note">
+                {element.nist?.espectro.present
+                  ? 'El archivo local no contiene transiciones representables.'
+                  : 'No hay una exportación de líneas NIST disponible para este elemento. Esto no se sustituye por un espectro inventado.'}
+                {elementData?.domains.nist_levels?.row_count
+                  ? ` Sí existen ${elementData.domains.nist_levels.row_count} niveles evaluados en la pestaña Niveles.`
+                  : ''}
+                <a href={`https://physics.nist.gov/cgi-bin/ASD/lines1.pl?spectra=${element.symbol}%20I&limits_type=0&unit=1&format=0`} target="_blank" rel="noreferrer">Consultar {element.symbol} I en NIST ASD</a>
+              </p>
+            {/if}
           </div>
         {:else if activeTab === 'lines'}
-          <div class="tab-pane table-pane"><SpectralLinesTable lines={element.lines} /></div>
-        {:else if activeTab === 'levels'}
           <div class="tab-pane table-pane">
-            {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando niveles…</p></div>
-            {:else}<DataDomainTable domain={elementData?.domains.nist_levels ?? null} fitHeight={true} pageSize={18} />{/if}
+            <SpectralLinesTable lines={element.lines} {selectedLineId} on:select={(event) => (selectedLineId = spectralLineId(event.detail))} />
           </div>
+        {:else if activeTab === 'levels'}
+          <div class="tab-pane levels-workspace">
+            {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando niveles…</p></div>
+            {:else}
+              <EnergyLevels
+                lines={element.lines}
+                domain={elementData?.domains.nist_levels ?? null}
+                {selectedLineId}
+                on:select={(event) => selectSpectralLine(event.detail)}
+              />
+              <div class="levels-table-pane"><DataDomainTable domain={elementData?.domains.nist_levels ?? null} fitHeight={true} pageSize={12} /></div>
+            {/if}
+          </div>
+        {:else if activeTab === 'trends'}
+          <div class="tab-pane"><ElementTrendsPanel {element} {elements} /></div>
         {:else if activeTab === 'chemistry'}
           <div class="tab-pane tab-scroll domain-list-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando química…</p></div>

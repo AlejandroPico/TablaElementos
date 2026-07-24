@@ -98,11 +98,6 @@
         {:else}
           <p>Diamagnetismo, paramagnetismo y órdenes colectivos no son sinónimos. Curie y Néel indican transiciones distintas y solo aparecen cuando existe un valor publicado.</p>
         {/if}
-        <dl>
-          {#each visible.filter((item) => item.row) as item}
-            <div><dt>{item.label}</dt><dd>{display(item.row)}</dd></div>
-          {/each}
-        </dl>
       </aside>
     </section>
 

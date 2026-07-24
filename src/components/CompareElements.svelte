@@ -43,6 +43,7 @@
     { id: 'spectrum', label: 'Espectro' },
     { id: 'lines', label: 'Líneas' },
     { id: 'levels', label: 'Niveles' },
+    { id: 'trends', label: 'Tendencias' },
     { id: 'chemistry', label: 'Química' },
     { id: 'context', label: 'Contexto' },
     { id: 'sources', label: 'Fuentes' }
@@ -124,6 +125,12 @@
 
   function naturalIsotopeCount(element: ElementWithLines): string {
     return String(domainRows(element, 'isotopes').filter((row) => Number.parseFloat(String(row.abundance ?? '0')) > 0).length);
+  }
+
+  function indexedValue(element: ElementWithLines, property: string, unit = ''): string {
+    const value = element.dataIndex?.filter_values?.[property];
+    if (typeof value !== 'number' || !Number.isFinite(value)) return '—';
+    return `${value.toLocaleString('es-ES', { maximumFractionDigits: 4 })}${unit ? ` ${unit}` : ''}`;
   }
 
   function rowsFor(currentScope: ComparisonScope): MatrixRow[] {
@@ -232,6 +239,19 @@
         { label: 'Líneas Auger', value: (element) => propertyCount(element, 'radiation', (property) => property === 'auger_line_energy') },
         { label: 'Registros neutrónicos', value: (element) => propertyCount(element, 'radiation', (property) => property.startsWith('neutron_')) },
         { label: 'Absorción neutrónica', value: (element) => firstAvailable(element, 'radiation', ['neutron_absorption_cross_section']) }
+      ];
+    }
+
+    if (currentScope === 'trends') {
+      return [
+        ...common.slice(0, 1),
+        { label: 'Electronegatividad', value: (element) => indexedValue(element, 'electronegativity', 'Pauling') },
+        { label: 'Primera ionización', value: (element) => indexedValue(element, 'ionization_energy', 'kJ/mol') },
+        { label: 'Radio atómico', value: (element) => indexedValue(element, 'atomic_radius', 'pm') },
+        { label: 'Densidad', value: (element) => indexedValue(element, 'density', 'g/cm³') },
+        { label: 'Conductividad térmica', value: (element) => indexedValue(element, 'thermal_conductivity', 'W/(m·K)') },
+        { label: 'Módulo de Young', value: (element) => indexedValue(element, 'young_modulus', 'GPa') },
+        { label: 'Abundancia en la corteza', value: (element) => indexedValue(element, 'abundance_crust', '%') },
       ];
     }
 

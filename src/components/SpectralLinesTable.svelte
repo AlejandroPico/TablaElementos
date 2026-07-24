@@ -1,11 +1,13 @@
 <script lang="ts">
-  import { afterUpdate, onMount } from 'svelte';
+  import { afterUpdate, createEventDispatcher, onMount } from 'svelte';
   import type { SpectralLine } from '../lib/atomicTypes';
   import { getStrongestLines } from '../lib/filters';
   import { formatEv, formatNm, wavelengthRegion } from '../lib/wavelengthColor';
 
   export let lines: SpectralLine[] = [];
+  export let selectedLineId = '';
 
+  const dispatch = createEventDispatcher<{ select: SpectralLine }>();
   let rootElement: HTMLElement;
   let tableViewport: HTMLDivElement;
   let page = 0;
@@ -13,6 +15,7 @@
   let resizeObserver: ResizeObserver | null = null;
   let measurementFrame = 0;
   let lastLinesKey = '';
+  let lastSelectedLineId = '';
 
   $: linesKey = `${lines.length}:${lines[0]?.label ?? ''}:${lines.at(-1)?.label ?? ''}`;
   $: if (linesKey !== lastLinesKey) {
@@ -24,6 +27,13 @@
   $: visibleLines = lines.slice(page * pageSize, (page + 1) * pageSize);
   $: strongestLines = getStrongestLines(lines, 8);
   $: strongestIds = new Set(strongestLines.map(lineId));
+  $: wavelengthMin = lines.length ? Math.min(...lines.map((line) => line.wavelength_nm)) : 0;
+  $: wavelengthMax = lines.length ? Math.max(...lines.map((line) => line.wavelength_nm)) : 1;
+  $: if (selectedLineId && selectedLineId !== lastSelectedLineId) {
+    lastSelectedLineId = selectedLineId;
+    const selectedIndex = lines.findIndex((line) => lineId(line) === selectedLineId);
+    if (selectedIndex >= 0) page = Math.floor(selectedIndex / Math.max(1, pageSize));
+  }
 
   function lineId(line: SpectralLine): string {
     return [line.species, Number(line.wavelength_nm).toFixed(6), line.transition, line.label].join('|');
@@ -31,6 +41,18 @@
 
   function energyJump(line: SpectralLine): number {
     return line.upper_level_ev - line.lower_level_ev;
+  }
+
+  function spectrumPosition(line: SpectralLine): number {
+    if (wavelengthMax === wavelengthMin) return 50;
+    return 2 + ((line.wavelength_nm - wavelengthMin) / (wavelengthMax - wavelengthMin)) * 96;
+  }
+
+  function selectLine(line: SpectralLine): void {
+    selectedLineId = lineId(line);
+    const selectedIndex = lines.findIndex((item) => lineId(item) === selectedLineId);
+    if (selectedIndex >= 0) page = Math.floor(selectedIndex / Math.max(1, pageSize));
+    dispatch('select', line);
   }
 
   function scheduleMeasurement(): void {
@@ -66,16 +88,19 @@
     <div><h3>Líneas espectrales NIST</h3><span>—</span><small>{lines.length.toLocaleString('es-ES')} registros</small></div>
   </header>
 
-  {#if strongestLines.length}
-    <div class="featured-lines" aria-label="Líneas espectrales más intensas">
-      <p>Líneas destacadas</p>
-      <div>
-        {#each strongestLines as line}
-          <span class="featured-line">
-            <i style={`--line-color:${line.approximate_color};`}></i>
-            <b>{formatNm(line.wavelength_nm)}</b>
-            <small>{line.label}</small>
-          </span>
+  {#if lines.length}
+    <div class="lines-overview" aria-label="Distribución visual de líneas espectrales">
+      <div class="lines-overview-axis"><span>{formatNm(wavelengthMin)}</span><strong>Distribución completa · selecciona una línea</strong><span>{formatNm(wavelengthMax)}</span></div>
+      <div class="lines-overview-track">
+        {#each lines as line}
+          <button
+            class:selected={selectedLineId === lineId(line)}
+            type="button"
+            style={`left:${spectrumPosition(line)}%;--line-color:${line.approximate_color};--line-opacity:${0.3 + line.intensity * 0.7};`}
+            title={`${line.label} · ${formatNm(line.wavelength_nm)}`}
+            aria-label={`Seleccionar ${line.label}, ${formatNm(line.wavelength_nm)}`}
+            on:click={() => selectLine(line)}
+          ></button>
         {/each}
       </div>
     </div>
@@ -88,8 +113,8 @@
       </thead>
       <tbody>
         {#each visibleLines as line}
-          <tr class:featured={strongestIds.has(lineId(line))}>
-            <td>{line.label}</td><td>{line.species}</td><td>{formatNm(line.wavelength_nm)}</td>
+          <tr class:featured={strongestIds.has(lineId(line))} class:selected={selectedLineId === lineId(line)}>
+            <td><button class="line-table-link" type="button" on:click={() => selectLine(line)}>{line.label}</button></td><td>{line.species}</td><td>{formatNm(line.wavelength_nm)}</td>
             <td>{wavelengthRegion(line.wavelength_nm)}</td><td>{line.intensity.toFixed(2)}</td>
             <td>{formatEv(line.lower_level_ev)}</td><td>{formatEv(line.upper_level_ev)}</td>
             <td>{formatEv(energyJump(line))}</td><td>{line.transition}</td>

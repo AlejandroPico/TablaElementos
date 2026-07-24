@@ -8,6 +8,11 @@
   type RadiationMode = 'xray' | 'attenuation' | 'xps' | 'neutrons';
   const modes: RadiationMode[] = ['xray', 'attenuation', 'xps', 'neutrons'];
   let mode: RadiationMode = 'xray';
+  let xrayPage = 0;
+  let xpsPage = 0;
+  let neutronPage = 0;
+  let selectedAttenuationIndex = -1;
+  const pageSize = 8;
 
   interface NumericRow {
     row: DataRow;
@@ -122,6 +127,13 @@
     { label: 'Absorción másica ref.', property: 'neutron_mass_absorption_reference', value: neutronAggregate(neutrons, 'neutron_mass_absorption_reference') },
   ];
   $: maxNeutron = Math.max(...neutronMetrics.map((item) => item.value ?? 0), 1);
+  $: xrayPages = Math.max(1, Math.ceil(xray.length / pageSize));
+  $: xrayVisible = xray.slice(xrayPage * pageSize, (xrayPage + 1) * pageSize);
+  $: xpsPages = Math.max(1, Math.ceil(xps.length / pageSize));
+  $: xpsVisible = xps.slice(xpsPage * pageSize, (xpsPage + 1) * pageSize);
+  $: neutronPages = Math.max(1, Math.ceil(neutrons.length / pageSize));
+  $: neutronVisible = neutrons.slice(neutronPage * pageSize, (neutronPage + 1) * pageSize);
+  $: selectedAttenuation = attenuationPoints[selectedAttenuationIndex] ?? null;
 </script>
 
 <div class="advanced-science-pane radiation-physics-pane">
@@ -135,7 +147,7 @@
     </nav>
 
     {#if mode === 'xray'}
-      <section class="science-visual-card xray-stick-card">
+      <section class="flat-science-section xray-stick-card">
         <header><div><small>Transiciones K, L, M y bordes</small><h3>Espectro característico de rayos X</h3></div><span>{xray.length} líneas</span></header>
         {#if xray.length}
           <div class="xray-stick-spectrum" aria-label={`Líneas de rayos X de ${element?.name_es}`}>
@@ -148,17 +160,19 @@
               {/each}
             </div>
           </div>
-          <div class="radiation-record-grid compact-record-grid">
-            {#each xray as row}
-              <article><span>{row.transition || 'Transición'}</span><strong>{row.value} {row.unit}</strong><small>{row.experimental_energy_ev ? 'experimental' : 'teórico'}</small></article>
-            {/each}
+          <div class="compact-science-table">
+            <table>
+              <thead><tr><th>Transición</th><th>Energía</th><th>Tipo</th><th>Fuente</th></tr></thead>
+              <tbody>{#each xrayVisible as row}<tr><td>{row.transition || 'Transición'}</td><td>{row.value} {row.unit}</td><td>{row.experimental_energy_ev ? 'Experimental' : 'Teórica'}</td><td>{row.source || '—'}</td></tr>{/each}</tbody>
+            </table>
           </div>
+          {#if xrayPages > 1}<div class="inline-pagination"><button type="button" disabled={xrayPage === 0} on:click={() => (xrayPage -= 1)}>Anterior</button><span>{xrayPage + 1} / {xrayPages}</span><button type="button" disabled={xrayPage >= xrayPages - 1} on:click={() => (xrayPage += 1)}>Siguiente</button></div>{/if}
         {:else}
           <div class="science-empty-state"><strong>Sin líneas características importadas</strong><p>NIST X-Ray Transition Energies cubre de Ne a Fm. El importador conserva energías teóricas y experimentales por separado.</p></div>
         {/if}
       </section>
     {:else if mode === 'attenuation'}
-      <section class="science-visual-card attenuation-card">
+      <section class="flat-science-section attenuation-card">
         <header><div><small>Interacción del fotón con la materia</small><h3>Atenuación másica frente a energía</h3></div><span>Escalas logarítmicas</span></header>
         {#if attenuationPoints.length > 1}
           <div class="attenuation-chart-wrap">
@@ -166,11 +180,26 @@
               <g class="chart-grid">{#each [42, 88, 134, 180, 226] as y}<line x1="46" x2="674" y1={y} y2={y}></line>{/each}</g>
               <polyline class="total-line" points={polyline(attenuationPoints)}></polyline>
               {#if absorptionPoints.length > 1}<polyline class="absorption-line" points={polyline(absorptionPoints)}></polyline>{/if}
-              {#each attenuationPoints as point}<circle class="total-point" cx={point.px} cy={point.py} r="3"><title>{point.label}</title></circle>{/each}
+              {#each attenuationPoints as point, index}
+                <g
+                  class:active={selectedAttenuationIndex === index}
+                  role="button"
+                  tabindex="0"
+                  aria-label={`Seleccionar ${point.label}`}
+                  on:click={() => (selectedAttenuationIndex = index)}
+                  on:keydown={(event) => (event.key === 'Enter' || event.key === ' ') && (selectedAttenuationIndex = index)}
+                >
+                  <circle class="total-point" cx={point.px} cy={point.py} r={selectedAttenuationIndex === index ? 5 : 3}><title>{point.label}</title></circle>
+                </g>
+              {/each}
               <text class="axis-caption" x="360" y="252" text-anchor="middle">Energía del fotón (MeV, escala log)</text>
             </svg>
           </div>
           <div class="attenuation-legend"><span><i class="total"></i>μ/ρ total</span><span><i class="absorbed"></i>μen/ρ absorción de energía</span></div>
+          <div class="science-selection-readout">
+            <span>Punto seleccionado</span>
+            <strong>{selectedAttenuation ? selectedAttenuation.label : 'Selecciona un punto de la curva'}</strong>
+          </div>
           <div class="absorption-edge-list">
             {#each attenuation.filter((item) => item.row.transition) as point}<span><b>{point.row.transition}</b>{point.row.energy}</span>{/each}
           </div>
@@ -179,7 +208,7 @@
         {/if}
       </section>
     {:else if mode === 'xps'}
-      <section class="science-visual-card xps-card">
+      <section class="flat-science-section xps-card">
         <header><div><small>Fotoelectrones y electrones Auger</small><h3>Energías XPS / Auger</h3></div><span>{xps.length} líneas</span></header>
         {#if xps.length}
           <div class="xps-axis"><span>energía mínima</span><span>eV</span><span>energía máxima</span></div>
@@ -188,9 +217,13 @@
               <span class="radiation-stick" class:auger={row.property === 'auger_line_energy'} style={`left:${xpsPosition(row, xps)}%;`} title={`${row.transition || row.property} · ${row.value} ${row.unit}`}><i></i><span>{row.transition || (row.property === 'auger_line_energy' ? 'Auger' : 'XPS')}</span></span>
             {/each}
           </div>
-          <div class="radiation-record-grid">
-            {#each xps as row}<article><span>{row.transition || row.property}</span><strong>{row.value} {row.unit}</strong><small>{[row.compound, row.chemical_state].filter(Boolean).join(' · ') || row.source}</small></article>{/each}
+          <div class="compact-science-table">
+            <table>
+              <thead><tr><th>Línea</th><th>Energía</th><th>Compuesto / estado</th><th>Fuente</th></tr></thead>
+              <tbody>{#each xpsVisible as row}<tr><td>{row.transition || row.property}</td><td>{row.value} {row.unit}</td><td>{[row.compound, row.chemical_state].filter(Boolean).join(' · ') || '—'}</td><td>{row.source || '—'}</td></tr>{/each}</tbody>
+            </table>
           </div>
+          {#if xpsPages > 1}<div class="inline-pagination"><button type="button" disabled={xpsPage === 0} on:click={() => (xpsPage -= 1)}>Anterior</button><span>{xpsPage + 1} / {xpsPages}</span><button type="button" disabled={xpsPage >= xpsPages - 1} on:click={() => (xpsPage += 1)}>Siguiente</button></div>{/if}
         {:else}
           <div class="science-empty-state">
             <strong>Sin exportación XPS/Auger local</strong>
@@ -200,8 +233,8 @@
         {/if}
       </section>
     {:else}
-      <div class="neutron-workspace">
-        <section class="science-visual-card neutron-summary-card">
+      <div class="neutron-workspace flat-split-workspace">
+        <section class="flat-science-section neutron-summary-card">
           <header><div><small>Neutrones térmicos · referencia</small><h3>Interacción neutrónica</h3></div><span>unidades por magnitud</span></header>
           <div class="neutron-bars">
             {#each neutronMetrics as metric}
@@ -213,14 +246,15 @@
             {/each}
           </div>
         </section>
-        <section class="science-visual-card neutron-isotope-card">
+        <section class="flat-science-section neutron-isotope-card">
           <header><div><small>Variación isotópica</small><h3>Tabla neutrónica</h3></div><span>{neutrons.length} registros</span></header>
           {#if neutrons.length}
             <div class="neutron-table-scroll">
               <table><thead><tr><th>Isótopo</th><th>Magnitud</th><th>Valor</th><th>Abundancia</th></tr></thead><tbody>
-                {#each neutrons as row}<tr><td>{row.isotope || 'natural'}</td><td>{String(row.property ?? '').replaceAll('neutron_', '').replaceAll('_', ' ')}</td><td>{row.value} {row.unit}</td><td>{row.abundance || '—'}</td></tr>{/each}
+                {#each neutronVisible as row}<tr><td>{row.isotope || 'natural'}</td><td>{String(row.property ?? '').replaceAll('neutron_', '').replaceAll('_', ' ')}</td><td>{row.value} {row.unit}</td><td>{row.abundance || '—'}</td></tr>{/each}
               </tbody></table>
             </div>
+            {#if neutronPages > 1}<div class="inline-pagination"><button type="button" disabled={neutronPage === 0} on:click={() => (neutronPage -= 1)}>Anterior</button><span>{neutronPage + 1} / {neutronPages}</span><button type="button" disabled={neutronPage >= neutronPages - 1} on:click={() => (neutronPage += 1)}>Siguiente</button></div>{/if}
           {:else}
             <div class="science-empty-state compact"><strong>Sin datos neutrónicos</strong><p>La fuente NIST NCNR cubre longitudes de dispersión y secciones térmicas hasta curio.</p></div>
           {/if}

@@ -3,7 +3,6 @@
   import CompareElements from '../components/CompareElements.svelte';
   import ElementModal from '../components/ElementModal.svelte';
   import PeriodicGrid from '../components/PeriodicGrid.svelte';
-  import TrendsExplorer from '../components/TrendsExplorer.svelte';
   import ViewToolbar from '../components/ViewToolbar.svelte';
   import type { ComparisonScope, ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
@@ -29,7 +28,6 @@
   let resolvedTheme: ResolvedTheme = 'dark';
   let systemTheme: MediaQueryList | null = null;
   let themeTimer = 0;
-  let trendsOpen = false;
 
   $: comparedElements = comparedSymbols
     .map((symbol) => elements.find((element) => element.symbol === symbol))
@@ -173,13 +171,11 @@
       {layoutBusy}
       {themeMode}
       {resolvedTheme}
-      {trendsOpen}
       on:zoomin={() => gridView?.zoomIn()}
       on:zoomout={() => gridView?.zoomOut()}
       on:reset={() => gridView?.resetView()}
       on:layout={toggleTableMode}
       on:theme={cycleTheme}
-      on:trends={() => (trendsOpen = !trendsOpen)}
     />
 
     {#if comparedElements.length > 0}
@@ -196,19 +192,10 @@
 
     <ElementModal
       element={modalElement}
+      {elements}
       {comparedSymbols}
       on:close={closeModal}
       on:compare={(event) => toggleCompared(event.detail)}
-    />
-
-    <TrendsExplorer
-      open={trendsOpen}
-      {elements}
-      on:close={() => (trendsOpen = false)}
-      on:open={(event) => {
-        trendsOpen = false;
-        openElement(event.detail);
-      }}
     />
   {/if}
 </main>

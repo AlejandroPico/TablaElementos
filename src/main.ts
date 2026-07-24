@@ -21,6 +21,7 @@ import './styles/zoom-stability.css';
 import './styles/advanced-science.css';
 import './styles/science-phase-2.css';
 import './styles/scientific-workspaces.css';
+import './styles/unified-science.css';
 import './lib/progressiveCellEnhancer';
 import './lib/zoomRenderStabilizer';
 import App from './app/App.svelte';
