@@ -1,0 +1,488 @@
+/* Fase científica 2: nuclear avanzada, termodinámica y radiación. */
+.nuclear-symbol-mark,
+.thermo-gauge,
+.radiation-symbol {
+  min-width: 118px;
+  min-height: 92px;
+  display: grid;
+  place-content: center;
+  gap: 4px;
+  border: 1px solid var(--line);
+  background: var(--panel-strong);
+  text-align: center;
+}
+
+.nuclear-symbol-mark strong,
+.thermo-gauge strong,
+.radiation-symbol strong {
+  font-size: 2.35rem;
+  line-height: 1;
+}
+
+.nuclear-symbol-mark span,
+.thermo-gauge span,
+.radiation-symbol span {
+  color: var(--text-soft);
+  font-size: 0.64rem;
+  font-weight: 760;
+}
+
+.nuclear-half-life-chart,
+.phase-landmark-chart,
+.thermo-line-chart,
+.attenuation-chart {
+  width: 100%;
+  min-width: 680px;
+  height: auto;
+  overflow: visible;
+}
+
+.nuclear-chart-scroll,
+.attenuation-chart-wrap {
+  overflow-x: auto;
+}
+
+.nuclear-half-life-chart .chart-grid line,
+.thermo-line-chart .chart-grid line,
+.attenuation-chart .chart-grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.nuclear-half-life-chart .chart-grid text,
+.nuclear-half-life-chart .axis-caption,
+.thermo-line-chart .axis-caption,
+.attenuation-chart .axis-caption {
+  fill: var(--text-soft);
+  font-size: 10px;
+}
+
+.nuclear-half-life-chart g[role='button'] {
+  cursor: pointer;
+  outline: none;
+}
+
+.nuclear-half-life-chart circle {
+  fill: var(--nuclide-color);
+  stroke: var(--panel-strong);
+  stroke-width: 2;
+  transition: r 130ms ease, filter 130ms ease;
+}
+
+.nuclear-half-life-chart g[role='button']:hover circle,
+.nuclear-half-life-chart g[role='button']:focus-visible circle,
+.nuclear-half-life-chart g.active circle {
+  filter: brightness(1.2) saturate(1.2);
+  stroke: var(--app-ink);
+}
+
+.decay-legend,
+.attenuation-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px 14px;
+  margin-top: 8px;
+  color: var(--text-soft);
+  font-size: 0.63rem;
+}
+
+.decay-legend span,
+.attenuation-legend span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.decay-legend i {
+  width: 9px;
+  height: 9px;
+  background: var(--nuclide-color);
+}
+
+.nuclear-lower-grid,
+.thermo-chart-grid,
+.neutron-workspace {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.abundance-bars,
+.neutron-bars {
+  display: grid;
+  gap: 5px;
+}
+
+.abundance-bars button,
+.neutron-bars article {
+  min-height: 35px;
+  display: grid;
+  grid-template-columns: minmax(72px, auto) minmax(90px, 1fr) auto;
+  align-items: center;
+  gap: 9px;
+  padding: 7px 8px;
+  border: 1px solid transparent;
+  border-radius: 0;
+  color: var(--app-ink);
+  background: color-mix(in srgb, var(--panel-strong) 72%, transparent);
+  text-align: left;
+}
+
+.abundance-bars button:hover,
+.abundance-bars button.active {
+  border-color: color-mix(in srgb, var(--accent) 65%, var(--line));
+}
+
+.abundance-bars button > i,
+.neutron-bars article > i {
+  height: 5px;
+  overflow: hidden;
+  background: var(--line);
+}
+
+.abundance-bars button > i b {
+  display: block;
+  height: 100%;
+  background: var(--nuclide-color);
+}
+
+.neutron-bars article > i b {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+}
+
+.abundance-bars span,
+.neutron-bars span {
+  color: var(--text-soft);
+  font-size: 0.64rem;
+}
+
+.abundance-bars strong,
+.neutron-bars strong {
+  font-size: 0.67rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.abundance-bars p {
+  margin: 14px 0;
+  color: var(--text-soft);
+  font-size: 0.7rem;
+}
+
+.nuclide-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1px;
+  margin: 0;
+  background: var(--line);
+}
+
+.nuclide-detail-grid > div {
+  min-height: 69px;
+  display: grid;
+  align-content: center;
+  gap: 5px;
+  padding: 9px;
+  background: var(--panel-strong);
+}
+
+.nuclide-detail-grid dt {
+  color: var(--text-soft);
+  font-size: 0.56rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.nuclide-detail-grid dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.73rem;
+  font-weight: 760;
+}
+
+.thermo-gauge {
+  background:
+    linear-gradient(to top, color-mix(in srgb, var(--accent) 24%, transparent), transparent 68%),
+    var(--panel-strong);
+}
+
+.phase-landmark-chart .phase-axis {
+  stroke: var(--line);
+  stroke-width: 4;
+}
+
+.phase-landmark-chart g line {
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.phase-landmark-chart g circle {
+  fill: var(--panel-strong);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.phase-landmark-chart g.secondary-landmark line,
+.phase-landmark-chart g.secondary-landmark circle {
+  stroke: color-mix(in srgb, var(--accent) 45%, var(--text-soft));
+}
+
+.phase-landmark-chart text {
+  fill: var(--text-soft);
+  font-size: 10px;
+}
+
+.phase-landmark-chart g text:first-of-type {
+  fill: var(--app-ink);
+  font-weight: 800;
+}
+
+.thermo-line-chart polyline,
+.attenuation-chart polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linejoin: miter;
+  stroke-linecap: square;
+}
+
+.thermo-line-chart circle,
+.attenuation-chart circle {
+  fill: var(--panel-strong);
+  stroke: var(--accent);
+  stroke-width: 2;
+}
+
+.attenuation-chart .absorption-line {
+  stroke: #d87988;
+  stroke-width: 2;
+  stroke-dasharray: 6 4;
+}
+
+.attenuation-legend i {
+  width: 18px;
+  height: 3px;
+  background: var(--accent);
+}
+
+.attenuation-legend i.absorbed {
+  background: #d87988;
+}
+
+.science-empty-state.compact {
+  min-height: 170px;
+}
+
+.thermo-record-list > div,
+.radiation-record-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 5px;
+  max-height: 260px;
+  overflow: auto;
+}
+
+.thermo-record-list article,
+.radiation-record-grid article {
+  min-height: 74px;
+  display: grid;
+  align-content: center;
+  gap: 4px;
+  padding: 10px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 65%, transparent);
+  background: color-mix(in srgb, var(--panel-strong) 74%, transparent);
+}
+
+.thermo-record-list span,
+.radiation-record-grid span,
+.thermo-record-list small,
+.radiation-record-grid small {
+  color: var(--text-soft);
+  font-size: 0.6rem;
+}
+
+.thermo-record-list strong,
+.radiation-record-grid strong {
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+
+.science-mode-tabs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 1px;
+  margin-top: 10px;
+  border: 1px solid var(--line);
+  background: var(--line);
+}
+
+.science-mode-tabs button {
+  min-height: 38px;
+  border: 0;
+  border-radius: 0;
+  color: var(--text-soft);
+  background: var(--panel-strong);
+  font-size: 0.68rem;
+  font-weight: 780;
+}
+
+.science-mode-tabs button:hover,
+.science-mode-tabs button.active {
+  color: var(--app-ink);
+  background: color-mix(in srgb, var(--accent) 11%, var(--panel-strong));
+  box-shadow: inset 0 -2px 0 var(--accent);
+}
+
+.xray-stick-spectrum,
+.xps-card {
+  min-height: 300px;
+}
+
+.xray-axis,
+.xps-axis {
+  display: flex;
+  justify-content: space-between;
+  color: var(--text-soft);
+  font-size: 0.58rem;
+}
+
+.xray-sticks,
+.xps-line-track {
+  position: relative;
+  height: 215px;
+  margin: 12px 0 18px;
+  border-bottom: 1px solid var(--line);
+  background:
+    linear-gradient(to right, transparent 24.8%, var(--line) 25%, transparent 25.2%, transparent 49.8%, var(--line) 50%, transparent 50.2%, transparent 74.8%, var(--line) 75%, transparent 75.2%);
+}
+
+.xray-sticks button,
+.xps-line-track button {
+  position: absolute;
+  bottom: 0;
+  width: 24px;
+  height: var(--stick-height, 72%);
+  transform: translateX(-50%);
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--accent);
+  background: transparent;
+}
+
+.xray-sticks button i,
+.xps-line-track button i {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.xray-sticks button span,
+.xps-line-track button span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%) rotate(-55deg);
+  transform-origin: left bottom;
+  color: var(--text-soft);
+  font-size: 0.52rem;
+  white-space: nowrap;
+}
+
+.xps-line-track button {
+  height: 72%;
+  color: #79c5d9;
+}
+
+.xps-line-track button.auger {
+  height: 48%;
+  color: #e0a865;
+}
+
+.compact-record-grid {
+  max-height: 210px;
+}
+
+.absorption-edge-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-top: 9px;
+}
+
+.absorption-edge-list span {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  border: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: 0.58rem;
+}
+
+.absorption-edge-list b {
+  color: var(--app-ink);
+}
+
+.neutron-table-scroll {
+  max-height: 365px;
+  overflow: auto;
+}
+
+.neutron-table-scroll table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.64rem;
+}
+
+.neutron-table-scroll th,
+.neutron-table-scroll td {
+  padding: 7px 8px;
+  border-bottom: 1px solid var(--line);
+  text-align: left;
+}
+
+.neutron-table-scroll th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  color: var(--text-soft);
+  background: var(--panel-strong);
+  font-size: 0.56rem;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+  .nuclear-lower-grid,
+  .thermo-chart-grid,
+  .neutron-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .nuclide-detail-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 700px) {
+  .science-mode-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .nuclear-symbol-mark,
+  .thermo-gauge,
+  .radiation-symbol {
+    min-width: 86px;
+  }
+
+  .nuclide-detail-grid {
+    grid-template-columns: 1fr;
+  }
+}
