@@ -19,6 +19,7 @@ import './styles/layout-transition-v2.css';
 import './styles/layout-transition-v4.css';
 import './styles/zoom-stability.css';
 import './styles/advanced-science.css';
+import './styles/science-phase-2.css';
 import './lib/progressiveCellEnhancer';
 import './lib/zoomRenderStabilizer';
 import App from './app/App.svelte';
