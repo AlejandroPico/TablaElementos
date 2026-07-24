@@ -34,6 +34,9 @@
     { id: 'electronic', label: 'Electrones' },
     { id: 'radii', label: 'Radios' },
     { id: 'crystal', label: 'Cristal' },
+    { id: 'nuclear', label: 'Nuclear' },
+    { id: 'thermodynamics', label: 'Termodinámica' },
+    { id: 'radiation', label: 'Radiación' },
     { id: 'properties', label: 'Propiedades' },
     { id: 'isotopes', label: 'Isótopos' },
     { id: 'spectrum', label: 'Espectro' },
@@ -70,8 +73,12 @@
     return payloads[element.symbol] ?? null;
   }
 
+  function domainRows(element: ElementWithLines, domainId: string) {
+    return payload(element)?.domains[domainId]?.rows ?? [];
+  }
+
   function propertyValue(element: ElementWithLines, domainId: string, property: string): string {
-    const row = payload(element)?.domains[domainId]?.rows.find((item) => item.property === property);
+    const row = domainRows(element, domainId).find((item) => item.property === property);
     if (!row?.value) return '—';
     return `${row.value}${row.unit ? ` ${row.unit}` : ''}`;
   }
@@ -86,6 +93,10 @@
 
   function domainCount(element: ElementWithLines, domainId: string): string {
     return String(payload(element)?.domains[domainId]?.row_count ?? 0);
+  }
+
+  function propertyCount(element: ElementWithLines, domainId: string, predicate: (property: string) => boolean): string {
+    return String(domainRows(element, domainId).filter((row) => predicate(String(row.property ?? ''))).length);
   }
 
   function estimateNeutrons(element: ElementWithLines): string {
@@ -104,6 +115,14 @@
       remaining -= count;
     }
     return result.join(' · ');
+  }
+
+  function stableIsotopeCount(element: ElementWithLines): string {
+    return String(domainRows(element, 'isotopes').filter((row) => String(row.half_life ?? '').toUpperCase() === 'STABLE').length);
+  }
+
+  function naturalIsotopeCount(element: ElementWithLines): string {
+    return String(domainRows(element, 'isotopes').filter((row) => Number.parseFloat(String(row.abundance ?? '0')) > 0).length);
   }
 
   function rowsFor(currentScope: ComparisonScope): MatrixRow[] {
@@ -148,7 +167,7 @@
         { label: 'Covalente', value: (element) => propertyValue(element, 'atomic', 'covalent_radius') },
         { label: 'Metálico', value: (element) => propertyValue(element, 'atomic', 'metallic_radius') },
         { label: 'Cristalino', value: (element) => propertyValue(element, 'atomic', 'crystal_radius') },
-        { label: 'Registros iónicos', value: (element) => String(payload(element)?.domains.atomic?.rows.filter((row) => row.property?.startsWith('ionic_radius_')).length ?? 0) }
+        { label: 'Registros iónicos', value: (element) => propertyCount(element, 'atomic', (property) => property.startsWith('ionic_radius_')) }
       ];
     }
 
@@ -161,6 +180,44 @@
         { label: 'Parámetro b', value: (element) => propertyValue(element, 'materials', 'lattice_b') },
         { label: 'Parámetro c', value: (element) => propertyValue(element, 'materials', 'lattice_c') },
         { label: 'Registros de materiales', value: (element) => domainCount(element, 'materials') }
+      ];
+    }
+
+    if (currentScope === 'nuclear') {
+      return [
+        ...common.slice(0, 1),
+        { label: 'Nucleídos registrados', value: (element) => domainCount(element, 'isotopes') },
+        { label: 'Isótopos estables', value: stableIsotopeCount },
+        { label: 'Con abundancia natural', value: naturalIsotopeCount },
+        { label: 'Momentos magnéticos disponibles', value: (element) => String(domainRows(element, 'isotopes').filter((row) => row.magnetic_dipole).length) },
+        { label: 'Cuadrupolos disponibles', value: (element) => String(domainRows(element, 'isotopes').filter((row) => row.electric_quadrupole).length) },
+        { label: 'Energías Q disponibles', value: (element) => String(domainRows(element, 'isotopes').filter((row) => row.qa || row.qec || row.qbm).length) }
+      ];
+    }
+
+    if (currentScope === 'thermodynamics') {
+      return [
+        ...common.slice(0, 1),
+        { label: 'Estado estándar', value: (element) => firstAvailable(element, 'thermodynamics', ['standard_state']) },
+        { label: 'Fusión', value: (element) => firstAvailable(element, 'thermodynamics', ['melting_point']) },
+        { label: 'Ebullición', value: (element) => firstAvailable(element, 'thermodynamics', ['boiling_point']) },
+        { label: 'Entalpía de fusión', value: (element) => firstAvailable(element, 'thermodynamics', ['enthalpy_fusion']) },
+        { label: 'Entalpía de vaporización', value: (element) => firstAvailable(element, 'thermodynamics', ['enthalpy_vaporization']) },
+        { label: 'Capacidad calorífica', value: (element) => firstAvailable(element, 'thermodynamics', ['heat_capacity_cp', 'specific_heat']) },
+        { label: 'Punto triple', value: (element) => firstAvailable(element, 'thermodynamics', ['triple_point', 'triple_point_temperature']) },
+        { label: 'Punto crítico', value: (element) => firstAvailable(element, 'thermodynamics', ['critical_temperature']) }
+      ];
+    }
+
+    if (currentScope === 'radiation') {
+      return [
+        ...common.slice(0, 1),
+        { label: 'Líneas características X', value: (element) => propertyCount(element, 'radiation', (property) => property === 'xray_transition_energy') },
+        { label: 'Puntos de atenuación', value: (element) => propertyCount(element, 'radiation', (property) => property === 'mass_attenuation_coefficient') },
+        { label: 'Líneas XPS', value: (element) => propertyCount(element, 'radiation', (property) => property === 'xps_binding_energy') },
+        { label: 'Líneas Auger', value: (element) => propertyCount(element, 'radiation', (property) => property === 'auger_line_energy') },
+        { label: 'Registros neutrónicos', value: (element) => propertyCount(element, 'radiation', (property) => property.startsWith('neutron_')) },
+        { label: 'Absorción neutrónica', value: (element) => firstAvailable(element, 'radiation', ['neutron_absorption_cross_section']) }
       ];
     }
 
@@ -185,6 +242,8 @@
       { label: 'Isótopos', value: (element) => domainCount(element, 'isotopes') },
       { label: 'Líneas espectrales', value: (element) => String(element.lines.length) },
       { label: 'Niveles NIST', value: (element) => domainCount(element, 'nist_levels') },
+      { label: 'Termodinámica', value: (element) => domainCount(element, 'thermodynamics') },
+      { label: 'Radiación', value: (element) => domainCount(element, 'radiation') },
       { label: 'Bloques con datos', value: (element) => String(element.dataIndex?.available_file_count ?? 0) }
     ];
   }
