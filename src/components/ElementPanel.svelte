@@ -29,6 +29,16 @@
     return '—';
   }
 
+  function stableCount(payload: ElementDataPayload | null): string {
+    const rows = payload?.domains.isotopes?.rows ?? [];
+    return String(rows.filter((row) => String(row.half_life ?? '').toUpperCase() === 'STABLE').length);
+  }
+
+  function propertyCount(payload: ElementDataPayload | null, domainId: string, prefix: string): string {
+    const rows = payload?.domains[domainId]?.rows ?? [];
+    return String(rows.filter((row) => String(row.property ?? '').startsWith(prefix)).length);
+  }
+
   function buildSummaryFacts(payload: ElementDataPayload | null): SummaryFact[] {
     if (!element) return [];
     return [
@@ -49,14 +59,20 @@
       { label: 'Radio covalente', value: propertyValue(payload, 'atomic', 'covalent_radius') },
       { label: 'Primera ionización', value: firstProperty(payload, 'atomic', ['ionization_energy_1', 'ionization_energy']) },
       { label: 'Afinidad electrónica', value: propertyValue(payload, 'atomic', 'electron_affinity') },
-      { label: 'Estado estándar', value: propertyValue(payload, 'physical', 'standard_state') },
+      { label: 'Estado estándar', value: firstProperty(payload, 'thermodynamics', ['standard_state']) },
       { label: 'Densidad', value: propertyValue(payload, 'physical', 'density') },
-      { label: 'Punto de fusión', value: propertyValue(payload, 'physical', 'melting_point') },
-      { label: 'Punto de ebullición', value: propertyValue(payload, 'physical', 'boiling_point') },
+      { label: 'Punto de fusión', value: firstProperty(payload, 'thermodynamics', ['melting_point']) },
+      { label: 'Punto de ebullición', value: firstProperty(payload, 'thermodynamics', ['boiling_point']) },
+      { label: 'Entalpía de fusión', value: firstProperty(payload, 'thermodynamics', ['enthalpy_fusion']) },
+      { label: 'Entalpía de vaporización', value: firstProperty(payload, 'thermodynamics', ['enthalpy_vaporization']) },
       { label: 'Estructura cristalina', value: propertyValue(payload, 'materials', 'crystal_structure') },
       { label: 'Grupo espacial', value: propertyValue(payload, 'materials', 'space_group') },
-      { label: 'Isótopos registrados', value: String(payload?.domains.isotopes?.row_count ?? 0) },
-      { label: 'Líneas espectrales', value: String(element.lines.length) },
+      { label: 'Nucleídos registrados', value: String(payload?.domains.isotopes?.row_count ?? 0) },
+      { label: 'Isótopos estables', value: stableCount(payload) },
+      { label: 'Líneas de rayos X', value: propertyCount(payload, 'radiation', 'xray_transition_energy') },
+      { label: 'Registros de atenuación', value: propertyCount(payload, 'radiation', 'mass_attenuation_coefficient') },
+      { label: 'Registros neutrónicos', value: propertyCount(payload, 'radiation', 'neutron_') },
+      { label: 'Líneas espectrales ópticas', value: String(element.lines.length) },
       { label: 'Niveles NIST', value: String(payload?.domains.nist_levels?.row_count ?? 0) }
     ];
   }
@@ -77,7 +93,7 @@
     {:else}
       <section class="summary-sheet" aria-label={`Resumen de ${element.name_es}`}>
         <header class="inline-summary-header">
-          <div><strong>Ficha esencial</strong><span>—</span><small>Identidad, estructura y propiedades principales</small></div>
+          <div><strong>Ficha esencial</strong><span>—</span><small>Identidad, estructura, termodinámica, núcleo y radiación</small></div>
           <i>Datos consolidados desde los CSV locales</i>
         </header>
         <dl class="summary-facts expanded-summary-facts">
@@ -93,7 +109,7 @@
   {:else}
     <div class="empty-panel">
       <h2>Selecciona un elemento</h2>
-      <p>La ficha reúne identidad, propiedades, isótopos, espectros, química, contexto y fuentes.</p>
+      <p>La ficha reúne identidad, estructura electrónica, cristalografía, termodinámica, núcleo, espectros, radiación, química, contexto y fuentes.</p>
     </div>
   {/if}
 </aside>
