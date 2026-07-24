@@ -1,1 +1,1 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,material_id,phase,structure,space_group,lattice_a,lattice_b,lattice_c,lattice_alpha,lattice_beta,lattice_gamma

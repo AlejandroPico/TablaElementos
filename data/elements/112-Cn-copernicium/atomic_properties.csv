@@ -1,3 +1,8 @@
 property,value,unit,source,source_url,retrieved_at,notes
 atomic_mass,286.179,u,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Valor publicado por PubChem.
 electron_configuration,[Rn]7s2 5f14 6d10 (predicted),,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Configuración electrónica.
+electron_configuration_abbreviated,[Rn]7s2 5f14 6d10 (predicted),,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,Configuración abreviada conservada desde el registro local de PubChem.
+outer_shell_electron_count,2,electrones,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Suma de ocupaciones con el mayor número cuántico principal n.
+valence_shell_configuration,7s2 6d10,,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Subconjunto de la configuración electrónica según el bloque d.
+valence_electron_count,12,electrones,TablaElementos · convención documentada,,2026-07-24T20:02:59+00:00,Convención formal n s + (n−1) d; la participación real depende del compuesto.
+common_valences,"2, 1, 0",,PubChem Periodic Table / interpretación histórica,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,Presentación provisional basada en estados de oxidación publicados. No equivale estrictamente a valencia IUPAC.

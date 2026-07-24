@@ -6,3 +6,9 @@ atomic_radius,175,pm,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/res
 ionization_energy,12.968,eV,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Primera energía de ionización cuando se proporciona.
 electron_affinity,3.617,eV,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Afinidad electrónica cuando se proporciona.
 standard_atomic_weight,"[35.446, 35.457]",u,CIAAW / IUPAC,https://www.ciaaw.org/atomic-weights.htm,2026-07-10T13:14:59+00:00,"Se conserva la notación publicada, incluidos intervalos o valores entre corchetes."
+electron_configuration_abbreviated,[Ne]3s2 3p5,,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,Configuración abreviada conservada desde el registro local de PubChem.
+outer_shell_electron_count,7,electrones,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Suma de ocupaciones con el mayor número cuántico principal n.
+valence_shell_configuration,3s2 3p5,,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Subconjunto de la configuración electrónica según el bloque p.
+valence_electron_count,7,electrones,TablaElementos · convención documentada,,2026-07-24T20:02:59+00:00,Conteo periódico del bloque p.
+common_valences,"+7, +5, +1, -1",,PubChem Periodic Table / interpretación histórica,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,Presentación provisional basada en estados de oxidación publicados. No equivale estrictamente a valencia IUPAC.
+van_der_waals_radius,175,pm,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,El campo AtomicRadius de la tabla periódica PubChem se conserva explícitamente como radio de Van der Waals; revisar la definición de la fuente para cada versión.

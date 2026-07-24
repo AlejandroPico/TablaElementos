@@ -1,1 +1,5 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,temperature_k,pressure,phase,source,source_url,retrieved_at,notes
+standard_state,Solid,,,,,TablaElementos · consolidación local,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:08+00:00,Copiado de physical_properties.csv. Fuente original: PubChem Periodic Table. Estado estándar.
+melting_point,1324,,,,,TablaElementos · consolidación local,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:08+00:00,Copiado de physical_properties.csv. Fuente original: PubChem Periodic Table. Se conserva la representación original de PubChem.
+boiling_point,3471,,,,,TablaElementos · consolidación local,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:08+00:00,Copiado de physical_properties.csv. Fuente original: PubChem Periodic Table. Se conserva la representación original de PubChem.
+density,10.07,,,,,TablaElementos · consolidación local,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:08+00:00,Copiado de physical_properties.csv. Fuente original: PubChem Periodic Table. Se conserva la representación original de PubChem.

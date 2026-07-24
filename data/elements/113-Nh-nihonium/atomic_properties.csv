@@ -1,3 +1,7 @@
 property,value,unit,source,source_url,retrieved_at,notes
 atomic_mass,286.182,u,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Valor publicado por PubChem.
 electron_configuration,[Rn]5f14 6d10 7s2 7p1 (predicted),,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-10T13:14:56+00:00,Configuración electrónica.
+electron_configuration_abbreviated,[Rn]5f14 6d10 7s2 7p1 (predicted),,PubChem Periodic Table,https://pubchem.ncbi.nlm.nih.gov/rest/pug/periodictable/JSON,2026-07-24T20:02:59+00:00,Configuración abreviada conservada desde el registro local de PubChem.
+outer_shell_electron_count,3,electrones,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Suma de ocupaciones con el mayor número cuántico principal n.
+valence_shell_configuration,7s2 7p1,,TablaElementos · derivación,,2026-07-24T20:02:59+00:00,Subconjunto de la configuración electrónica según el bloque p.
+valence_electron_count,3,electrones,TablaElementos · convención documentada,,2026-07-24T20:02:59+00:00,Conteo periódico del bloque p.
