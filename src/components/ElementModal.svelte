@@ -1,7 +1,10 @@
 <script lang="ts">
   import { createEventDispatcher } from 'svelte';
   import AtomicStage from './AtomicStage.svelte';
+  import AtomicRadiiPanel from './AtomicRadiiPanel.svelte';
+  import CrystalStructurePanel from './CrystalStructurePanel.svelte';
   import DataDomainTable from './DataDomainTable.svelte';
+  import ElectronicStructurePanel from './ElectronicStructurePanel.svelte';
   import ElementPanel from './ElementPanel.svelte';
   import SpectralLinesTable from './SpectralLinesTable.svelte';
   import SpectrumViewer from './SpectrumViewer.svelte';
@@ -22,11 +25,19 @@
   const CONTEXT_IDS = ['history', 'geochemistry', 'astrophysics', 'biology', 'environment', 'industry', 'analytical', 'radiation'];
 
   const tabs: Array<{ id: TabId; label: string }> = [
-    { id: 'summary', label: 'Resumen' }, { id: 'atom', label: 'Átomo 3D' },
-    { id: 'properties', label: 'Propiedades' }, { id: 'isotopes', label: 'Isótopos' },
-    { id: 'spectrum', label: 'Espectro' }, { id: 'lines', label: 'Líneas' },
-    { id: 'levels', label: 'Niveles' }, { id: 'chemistry', label: 'Química' },
-    { id: 'context', label: 'Contexto' }, { id: 'sources', label: 'Fuentes' }
+    { id: 'summary', label: 'Resumen' },
+    { id: 'atom', label: 'Átomo 3D' },
+    { id: 'electronic', label: 'Electrones' },
+    { id: 'radii', label: 'Radios' },
+    { id: 'crystal', label: 'Cristal 3D' },
+    { id: 'properties', label: 'Propiedades' },
+    { id: 'isotopes', label: 'Isótopos' },
+    { id: 'spectrum', label: 'Espectro' },
+    { id: 'lines', label: 'Líneas' },
+    { id: 'levels', label: 'Niveles' },
+    { id: 'chemistry', label: 'Química' },
+    { id: 'context', label: 'Contexto' },
+    { id: 'sources', label: 'Fuentes' }
   ];
 
   export let element: ElementWithLines | null = null;
@@ -154,6 +165,12 @@
           <div class="tab-pane summary-pane"><ElementPanel {element} {elementData} {loadingData} /></div>
         {:else if activeTab === 'atom'}
           <div class="tab-pane atom-tab"><AtomicStage {element} {elementData} /></div>
+        {:else if activeTab === 'electronic'}
+          <div class="tab-pane"><ElectronicStructurePanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'radii'}
+          <div class="tab-pane"><AtomicRadiiPanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'crystal'}
+          <div class="tab-pane"><CrystalStructurePanel {element} {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'properties'}
           <div class="tab-pane tab-scroll domain-list-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando propiedades…</p></div>
