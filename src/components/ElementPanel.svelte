@@ -7,6 +7,11 @@
     wide?: boolean;
   }
 
+  interface PropertyLocation {
+    domain: string;
+    properties: string[];
+  }
+
   export let element: ElementWithLines | null = null;
   export let elementData: ElementDataPayload | null = null;
   export let loadingData = false;
@@ -24,6 +29,14 @@
   function firstProperty(payload: ElementDataPayload | null, domainId: string, properties: string[]): string {
     for (const property of properties) {
       const value = propertyValue(payload, domainId, property);
+      if (value !== '—') return value;
+    }
+    return '—';
+  }
+
+  function firstAcross(payload: ElementDataPayload | null, locations: PropertyLocation[]): string {
+    for (const location of locations) {
+      const value = firstProperty(payload, location.domain, location.properties);
       if (value !== '—') return value;
     }
     return '—';
@@ -59,10 +72,28 @@
       { label: 'Radio covalente', value: propertyValue(payload, 'atomic', 'covalent_radius') },
       { label: 'Primera ionización', value: firstProperty(payload, 'atomic', ['ionization_energy_1', 'ionization_energy']) },
       { label: 'Afinidad electrónica', value: propertyValue(payload, 'atomic', 'electron_affinity') },
-      { label: 'Estado estándar', value: firstProperty(payload, 'thermodynamics', ['standard_state']) },
+      {
+        label: 'Estado estándar',
+        value: firstAcross(payload, [
+          { domain: 'thermodynamics', properties: ['standard_state'] },
+          { domain: 'physical', properties: ['standard_state', 'phase', 'state'] }
+        ])
+      },
       { label: 'Densidad', value: propertyValue(payload, 'physical', 'density') },
-      { label: 'Punto de fusión', value: firstProperty(payload, 'thermodynamics', ['melting_point']) },
-      { label: 'Punto de ebullición', value: firstProperty(payload, 'thermodynamics', ['boiling_point']) },
+      {
+        label: 'Punto de fusión',
+        value: firstAcross(payload, [
+          { domain: 'thermodynamics', properties: ['melting_point'] },
+          { domain: 'physical', properties: ['melting_point'] }
+        ])
+      },
+      {
+        label: 'Punto de ebullición',
+        value: firstAcross(payload, [
+          { domain: 'thermodynamics', properties: ['boiling_point'] },
+          { domain: 'physical', properties: ['boiling_point'] }
+        ])
+      },
       { label: 'Entalpía de fusión', value: firstProperty(payload, 'thermodynamics', ['enthalpy_fusion']) },
       { label: 'Entalpía de vaporización', value: firstProperty(payload, 'thermodynamics', ['enthalpy_vaporization']) },
       { label: 'Estructura cristalina', value: propertyValue(payload, 'materials', 'crystal_structure') },
