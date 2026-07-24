@@ -6,8 +6,11 @@
   import DataDomainTable from './DataDomainTable.svelte';
   import ElectronicStructurePanel from './ElectronicStructurePanel.svelte';
   import ElementPanel from './ElementPanel.svelte';
+  import NuclearPhysicsPanel from './NuclearPhysicsPanel.svelte';
+  import RadiationPhysicsPanel from './RadiationPhysicsPanel.svelte';
   import SpectralLinesTable from './SpectralLinesTable.svelte';
   import SpectrumViewer from './SpectrumViewer.svelte';
+  import ThermodynamicsPanel from './ThermodynamicsPanel.svelte';
   import type {
     ComparisonScope,
     ElementDataDomain,
@@ -30,6 +33,9 @@
     { id: 'electronic', label: 'Electrones' },
     { id: 'radii', label: 'Radios' },
     { id: 'crystal', label: 'Cristal 3D' },
+    { id: 'nuclear', label: 'Nuclear' },
+    { id: 'thermodynamics', label: 'Termodinámica' },
+    { id: 'radiation', label: 'Radiación' },
     { id: 'properties', label: 'Propiedades' },
     { id: 'isotopes', label: 'Isótopos' },
     { id: 'spectrum', label: 'Espectro' },
@@ -102,6 +108,7 @@
     if (file.status === 'invalid_single_column_script') return 'Contiene JavaScript';
     if (file.status === 'invalid_html_export') return 'Parece HTML';
     if (file.status === 'single_column_csv') return 'CSV de una columna';
+    if (file.status === 'empty_or_header_only') return 'Vacío · se usa respaldo si existe';
     return file.status;
   }
 
@@ -171,6 +178,12 @@
           <div class="tab-pane"><AtomicRadiiPanel {element} {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'crystal'}
           <div class="tab-pane"><CrystalStructurePanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'nuclear'}
+          <div class="tab-pane"><NuclearPhysicsPanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'thermodynamics'}
+          <div class="tab-pane"><ThermodynamicsPanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'radiation'}
+          <div class="tab-pane"><RadiationPhysicsPanel {element} {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'properties'}
           <div class="tab-pane tab-scroll domain-list-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando propiedades…</p></div>
@@ -220,7 +233,7 @@
               <DataDomainTable domain={elementData?.domains.sources ?? null} />
               <section class="nist-compact-panel">
                 <header class="inline-summary-header"><div><strong>Validación NIST</strong><span>—</span><small>{element.nist?.imported_line_count ?? 0} líneas interpretadas</small></div></header>
-                {#if hasNistProblem}<p class="nist-inline-warning">Alguno de los archivos NIST no tiene estructura tabular válida.</p>{/if}
+                {#if hasNistProblem}<p class="nist-inline-warning">Alguno de los archivos NIST no tiene estructura tabular válida; cuando existe respaldo local, el espectro no queda vacío.</p>{/if}
                 {#if element.nist}
                   <div class="nist-status-list">
                     {#each nistFiles as file}
