@@ -1,29 +1,29 @@
 # `data/elements/`
 
-Carpeta raíz para la futura tabla periódica ampliada.
+Repositorio canónico de datos científicos de TablaElementos.
 
-La estructura prevista es una carpeta por elemento, ordenada por número atómico y símbolo:
+Cada uno de los 118 elementos dispone de una carpeta propia, ordenada por número atómico:
 
-```txt
+```text
 data/elements/
 ├─ elements.manifest.csv
 ├─ 001-H-hydrogen/
 ├─ 002-He-helium/
 ├─ 003-Li-lithium/
-└─ ...
+├─ ...
+├─ 092-U-uranium/
+└─ 118-Og-oganesson/
 ```
 
-Git no conserva carpetas vacías. Por eso el repositorio incluye el manifiesto `elements.manifest.csv` y el script `scripts/init_elements_structure.py`, que genera localmente las 118 carpetas con plantillas CSV.
+## Convención
 
-## Convención de carpetas
-
-```txt
+```text
 NNN-Symbol-english-name
 ```
 
 Ejemplos:
 
-```txt
+```text
 001-H-hydrogen
 008-O-oxygen
 026-Fe-iron
@@ -31,38 +31,127 @@ Ejemplos:
 118-Og-oganesson
 ```
 
-## Archivos previstos por elemento
+## Regla principal
 
-Cada carpeta de elemento podrá contener CSVs independientes por dominio científico:
+Toda propiedad asociada a un elemento debe terminar dentro de su carpeta. Los importadores pueden utilizar temporalmente `data/import/`, pero los valores consumidos por la aplicación se normalizan en los CSV del elemento correspondiente.
 
-```txt
-identity.csv                    # Identidad básica, posición, nombres, bloque, grupo, periodo
-spectra_nist_lines.csv          # Líneas espectrales descargadas de NIST ASD
-spectra_nist_levels.csv         # Niveles de energía / transiciones si se separan de líneas
-atomic_properties.csv           # Radio, configuración electrónica, electronegatividad, ionización, etc.
-isotopes.csv                    # Isótopos, vida media, abundancia, modos de decaimiento
-physical_properties.csv         # Densidad, puntos de fusión/ebullición, conductividad, dureza
-chemical_properties.csv         # Estados de oxidación, reactividad, compuestos comunes
-materials.csv                   # Cristalografía, fases, aleaciones, magnetismo, superconductividad
-thermodynamics.csv              # Entalpías, entropía, calor específico, energía libre
-geochemistry.csv                # Abundancia terrestre, minerales, extracción
-astrophysics.csv                # Abundancia cósmica, nucleosíntesis, presencia estelar
-biology_medicine.csv            # Función biológica, toxicidad, usos médicos
-environment_safety.csv          # Medio ambiente, peligros, manipulación, regulación
-industry_economy.csv            # Usos industriales, producción, reservas, criticidad, reciclaje
-history.csv                     # Descubrimiento, etimología, contexto histórico
-compounds.csv                   # Compuestos, sales, óxidos, minerales, moléculas relevantes
-analytical_methods.csv          # Métodos de detección: XRF, ICP-MS, absorción atómica, etc.
-radiation_interaction.csv       # Rayos X, neutrones, activación, secciones eficaces
-photonics_color.csv             # Color de llama, fluorescencia, pigmentos, LEDs, láseres
-computational.csv               # Datos calculados, DFT, potenciales interatómicos
-sources.csv                     # Fuente, URL, fecha de descarga, licencia/notas
+No se mantiene una base científica paralela para propiedades atómicas, nucleares, termodinámicas o radiológicas.
+
+## Dominios por elemento
+
+```text
+identity.csv
+spectra_nist_lines.csv
+spectra_nist_levels.csv
+atomic_properties.csv
+isotopes.csv
+physical_properties.csv
+chemical_properties.csv
+materials.csv
+thermodynamics.csv
+geochemistry.csv
+astrophysics.csv
+biology_medicine.csv
+environment_safety.csv
+industry_economy.csv
+history.csv
+compounds.csv
+analytical_methods.csv
+radiation_interaction.csv
+photonics_color.csv
+computational.csv
+sources.csv
 ```
 
-## Reglas de trabajo
+### Identidad y propiedades atómicas
 
-- Los datos descargados deben guardarse en bruto siempre que sea posible.
-- No se consultarán APIs externas en tiempo de ejecución de la web.
-- Todo dato usado por la aplicación debe estar versionado dentro del repositorio.
-- `data/raw/` se mantiene temporalmente por compatibilidad con la V1 actual.
-- La migración completa se hará en fases: primero estructura, luego normalización, después consumo desde frontend.
+`identity.csv` conserva nombres, símbolo, Z, posición periódica y clasificación.
+
+`atomic_properties.csv` admite:
+
+- masa y peso atómico;
+- configuraciones electrónica y de valencia;
+- electrones exteriores y de valencia;
+- valencias y estados relacionados;
+- afinidad y electronegatividad;
+- ionizaciones sucesivas;
+- radios de Van der Waals, covalentes, metálicos, cristalinos e iónicos.
+
+### Cristalografía y materiales
+
+`materials.csv` conserva cada fase o alótropo con:
+
+- identificador;
+- estructura;
+- sistema y grupo espacial;
+- parámetros y ángulos de red;
+- estabilidad;
+- procedencia.
+
+### Física nuclear
+
+`isotopes.csv` conserva los registros de IAEA LiveChart, incluidos, cuando existen:
+
+- Z, N y masa;
+- abundancia;
+- vida media;
+- modos de desintegración;
+- espín y paridad;
+- momentos dipolar y cuadrupolar;
+- energías Q y de separación;
+- energía de enlace y exceso de masa.
+
+### Termodinámica
+
+`thermodynamics.csv` utiliza el esquema:
+
+```text
+property,value,unit,temperature_k,pressure,phase,source,source_url,retrieved_at,notes
+```
+
+Cada valor debe conservar sus condiciones. Una magnitud dependiente de temperatura o fase no se reduce a una constante universal.
+
+### Radiación
+
+`radiation_interaction.csv` utiliza el esquema:
+
+```text
+property,value,unit,energy,particle_or_photon,isotope,transition,process,source,source_url,retrieved_at,notes
+```
+
+Puede contener:
+
+- transiciones características de rayos X;
+- coeficientes de atenuación y absorción;
+- XPS y líneas Auger con estado químico;
+- longitudes de dispersión neutrónica;
+- secciones coherente, incoherente, total y de absorción.
+
+## Procedencia
+
+Cada importación debe registrarse en `sources.csv` con proveedor, dataset, archivo afectado, URL, fecha, estado y notas.
+
+Los valores derivados deben identificarse como derivados; no pueden presentarse como mediciones experimentales.
+
+## Generación de la aplicación
+
+Los CSV se convierten en un JSON independiente por elemento:
+
+```text
+public/data/elements/H.json
+public/data/elements/Fe.json
+public/data/elements/U.json
+...
+```
+
+El navegador solo descarga el JSON del elemento cuya ficha se abre.
+
+## Actualización remota
+
+El workflow manual:
+
+```text
+.github/workflows/refresh-scientific-data.yml
+```
+
+descarga, valida y confirma los cambios dentro de estas carpetas. El despliegue normal de Pages es offline y utiliza exclusivamente los CSV versionados.
