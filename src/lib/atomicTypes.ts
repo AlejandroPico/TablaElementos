@@ -4,6 +4,9 @@ export type ComparisonScope =
   | 'global'
   | 'summary'
   | 'atom'
+  | 'electronic'
+  | 'radii'
+  | 'crystal'
   | 'properties'
   | 'isotopes'
   | 'spectrum'
@@ -86,6 +89,8 @@ export interface ElementDataIndex {
   available_domains: string[];
   domain_counts: Record<string, number>;
   available_file_count: number;
+  summary_values?: Record<string, string>;
+  filter_values?: Record<string, string | number | null>;
 }
 
 export interface SpectraDataset {
