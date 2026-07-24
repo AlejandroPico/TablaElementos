@@ -13,12 +13,36 @@
     rawY: number;
   }
 
+  interface SeriesValue {
+    x: number;
+    y: number;
+    label: string;
+  }
+
+  interface ShomateBlock {
+    phase: string;
+    index: string;
+    minTemperature: number;
+    maxTemperature: number;
+    coefficients: Partial<Record<'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G' | 'H', number>>;
+  }
+
   function num(value: unknown): number | null {
-    const text = String(value ?? '').replace(/−/g, '-').replace(/,/g, '.');
+    const text = String(value ?? '')
+      .replace(/−/g, '-')
+      .replace(/,/g, '.')
+      .replace(/×\s*10\s*\^?\s*\{?([-+]?\d+)\}?/gi, 'e$1');
     const match = text.match(/[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?/i);
     if (!match) return null;
     const parsed = Number(match[0]);
     return Number.isFinite(parsed) ? parsed : null;
+  }
+
+  function numbers(value: unknown): number[] {
+    const text = String(value ?? '').replace(/−/g, '-').replace(/,/g, '.');
+    return (text.match(/[-+]?\d+(?:\.\d+)?(?:e[-+]?\d+)?/gi) ?? [])
+      .map((part) => Number(part))
+      .filter(Number.isFinite);
   }
 
   function findRow(sourceRows: DataRow[], ...properties: string[]): DataRow | null {
@@ -43,7 +67,7 @@
     return value;
   }
 
-  function series(sourceRows: DataRow[], propertyNames: string[], xKeys: string[]): Array<{ x: number; y: number; label: string }> {
+  function series(sourceRows: DataRow[], propertyNames: string[], xKeys: string[]): SeriesValue[] {
     return sourceRows.flatMap((row) => {
       if (!propertyNames.includes(String(row.property ?? ''))) return [];
       const y = num(row.value);
@@ -53,7 +77,61 @@
     }).sort((a, b) => a.x - b.x);
   }
 
-  function plotPoints(values: Array<{ x: number; y: number; label: string }>, logY = false): Point[] {
+  function shomateBlocks(sourceRows: DataRow[]): ShomateBlock[] {
+    const groups = new Map<string, ShomateBlock>();
+    for (const row of sourceRows) {
+      const match = String(row.property ?? '').match(/^shomate_([A-H])_([a-z]+|unspecified)_(\d+)$/i);
+      if (!match) continue;
+      const [, coefficientRaw, phase, index] = match;
+      const coefficient = coefficientRaw.toUpperCase() as keyof ShomateBlock['coefficients'];
+      const value = num(row.value);
+      if (value === null) continue;
+      const temperatures = numbers(row.temperature_k);
+      const minTemperature = temperatures[0] ?? 298.15;
+      const maxTemperature = temperatures[1] ?? minTemperature;
+      const key = `${phase}_${index}`;
+      const group = groups.get(key) ?? {
+        phase,
+        index,
+        minTemperature,
+        maxTemperature,
+        coefficients: {},
+      };
+      group.minTemperature = minTemperature;
+      group.maxTemperature = maxTemperature;
+      group.coefficients[coefficient] = value;
+      groups.set(key, group);
+    }
+    return [...groups.values()]
+      .filter((block) => ['A', 'B', 'C', 'D', 'E'].every((key) => block.coefficients[key as keyof ShomateBlock['coefficients']] !== undefined))
+      .sort((a, b) => a.minTemperature - b.minTemperature);
+  }
+
+  function cpFromShomate(blocks: ShomateBlock[]): SeriesValue[] {
+    const values: SeriesValue[] = [];
+    for (const block of blocks) {
+      const { A = 0, B = 0, C = 0, D = 0, E = 0 } = block.coefficients;
+      const span = Math.max(0, block.maxTemperature - block.minTemperature);
+      const steps = span > 0 ? 28 : 1;
+      for (let index = 0; index <= steps; index += 1) {
+        const temperature = span > 0
+          ? block.minTemperature + (span * index) / steps
+          : block.minTemperature;
+        if (temperature <= 0) continue;
+        const t = temperature / 1000;
+        const cp = A + B * t + C * t ** 2 + D * t ** 3 + E / t ** 2;
+        if (!Number.isFinite(cp) || cp <= 0) continue;
+        values.push({
+          x: temperature,
+          y: cp,
+          label: `${cp.toLocaleString('es-ES', { maximumFractionDigits: 4 })} J/(mol·K) · ${block.phase}`,
+        });
+      }
+    }
+    return values.sort((a, b) => a.x - b.x);
+  }
+
+  function plotPoints(values: SeriesValue[], logY = false): Point[] {
     if (!values.length) return [];
     const xs = values.map((item) => item.x);
     const ys = values.map((item) => logY ? Math.log10(item.y) : item.y);
@@ -93,7 +171,11 @@
   $: triple = kelvin(tripleRow);
   $: critical = kelvin(criticalRow);
   $: phaseMax = Math.max(melting ?? 0, boiling ?? 0, triple ?? 0, critical ?? 0, 300);
-  $: cpSeries = series(allRows, ['heat_capacity_cp', 'specific_heat', 'specific_heat_capacity'], ['temperature_k']);
+  $: directCpSeries = series(allRows, ['heat_capacity_cp', 'specific_heat', 'specific_heat_capacity'], ['temperature_k']);
+  $: shomate = shomateBlocks(thermodynamicRows);
+  $: shomateCpSeries = cpFromShomate(shomate);
+  $: cpDerivedFromShomate = directCpSeries.length <= 1 && shomateCpSeries.length > 1;
+  $: cpSeries = directCpSeries.length > 1 ? directCpSeries : shomateCpSeries;
   $: vaporSeries = series(allRows, ['vapor_pressure'], ['temperature_k']);
   $: cpPoints = plotPoints(cpSeries);
   $: vaporPoints = plotPoints(vaporSeries, true);
@@ -118,7 +200,7 @@
       <article><small>Entalpía de fusión</small><strong>{textValue(allRows, ['enthalpy_fusion'])}</strong></article>
       <article><small>Entalpía de vaporización</small><strong>{textValue(allRows, ['enthalpy_vaporization'])}</strong></article>
       <article><small>Capacidad calorífica Cp</small><strong>{textValue(allRows, ['heat_capacity_cp', 'specific_heat'])}</strong></article>
-      <article><small>Entropía molar estándar</small><strong>{textValue(allRows, ['standard_molar_entropy'])}</strong></article>
+      <article><small>Entropía molar estándar</small><strong>{textValue(allRows, ['standard_molar_entropy_solid', 'standard_molar_entropy_liquid', 'standard_molar_entropy_gas', 'standard_molar_entropy'])}</strong></article>
       <article><small>Punto triple</small><strong>{textValue(allRows, ['triple_point', 'triple_point_temperature'])}</strong></article>
       <article><small>Punto crítico</small><strong>{textValue(allRows, ['critical_temperature'])}</strong></article>
     </section>
@@ -152,16 +234,20 @@
 
     <div class="thermo-chart-grid">
       <section class="science-visual-card thermo-series-card">
-        <header><div><small>Respuesta térmica</small><h3>Cp frente a temperatura</h3></div><span>{cpSeries.length} puntos</span></header>
+        <header>
+          <div><small>Respuesta térmica</small><h3>Cp frente a temperatura</h3></div>
+          <span>{cpSeries.length} puntos{cpDerivedFromShomate ? ' · NIST Shomate' : ''}</span>
+        </header>
         {#if cpPoints.length > 1}
           <svg class="thermo-line-chart" viewBox="0 0 720 260" role="img" aria-label="Capacidad calorífica frente a temperatura">
             <g class="chart-grid">{#each [42, 88, 134, 180, 226] as y}<line x1="44" x2="676" y1={y} y2={y}></line>{/each}</g>
             <polyline points={pointsString(cpPoints)}></polyline>
-            {#each cpPoints as point}<circle cx={point.x} cy={point.y} r="4"><title>{`${point.rawX} K · ${point.label}`}</title></circle>{/each}
+            {#each cpPoints as point}<circle cx={point.x} cy={point.y} r="4"><title>{`${point.rawX.toLocaleString('es-ES', { maximumFractionDigits: 2 })} K · ${point.label}`}</title></circle>{/each}
             <text class="axis-caption" x="360" y="252" text-anchor="middle">Temperatura (K)</text>
           </svg>
+          {#if cpDerivedFromShomate}<p class="chart-source-note">Curva calculada con los coeficientes A–E y los intervalos de fase publicados por NIST Chemistry WebBook.</p>{/if}
         {:else}
-          <div class="science-empty-state compact"><strong>Serie Cp(T) no disponible</strong><p>Un único valor se muestra en la ficha; una curva requiere varias temperaturas.</p></div>
+          <div class="science-empty-state compact"><strong>Serie Cp(T) no disponible</strong><p>Un único valor se muestra en la ficha; una curva requiere varios puntos o coeficientes Shomate completos.</p></div>
         {/if}
       </section>
 
@@ -195,6 +281,6 @@
       </section>
     {/if}
 
-    <p class="science-method-note">Un punto de fusión, una capacidad calorífica o una presión de vapor no son números universales: dependen de fase, presión, pureza y temperatura. El panel no interpola cuando solo existe un registro.</p>
+    <p class="science-method-note">Un punto de fusión, una capacidad calorífica o una presión de vapor no son números universales: dependen de fase, presión, pureza y temperatura. Las curvas Shomate se calculan únicamente cuando NIST publica todos los coeficientes necesarios.</p>
   {/if}
 </div>
