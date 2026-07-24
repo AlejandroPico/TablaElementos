@@ -1,7 +1,7 @@
 {
   "name": "tabla-elementos",
   "private": true,
-  "version": "0.4.0",
+  "version": "0.5.0",
   "type": "module",
   "description": "Tabla periódica científica para explorar estructura electrónica, cristales, termodinámica, núcleos, espectros y radiación por elemento.",
   "scripts": {
@@ -11,7 +11,8 @@
     "enrich:advanced:offline": "python scripts/enrich_advanced_properties.py --offline",
     "enrich:science2": "python scripts/enrich_science_phase_2_v2.py --network",
     "enrich:webbook": "python scripts/enrich_nist_webbook.py --workers 3 && python scripts/register_webbook_sources.py",
-    "enrich:all": "python scripts/enrich_advanced_properties.py --pubchem-annotations && python scripts/enrich_science_phase_2_v2.py --network && python scripts/enrich_nist_webbook.py --workers 3 && python scripts/register_webbook_sources.py",
+    "enrich:context": "python scripts/enrich_material_context.py",
+    "enrich:all": "python scripts/enrich_advanced_properties.py --pubchem-annotations && python scripts/enrich_science_phase_2_v2.py --network && python scripts/enrich_nist_webbook.py --workers 3 && python scripts/register_webbook_sources.py && python scripts/enrich_material_context.py",
     "repair:iron-spectrum": "python scripts/repair_iron_spectrum.py",
     "repair:spectra:all": "python scripts/enrich_science_phase_2_v2.py --network --repair-spectra",
     "refresh:data": "npm run enrich:all && npm run repair:iron-spectrum && npm run build:data",

@@ -1,1 +1,3 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,classification
+dot_number,3077,,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Lead_(element),2026-07-24T22:17:53+00:00,Identificador o clasificación; no equivale por sí solo a una evaluación toxicológica.,transporte DOT
+rtecs_identifier,RTECSOF7525000,,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Lead_(element),2026-07-24T22:17:53+00:00,Identificador o clasificación; no equivale por sí solo a una evaluación toxicológica.,registro de efectos tóxicos

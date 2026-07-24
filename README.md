@@ -1,8 +1,8 @@
 # TablaElementos
 
-Tabla periódica científica, interactiva y completamente estática para explorar los 118 elementos químicos mediante zoom progresivo, filtros combinables, estructura electrónica, radios diferenciados, cristalografía 3D, física nuclear, termodinámica, espectros, rayos X, atenuación, neutrones y comparación entre elementos.
+Tabla periódica científica, interactiva y completamente estática para explorar los 118 elementos químicos mediante zoom progresivo, filtros combinables, estructura electrónica, radios diferenciados, cristalografía 3D, física nuclear, termodinámica, propiedades materiales, contexto biológico e industrial y tendencias globales.
 
-> **Versión:** `0.4.0`  
+> **Versión:** `0.5.0`
 > **Tecnologías:** Svelte 5 · TypeScript · Vite · D3 · Python  
 > **Despliegue:** GitHub Pages mediante GitHub Actions  
 > **Ejecución:** sin backend y sin consultas científicas externas desde el navegador
@@ -99,6 +99,7 @@ Al pulsar una casilla se abre una ficha con pestañas independientes:
 - **Electrones**
 - **Radios**
 - **Cristal 3D**
+- **Material**
 - **Nuclear**
 - **Termodinámica**
 - **Radiación**
@@ -112,6 +113,35 @@ Al pulsar una casilla se abre una ficha con pestañas independientes:
 - **Fuentes**
 
 Los dominios extensos se cargan de forma diferida mediante un JSON independiente por elemento.
+
+## Propiedades eléctricas, magnéticas y mecánicas
+
+La pestaña **Material** reúne tres vistas compactas:
+
+- transporte eléctrico y térmico: conductividad, resistividad y expansión;
+- mecánica: módulos de Young, cizalla y compresibilidad, Poisson, dureza y velocidad del sonido;
+- magnetismo: tipo magnético, susceptibilidad y temperaturas de Curie, Néel o transición superconductora.
+
+Cada ficha conserva la unidad y la fuente del registro original. La ausencia de un valor se muestra como falta de cobertura, no como cero.
+
+## Biología, seguridad, abundancia e industria
+
+La pestaña **Contexto** permite alternar entre:
+
+- abundancia en Universo, corteza terrestre, océano y cuerpo humano mediante escala logarítmica;
+- papel biológico y referencias de seguridad disponibles;
+- usos, producción, precio y riesgo de suministro.
+
+Las afirmaciones toxicológicas no se deducen automáticamente de una clasificación aislada.
+
+## Tendencias globales
+
+El botón de gráfica de la barra principal abre un explorador para:
+
+- elegir cualquier propiedad numérica con cobertura;
+- representarla frente al número atómico;
+- colorear la tabla periódica completa con la misma escala;
+- seleccionar un elemento desde cualquiera de las dos vistas.
 
 ## Átomo 3D
 
@@ -305,6 +335,7 @@ La selección de elementos no tiene un límite impuesto por la aplicación.
 - electrones;
 - radios;
 - cristal;
+- material;
 - nuclear;
 - termodinámica;
 - radiación;
@@ -347,6 +378,8 @@ El dataset consolida principalmente:
 - **NIST NCNR:** dispersión y absorción neutrónica.
 - **NIST XPS Database:** exportaciones XPS y Auger.
 - **Materials Project:** fases y cristalografía calculada cuando existe clave.
+- **periodic-table-data-complete:** compilación secundaria para propiedades materiales, abundancia y contexto industrial.
+- **Mendeleev:** compilación secundaria para propiedades magnéticas, mecánicas y de abundancia.
 
 Cada valor debe interpretarse junto con su unidad, condiciones, incertidumbre, fecha y fuente.
 
@@ -464,6 +497,7 @@ npm run build:data
 ```bash
 npm run enrich:advanced
 npm run enrich:science2
+npm run enrich:context
 npm run enrich:all
 ```
 
@@ -486,7 +520,7 @@ La reparación masiva es opcional porque puede generar miles de líneas por elem
 ### Despliegue
 
 ```text
-.github/workflows/deploy-pages.yml
+.github/workflows/deploy.yml
 ```
 
 Valida, construye offline y publica GitHub Pages.

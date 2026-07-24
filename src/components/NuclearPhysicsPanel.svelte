@@ -127,20 +127,11 @@
   {#if loading}
     <div class="modal-load-state"><span></span><p>Cargando física nuclear…</p></div>
   {:else}
-    <section class="science-hero nuclear-hero">
-      <div>
-        <p>Física nuclear e isotópica</p>
-        <h3>Mapa de nucleídos de {element?.name_es}</h3>
-        <small>Abundancia, estabilidad, vida media, modos de desintegración, espín, momentos nucleares y energías Q procedentes de IAEA LiveChart.</small>
-      </div>
-      <div class="nuclear-symbol-mark"><strong>{element?.symbol}</strong><span>Z = {element?.atomic_number}</span></div>
-    </section>
-
-    <section class="science-card-grid nuclear-summary-grid">
-      <article><small>Nucleídos registrados</small><strong>{nuclides.length}</strong></article>
-      <article><small>Estables</small><strong>{stableCount}</strong></article>
-      <article><small>Con abundancia natural</small><strong>{naturalCount}</strong></article>
-      <article><small>Intervalo de neutrones</small><strong>{nuclides.length ? `${nuclides[0].n} – ${nuclides[nuclides.length - 1].n}` : '—'}</strong></article>
+    <section class="science-inline-stats" aria-label="Resumen nuclear">
+      <span><small>Nucleídos</small><strong>{nuclides.length}</strong></span>
+      <span><small>Estables</small><strong>{stableCount}</strong></span>
+      <span><small>Abundancia natural</small><strong>{naturalCount}</strong></span>
+      <span><small>Intervalo N</small><strong>{nuclides.length ? `${nuclides[0].n}–${nuclides[nuclides.length - 1].n}` : '—'}</strong></span>
     </section>
 
     {#if nuclides.length}

@@ -1,1 +1,1 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,energy,particle_or_photon,isotope,transition,process,source,source_url,retrieved_at,notes,abundance,experimental_energy_ev,theoretical_energy_ev

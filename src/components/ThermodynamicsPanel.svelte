@@ -185,25 +185,23 @@
   {#if loading}
     <div class="modal-load-state"><span></span><p>Cargando termodinámica…</p></div>
   {:else}
-    <section class="science-hero thermo-hero">
-      <div>
-        <p>Termodinámica y fases</p>
-        <h3>Materia, energía y transiciones</h3>
-        <small>Las magnitudes conservan fase, temperatura, presión, fuente y condiciones cuando la fuente las proporciona.</small>
-      </div>
-      <div class="thermo-gauge" aria-label={`Estado estándar: ${textValue(allRows, ['standard_state'])}`}><strong>{element?.symbol}</strong><span>{textValue(allRows, ['standard_state'])}</span></div>
+    <section class="science-inline-stats" aria-label="Resumen termodinámico">
+      <span><small>Estado</small><strong>{textValue(allRows, ['standard_state'])}</strong></span>
+      <span><small>Fusión</small><strong>{textValue(allRows, ['melting_point'])}</strong></span>
+      <span><small>Ebullición</small><strong>{textValue(allRows, ['boiling_point'])}</strong></span>
+      <span><small>Cp</small><strong>{textValue(allRows, ['heat_capacity_cp', 'specific_heat'])}</strong></span>
     </section>
 
-    <section class="science-card-grid thermo-summary-grid">
-      <article><small>Punto de fusión</small><strong>{textValue(allRows, ['melting_point'])}</strong></article>
-      <article><small>Punto de ebullición</small><strong>{textValue(allRows, ['boiling_point'])}</strong></article>
-      <article><small>Entalpía de fusión</small><strong>{textValue(allRows, ['enthalpy_fusion'])}</strong></article>
-      <article><small>Entalpía de vaporización</small><strong>{textValue(allRows, ['enthalpy_vaporization'])}</strong></article>
-      <article><small>Capacidad calorífica Cp</small><strong>{textValue(allRows, ['heat_capacity_cp', 'specific_heat'])}</strong></article>
-      <article><small>Entropía molar estándar</small><strong>{textValue(allRows, ['standard_molar_entropy_solid', 'standard_molar_entropy_liquid', 'standard_molar_entropy_gas', 'standard_molar_entropy'])}</strong></article>
-      <article><small>Punto triple</small><strong>{textValue(allRows, ['triple_point', 'triple_point_temperature'])}</strong></article>
-      <article><small>Punto crítico</small><strong>{textValue(allRows, ['critical_temperature'])}</strong></article>
-    </section>
+    <details class="science-detail-drawer">
+      <summary>Más magnitudes termodinámicas</summary>
+      <dl>
+        <div><dt>Entalpía de fusión</dt><dd>{textValue(allRows, ['enthalpy_fusion'])}</dd></div>
+        <div><dt>Entalpía de vaporización</dt><dd>{textValue(allRows, ['enthalpy_vaporization'])}</dd></div>
+        <div><dt>Entropía molar</dt><dd>{textValue(allRows, ['standard_molar_entropy_solid', 'standard_molar_entropy_liquid', 'standard_molar_entropy_gas', 'standard_molar_entropy'])}</dd></div>
+        <div><dt>Punto triple</dt><dd>{textValue(allRows, ['triple_point', 'triple_point_temperature'])}</dd></div>
+        <div><dt>Punto crítico</dt><dd>{textValue(allRows, ['critical_temperature'])}</dd></div>
+      </dl>
+    </details>
 
     <section class="science-visual-card phase-landmark-card">
       <header>

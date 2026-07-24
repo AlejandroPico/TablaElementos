@@ -1,1 +1,2 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,organism_or_use
+abundance_human,0,%,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Ununtrium,2026-07-24T22:17:53+00:00,Fracción másica aproximada de la compilación; comparar en escala logarítmica.,cuerpo humano

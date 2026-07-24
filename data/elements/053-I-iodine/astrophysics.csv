@@ -1,1 +1,3 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,context
+abundance_universe,1e-07,%,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Iodine,2026-07-24T22:17:53+00:00,Fracción másica aproximada de la compilación; comparar en escala logarítmica.,universe
+abundance_meteor,2.5e-05,%,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Iodine,2026-07-24T22:17:53+00:00,Fracción másica aproximada de la compilación; comparar en escala logarítmica.,meteor

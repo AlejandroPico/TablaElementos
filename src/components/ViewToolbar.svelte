@@ -16,6 +16,7 @@
   export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
   export let resolvedTheme: ResolvedTheme = 'dark';
+  export let trendsOpen = false;
 
   let guideOpen = false;
   let internalInfoOpen = false;
@@ -29,6 +30,7 @@
     reset: void;
     layout: void;
     theme: void;
+    trends: void;
   }>();
 
   function themeLabel(): string {
@@ -53,6 +55,13 @@
 
     guideOpen = !guideOpen;
     internalInfoOpen = false;
+  }
+
+  function handleTrendsClick(): void {
+    filterOpen = false;
+    guideOpen = false;
+    internalInfoOpen = false;
+    dispatch('trends');
   }
 </script>
 
@@ -109,6 +118,21 @@
       <path d="M3 5h18l-7 8v5.5l-4 2V13L3 5Z"></path>
     </svg>
     {#if activeFilterCount > 0}<span class="filter-count" aria-hidden="true">{activeFilterCount}</span>{/if}
+  </button>
+
+  <button
+    class:active={trendsOpen}
+    class="view-tool-button"
+    type="button"
+    title="Abrir tendencias globales"
+    aria-label="Abrir explorador global de tendencias periódicas"
+    on:click={handleTrendsClick}
+  >
+    <svg class="trend-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M4 19V5M4 19h16"></path>
+      <path d="m6.5 16 4-5 3 2 4.5-6"></path>
+      <circle cx="6.5" cy="16" r="1"></circle><circle cx="10.5" cy="11" r="1"></circle><circle cx="13.5" cy="13" r="1"></circle><circle cx="18" cy="7" r="1"></circle>
+    </svg>
   </button>
 
   <button

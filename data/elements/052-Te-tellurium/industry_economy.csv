@@ -1,1 +1,3 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,year,region
+price_per_kg,63.5,USD/kg,Mendeleev · commit 580e34010f · compilación secundaria,https://periodic-table.rsc.org/element/52/tellurium,2026-07-24T22:17:53+00:00,Dato secundario; el precio y los indicadores económicos requieren fecha y mercado para uso profesional.,,global
+uses,Used to improve the machining quality of copper and stainless steel products and to color glass and ceramics. Also in thermoelectric devices. Some is used in the rubber industry and it is a basic ingredient in manufacturing blasting caps.,,Mendeleev · commit 580e34010f · compilación secundaria,https://periodic-table.rsc.org/element/52/tellurium,2026-07-24T22:17:53+00:00,Dato secundario; el precio y los indicadores económicos requieren fecha y mercado para uso profesional.,,global

@@ -285,6 +285,18 @@ def filter_values(
     heat_row = property_row(domains, "physical", ("specific_heat", "specific_heat_capacity"))
     oxidation_row = property_row(domains, "chemical", ("oxidation_states", "oxidation_state"))
     discovery_row = property_row(domains, "history", ("discovery_year", "year_discovered", "discovered", "year"))
+    thermal_conductivity_row = property_row(domains, "materials", ("thermal_conductivity",))
+    electrical_conductivity_row = property_row(domains, "materials", ("electrical_conductivity",))
+    electrical_resistivity_row = property_row(domains, "materials", ("electrical_resistivity",))
+    young_modulus_row = property_row(domains, "materials", ("young_modulus",))
+    shear_modulus_row = property_row(domains, "materials", ("shear_modulus",))
+    bulk_modulus_row = property_row(domains, "materials", ("bulk_modulus",))
+    crust_abundance_row = property_row(domains, "geochemistry", ("abundance_crust",))
+    ocean_abundance_row = property_row(domains, "geochemistry", ("abundance_ocean",))
+    universe_abundance_row = property_row(domains, "astrophysics", ("abundance_universe",))
+    human_abundance_row = property_row(domains, "biology", ("abundance_human",))
+    supply_risk_row = property_row(domains, "industry", ("relative_supply_risk",))
+    price_row = property_row(domains, "industry", ("price_per_kg",))
 
     standard_state = clean(state_row.get("value")) if state_row else ""
     if not standard_state:
@@ -312,6 +324,18 @@ def filter_values(
         "isotope_count": domains.get("isotopes", {}).get("row_count", 0),
         "level_count": domains.get("nist_levels", {}).get("row_count", 0),
         "available_file_count": available_file_count,
+        "thermal_conductivity": row_number(thermal_conductivity_row),
+        "electrical_conductivity": row_number(electrical_conductivity_row),
+        "electrical_resistivity": row_number(electrical_resistivity_row),
+        "young_modulus": row_number(young_modulus_row),
+        "shear_modulus": row_number(shear_modulus_row),
+        "bulk_modulus": row_number(bulk_modulus_row),
+        "abundance_crust": row_number(crust_abundance_row),
+        "abundance_ocean": row_number(ocean_abundance_row),
+        "abundance_universe": row_number(universe_abundance_row),
+        "abundance_human": row_number(human_abundance_row),
+        "relative_supply_risk": row_number(supply_risk_row),
+        "price_per_kg": row_number(price_row),
     }
 
 

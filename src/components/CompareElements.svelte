@@ -34,6 +34,7 @@
     { id: 'electronic', label: 'Electrones' },
     { id: 'radii', label: 'Radios' },
     { id: 'crystal', label: 'Cristal' },
+    { id: 'material', label: 'Material' },
     { id: 'nuclear', label: 'Nuclear' },
     { id: 'thermodynamics', label: 'Termodinámica' },
     { id: 'radiation', label: 'Radiación' },
@@ -180,6 +181,19 @@
         { label: 'Parámetro b', value: (element) => propertyValue(element, 'materials', 'lattice_b') },
         { label: 'Parámetro c', value: (element) => propertyValue(element, 'materials', 'lattice_c') },
         { label: 'Registros de materiales', value: (element) => domainCount(element, 'materials') }
+      ];
+    }
+
+    if (currentScope === 'material') {
+      return [
+        ...common.slice(0, 1),
+        { label: 'Conductividad eléctrica', value: (element) => propertyValue(element, 'materials', 'electrical_conductivity') },
+        { label: 'Resistividad', value: (element) => propertyValue(element, 'materials', 'electrical_resistivity') },
+        { label: 'Conductividad térmica', value: (element) => propertyValue(element, 'materials', 'thermal_conductivity') },
+        { label: 'Orden magnético', value: (element) => propertyValue(element, 'materials', 'magnetic_type') },
+        { label: 'Módulo de Young', value: (element) => propertyValue(element, 'materials', 'young_modulus') },
+        { label: 'Módulo volumétrico', value: (element) => propertyValue(element, 'materials', 'bulk_modulus') },
+        { label: 'Dureza Mohs', value: (element) => propertyValue(element, 'materials', 'mohs_hardness') }
       ];
     }
 

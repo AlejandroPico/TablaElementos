@@ -118,6 +118,8 @@
     { label: 'Dispersión incoherente', property: 'neutron_incoherent_cross_section', value: neutronAggregate(neutrons, 'neutron_incoherent_cross_section') },
     { label: 'Dispersión total', property: 'neutron_total_scattering_cross_section', value: neutronAggregate(neutrons, 'neutron_total_scattering_cross_section') },
     { label: 'Absorción térmica', property: 'neutron_absorption_cross_section', value: neutronAggregate(neutrons, 'neutron_absorption_cross_section') },
+    { label: 'Sección de referencia', property: 'neutron_cross_section_reference', value: neutronAggregate(neutrons, 'neutron_cross_section_reference') },
+    { label: 'Absorción másica ref.', property: 'neutron_mass_absorption_reference', value: neutronAggregate(neutrons, 'neutron_mass_absorption_reference') },
   ];
   $: maxNeutron = Math.max(...neutronMetrics.map((item) => item.value ?? 0), 1);
 </script>
@@ -126,15 +128,6 @@
   {#if loading}
     <div class="modal-load-state"><span></span><p>Cargando interacción con radiación…</p></div>
   {:else}
-    <section class="science-hero radiation-hero">
-      <div>
-        <p>Fotones, electrones y neutrones</p>
-        <h3>Laboratorio de interacción radiológica</h3>
-        <small>Transiciones características de rayos X, coeficientes de atenuación, energías XPS/Auger y secciones eficaces neutrónicas.</small>
-      </div>
-      <div class="radiation-symbol"><strong>{element?.symbol}</strong><span>{radiationRows.length} registros</span></div>
-    </section>
-
     <nav class="science-mode-tabs" aria-label="Ámbitos de radiación">
       {#each modes as current}
         <button class:active={mode === current} type="button" on:click={() => (mode = current)}>{modeLabel(current)}</button>
@@ -149,9 +142,9 @@
             <div class="xray-axis"><span>menor energía</span><span>energía logarítmica (eV)</span><span>mayor energía</span></div>
             <div class="xray-sticks">
               {#each xray as row, index}
-                <button type="button" style={`left:${xrayPosition(row, xray)}%;--stick-height:${34 + (index % 5) * 10}%;`} title={`${row.transition || 'Transición'} · ${row.value} ${row.unit}`}>
+                <span class="radiation-stick" style={`left:${xrayPosition(row, xray)}%;--stick-height:${34 + (index % 5) * 10}%;`} title={`${row.transition || 'Transición'} · ${row.value} ${row.unit}`}>
                   <i></i><span>{row.transition || 'X'}</span>
-                </button>
+                </span>
               {/each}
             </div>
           </div>
@@ -192,20 +185,24 @@
           <div class="xps-axis"><span>energía mínima</span><span>eV</span><span>energía máxima</span></div>
           <div class="xps-line-track">
             {#each xps as row}
-              <button type="button" class:auger={row.property === 'auger_line_energy'} style={`left:${xpsPosition(row, xps)}%;`} title={`${row.transition || row.property} · ${row.value} ${row.unit}`}><i></i><span>{row.transition || (row.property === 'auger_line_energy' ? 'Auger' : 'XPS')}</span></button>
+              <span class="radiation-stick" class:auger={row.property === 'auger_line_energy'} style={`left:${xpsPosition(row, xps)}%;`} title={`${row.transition || row.property} · ${row.value} ${row.unit}`}><i></i><span>{row.transition || (row.property === 'auger_line_energy' ? 'Auger' : 'XPS')}</span></span>
             {/each}
           </div>
           <div class="radiation-record-grid">
             {#each xps as row}<article><span>{row.transition || row.property}</span><strong>{row.value} {row.unit}</strong><small>{[row.compound, row.chemical_state].filter(Boolean).join(' · ') || row.source}</small></article>{/each}
           </div>
         {:else}
-          <div class="science-empty-state"><strong>Sin exportación XPS/Auger local</strong><p>La pestaña está preparada para CSV del NIST XPS Database. Las energías dependen del compuesto y del estado químico; no se inventa una línea “del elemento” universal.</p></div>
+          <div class="science-empty-state">
+            <strong>Sin exportación XPS/Auger local</strong>
+            <p>La pestaña está preparada para CSV del NIST XPS Database. Las energías dependen del compuesto y del estado químico; no se inventa una línea “del elemento” universal.</p>
+            <a class="science-source-link" href="https://srdata.nist.gov/xps/" target="_blank" rel="noreferrer">Consultar NIST XPS Database</a>
+          </div>
         {/if}
       </section>
     {:else}
       <div class="neutron-workspace">
         <section class="science-visual-card neutron-summary-card">
-          <header><div><small>Neutrones térmicos · 2200 m/s</small><h3>Secciones eficaces</h3></div><span>barn</span></header>
+          <header><div><small>Neutrones térmicos · referencia</small><h3>Interacción neutrónica</h3></div><span>unidades por magnitud</span></header>
           <div class="neutron-bars">
             {#each neutronMetrics as metric}
               <article>

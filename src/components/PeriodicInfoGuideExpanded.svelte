@@ -431,7 +431,7 @@
 
 {#if open}
   <div class="periodic-guide-backdrop" role="presentation" on:click={closeFromBackdrop}>
-    <article class="periodic-guide" role="dialog" aria-modal="true" aria-label="Guía completa de la tabla periódica">
+    <div class="periodic-guide" role="dialog" aria-modal="true" aria-label="Guía completa de la tabla periódica">
       <header class="periodic-guide-head">
         <div>
           <p>Guía científica · 30 capítulos</p>
@@ -449,7 +449,7 @@
         {/each}
       </nav>
 
-      <div bind:this={scrollElement} class="periodic-guide-scroll" tabindex="0">
+      <div bind:this={scrollElement} class="periodic-guide-scroll" role="region" aria-label="Contenido de la guía">
         <section class="periodic-guide-section">
           <h3>{activeTopic.title}</h3>
           {#each activeTopic.paragraphs as paragraph}<p>{paragraph}</p>{/each}
@@ -472,6 +472,6 @@
           {/if}
         </section>
       </div>
-    </article>
+    </div>
   </div>
 {/if}

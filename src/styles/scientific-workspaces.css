@@ -1,0 +1,447 @@
+/* Espacios científicos unificados: menos cabeceras, más área de visualización. */
+.master-modal .advanced-science-pane {
+  height: 100%;
+  min-height: 0;
+  padding: 10px 12px 12px;
+  overflow: auto;
+  scrollbar-gutter: stable;
+}
+
+.electronic-structure-pane > .science-hero,
+.radii-pane > .science-hero,
+.crystal-pane > .science-hero {
+  display: none;
+}
+
+.science-inline-stats {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  margin: 0 0 8px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.science-inline-stats > span {
+  min-width: 145px;
+  flex: 1 1 145px;
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 8px 11px;
+  border-right: 1px solid var(--line);
+}
+
+.science-inline-stats > span:last-child {
+  border-right: 0;
+}
+
+.science-inline-stats small {
+  color: var(--text-soft);
+  font-size: 0.59rem;
+  font-weight: 760;
+  letter-spacing: 0.045em;
+  text-transform: uppercase;
+}
+
+.science-inline-stats strong {
+  font-size: 0.76rem;
+  font-variant-numeric: tabular-nums;
+  text-align: right;
+}
+
+.science-detail-drawer {
+  margin: 0 0 8px;
+  border: 1px solid var(--line);
+  background: transparent;
+}
+
+.science-detail-drawer summary {
+  padding: 7px 10px;
+  color: var(--text-soft);
+  background: var(--surface-soft);
+  cursor: pointer;
+  font-size: 0.65rem;
+  font-weight: 760;
+}
+
+.science-detail-drawer dl {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+  margin: 0;
+}
+
+.science-detail-drawer dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 10px;
+  border-top: 1px solid var(--line);
+}
+
+.science-detail-drawer dt,
+.science-detail-drawer dd {
+  margin: 0;
+  font-size: 0.65rem;
+}
+
+.science-detail-drawer dt { color: var(--text-soft); }
+.science-detail-drawer dd { font-weight: 760; text-align: right; }
+
+.master-modal .science-visual-card {
+  margin-top: 7px;
+  padding: 11px 12px;
+}
+
+.master-modal .science-visual-card > header {
+  margin-bottom: 6px;
+}
+
+.master-modal .science-visual-card h3 {
+  font-size: 0.9rem;
+}
+
+.master-modal .nuclear-half-life-chart,
+.master-modal .phase-landmark-chart,
+.master-modal .thermo-line-chart,
+.master-modal .attenuation-chart,
+.master-modal .ionization-chart {
+  width: 100%;
+  min-width: 0;
+}
+
+.master-modal .nuclear-chart-scroll,
+.master-modal .attenuation-chart-wrap,
+.master-modal .ionization-chart-wrap {
+  overflow: visible;
+}
+
+.master-modal .science-empty-state {
+  min-height: 145px;
+  margin-top: 6px;
+  padding: 16px;
+}
+
+.master-modal .science-method-note {
+  margin-top: 7px;
+  padding: 7px 10px;
+}
+
+.material-mode-tabs,
+.context-mode-tabs {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  margin-top: 0;
+}
+
+.material-dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(260px, 0.55fr);
+  min-height: 460px;
+  margin-top: 8px;
+  border: 1px solid var(--line);
+}
+
+.material-plot {
+  min-width: 0;
+  padding: 14px;
+  border-right: 1px solid var(--line);
+}
+
+.material-plot > header,
+.abundance-context-chart > header,
+.context-table-sheet > header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 14px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--line);
+}
+
+.material-plot h3,
+.material-plot small,
+.abundance-context-chart h3,
+.abundance-context-chart small,
+.context-table-sheet h3,
+.context-table-sheet small {
+  margin: 0;
+}
+
+.material-plot > header > span,
+.abundance-context-chart > header > span,
+.context-table-sheet > header > span {
+  color: var(--text-soft);
+  font-size: 0.62rem;
+}
+
+.material-bars {
+  display: grid;
+  gap: 2px;
+  margin-top: 12px;
+}
+
+.material-bars article {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.85fr) minmax(140px, 1.15fr);
+  align-items: center;
+  gap: 14px;
+  min-height: 48px;
+  padding: 7px 9px;
+  background: color-mix(in srgb, var(--panel-strong) 68%, transparent);
+}
+
+.material-bars article > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.material-bars span { color: var(--text-soft); font-size: 0.66rem; }
+.material-bars strong { font-size: 0.7rem; text-align: right; }
+.material-bars i { height: 7px; overflow: hidden; background: var(--line); }
+.material-bars i b { display: block; height: 100%; background: var(--accent); }
+.material-bars article.missing { opacity: 0.58; }
+
+.material-reading {
+  padding: 14px;
+  background: var(--surface-soft);
+}
+
+.material-reading h3 { margin: 0; font-size: 0.9rem; }
+.material-reading > p { color: var(--text-soft); font-size: 0.69rem; line-height: 1.55; }
+.material-reading dl { margin: 14px 0 0; }
+.material-reading dl div {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 7px 0;
+  border-top: 1px solid var(--line);
+}
+.material-reading dt { color: var(--text-soft); font-size: 0.61rem; }
+.material-reading dd { margin: 0; font-size: 0.65rem; font-weight: 760; text-align: right; }
+
+.abundance-context-chart,
+.context-table-sheet {
+  margin-top: 8px;
+  padding: 14px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.abundance-context-chart > div {
+  display: grid;
+  gap: 5px;
+  margin-top: 14px;
+}
+
+.abundance-context-chart article {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.36fr) minmax(180px, 1fr) minmax(110px, auto);
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  padding: 7px 10px;
+  background: var(--panel-strong);
+}
+
+.abundance-context-chart article > span { color: var(--text-soft); font-size: 0.67rem; }
+.abundance-context-chart article > i { height: 10px; overflow: hidden; background: var(--line); }
+.abundance-context-chart article > i b { display: block; height: 100%; background: linear-gradient(90deg, color-mix(in srgb, var(--accent) 45%, transparent), var(--accent)); }
+.abundance-context-chart article > strong { font-size: 0.7rem; text-align: right; }
+.abundance-context-chart article.missing { opacity: 0.58; }
+.abundance-context-chart > p { margin: 12px 0 0; color: var(--text-soft); font-size: 0.66rem; }
+
+.context-table-sheet dl {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+}
+
+.context-table-sheet dl > div {
+  display: grid;
+  grid-template-columns: minmax(130px, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 11px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.context-table-sheet dl > div:nth-child(odd) { padding-right: 14px; border-right: 1px solid var(--line); }
+.context-table-sheet dl > div:nth-child(even) { padding-left: 14px; }
+.context-table-sheet dl > div.wide { grid-column: 1 / -1; padding-inline: 0; border-right: 0; }
+.context-table-sheet dt { color: var(--text-soft); font-size: 0.62rem; text-transform: capitalize; }
+.context-table-sheet dd { display: grid; gap: 3px; margin: 0; min-width: 0; text-align: right; }
+.context-table-sheet dd strong { overflow-wrap: anywhere; font-size: 0.69rem; }
+.context-table-sheet dd small { color: var(--text-soft); font-size: 0.58rem; }
+
+/* Las líneas informativas no son botones: conservan tooltip sin cursor engañoso. */
+.xray-sticks .radiation-stick,
+.xps-line-track .radiation-stick {
+  position: absolute;
+  bottom: 0;
+  width: 24px;
+  height: var(--stick-height, 72%);
+  transform: translateX(-50%);
+  color: var(--accent);
+  cursor: help;
+}
+
+.xray-sticks .radiation-stick > i,
+.xps-line-track .radiation-stick > i {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 2px;
+  height: 100%;
+  transform: translateX(-50%);
+  background: currentColor;
+}
+
+.xray-sticks .radiation-stick > span,
+.xps-line-track .radiation-stick > span {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 4px);
+  transform: translateX(-50%) rotate(-55deg);
+  transform-origin: left bottom;
+  color: var(--text-soft);
+  font-size: 0.52rem;
+  white-space: nowrap;
+}
+
+.xps-line-track .radiation-stick { height: 72%; color: #79c5d9; }
+.xps-line-track .radiation-stick.auger { height: 48%; color: #e0a865; }
+
+/* Explorador global. */
+.trends-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 1800;
+  display: grid;
+  place-items: center;
+  padding: 22px;
+  background: color-mix(in srgb, #020711 72%, transparent);
+  backdrop-filter: blur(10px);
+}
+
+.trends-modal {
+  width: min(1240px, 96vw);
+  height: min(840px, 92vh);
+  display: grid;
+  grid-template-rows: auto auto minmax(0, 1fr) auto;
+  border: 1px solid var(--line);
+  color: var(--app-ink);
+  background: var(--panel);
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+.trends-modal > header {
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 17px 20px;
+  border-bottom: 1px solid var(--line);
+  background: var(--panel-strong);
+}
+
+.trends-modal > header p,
+.trends-modal > header h2,
+.trends-modal > header small { margin: 0; }
+.trends-modal > header p { color: var(--accent); font-size: 0.61rem; font-weight: 800; letter-spacing: 0.12em; text-transform: uppercase; }
+.trends-modal > header h2 { margin-top: 2px; font-size: 1.35rem; }
+.trends-modal > header small { display: block; margin-top: 4px; color: var(--text-soft); }
+.trends-modal > header button { width: 34px; height: 34px; border: 1px solid var(--line); border-radius: 0; color: var(--app-ink); background: transparent; font-size: 1.35rem; }
+
+.trends-controls {
+  display: flex;
+  align-items: end;
+  gap: 12px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.trends-controls label { min-width: 290px; display: grid; gap: 4px; }
+.trends-controls label span { color: var(--text-soft); font-size: 0.58rem; font-weight: 760; text-transform: uppercase; }
+.trends-controls select { min-height: 35px; padding: 0 9px; border: 1px solid var(--line); border-radius: 0; color: var(--app-ink); background: var(--panel-strong); }
+.trend-scale-badge { margin-left: auto; color: var(--text-soft); font-size: 0.64rem; }
+
+.trends-stage {
+  min-height: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  overflow: auto;
+}
+
+.global-trend-chart {
+  width: 100%;
+  max-height: 100%;
+}
+.global-trend-chart .chart-grid line { stroke: var(--line); }
+.global-trend-chart polyline { fill: none; stroke: var(--accent); stroke-width: 2.5; }
+.global-trend-chart circle { fill: var(--panel-strong); stroke: var(--accent); stroke-width: 2; cursor: pointer; }
+.global-trend-chart text { fill: var(--text-soft); font-size: 10px; }
+
+.trend-periodic-map {
+  width: min(100%, 1120px);
+  display: grid;
+  grid-template-columns: repeat(18, minmax(42px, 1fr));
+  grid-template-rows: repeat(9, minmax(46px, 1fr));
+  gap: 3px;
+}
+
+.trend-periodic-map button {
+  min-width: 0;
+  min-height: 48px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  grid-template-rows: auto 1fr;
+  gap: 1px;
+  padding: 4px 5px;
+  border: 1px solid color-mix(in srgb, var(--accent) 25%, var(--line));
+  border-radius: 0;
+  color: var(--app-ink);
+  background: var(--trend-color);
+  text-align: left;
+}
+.trend-periodic-map button:hover { border-color: var(--app-ink); transform: translateY(-1px); }
+.trend-periodic-map small { font-size: 0.48rem; }
+.trend-periodic-map strong { font-size: 0.78rem; }
+.trend-periodic-map span { grid-column: 1 / -1; overflow: hidden; font-size: 0.47rem; text-overflow: ellipsis; white-space: nowrap; }
+.trend-periodic-map button.missing { color: var(--text-soft); background: transparent; border-style: dashed; }
+
+.trends-modal > footer {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 9px 14px;
+  border-top: 1px solid var(--line);
+  color: var(--text-soft);
+  font-size: 0.61rem;
+}
+.trends-modal > footer span { display: inline-flex; align-items: center; gap: 5px; }
+.trends-modal > footer i { width: 16px; height: 7px; border: 1px solid var(--line); }
+.trends-modal > footer p { margin: 0 0 0 auto; }
+
+@media (max-width: 940px) {
+  .material-dashboard { grid-template-columns: 1fr; }
+  .material-plot { border-right: 0; border-bottom: 1px solid var(--line); }
+  .context-table-sheet dl { grid-template-columns: 1fr; }
+  .context-table-sheet dl > div { padding-inline: 0 !important; border-right: 0 !important; }
+  .trend-periodic-map { min-width: 920px; }
+}
+
+@media (max-width: 680px) {
+  .master-modal .advanced-science-pane { padding: 7px; }
+  .science-inline-stats > span { min-width: 50%; }
+  .material-bars article { grid-template-columns: 1fr; gap: 5px; }
+  .abundance-context-chart article { grid-template-columns: 105px 1fr; }
+  .abundance-context-chart article > strong { grid-column: 1 / -1; text-align: left; }
+  .trends-backdrop { padding: 0; }
+  .trends-modal { width: 100vw; height: 100vh; }
+  .trends-controls { align-items: stretch; flex-direction: column; }
+  .trends-controls label { min-width: 0; width: 100%; }
+  .trend-scale-badge { margin-left: 0; }
+}

@@ -7,6 +7,7 @@ export type ComparisonScope =
   | 'electronic'
   | 'radii'
   | 'crystal'
+  | 'material'
   | 'nuclear'
   | 'thermodynamics'
   | 'radiation'

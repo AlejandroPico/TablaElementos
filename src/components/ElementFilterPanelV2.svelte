@@ -526,13 +526,13 @@
 
           <section class="filter-v2-card accent-position">
             <header><div><small>Posición periódica</small><h3>Periodo y grupo</h3></div><span>{selectedPeriods.size + selectedGroups.size || 'Todos'}</span></header>
-            <label class="filter-v2-subtitle">Periodo</label>
+            <div class="filter-v2-subtitle">Periodo</div>
             <div class="filter-v2-options numeric-options">
               {#each Array.from({ length: 7 }, (_, index) => index + 1) as period}
                 <button type="button" class:active={selectedPeriods.has(period)} on:click={() => togglePeriod(period)}>{period}</button>
               {/each}
             </div>
-            <label class="filter-v2-subtitle">Grupo</label>
+            <div class="filter-v2-subtitle">Grupo</div>
             <div class="filter-v2-options numeric-options group-grid">
               {#each Array.from({ length: 18 }, (_, index) => index + 1) as group}
                 <button type="button" class:active={selectedGroups.has(group)} on:click={() => toggleGroup(group)}>{group}</button>

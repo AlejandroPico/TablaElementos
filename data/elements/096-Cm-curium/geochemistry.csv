@@ -1,1 +1,4 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,environment
+abundance_crust,0,%,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Curium,2026-07-24T22:17:53+00:00,Fracción másica aproximada de la compilación; comparar en escala logarítmica.,corteza
+abundance_ocean,0,%,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Curium,2026-07-24T22:17:53+00:00,Fracción másica aproximada de la compilación; comparar en escala logarítmica.,océano
+goldschmidt_class,synthetic,,Mendeleev · commit 580e34010f · compilación secundaria,https://periodic-table.rsc.org/element/96/curium,2026-07-24T22:17:53+00:00,Clasificación secundaria con bibliografía indicada en los metadatos de Mendeleev.,clasificación

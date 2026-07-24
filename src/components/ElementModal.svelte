@@ -3,10 +3,12 @@
   import AtomicStage from './AtomicStage.svelte';
   import AtomicRadiiPanel from './AtomicRadiiPanel.svelte';
   import CrystalStructurePanel from './CrystalStructurePanel.svelte';
+  import ContextAbundancePanel from './ContextAbundancePanel.svelte';
   import DataDomainTable from './DataDomainTable.svelte';
   import ElectronicStructurePanel from './ElectronicStructurePanel.svelte';
   import ElementPanel from './ElementPanel.svelte';
   import NuclearPhysicsPanel from './NuclearPhysicsPanel.svelte';
+  import MaterialPropertiesPanel from './MaterialPropertiesPanel.svelte';
   import RadiationPhysicsPanel from './RadiationPhysicsPanel.svelte';
   import SpectralLinesTable from './SpectralLinesTable.svelte';
   import SpectrumViewer from './SpectrumViewer.svelte';
@@ -25,7 +27,6 @@
 
   const PROPERTY_IDS = ['identity', 'atomic', 'physical', 'photonics'];
   const CHEMISTRY_IDS = ['chemical', 'materials', 'thermodynamics', 'compounds', 'computational'];
-  const CONTEXT_IDS = ['history', 'geochemistry', 'astrophysics', 'biology', 'environment', 'industry', 'analytical', 'radiation'];
 
   const tabs: Array<{ id: TabId; label: string }> = [
     { id: 'summary', label: 'Resumen' },
@@ -33,6 +34,7 @@
     { id: 'electronic', label: 'Electrones' },
     { id: 'radii', label: 'Radios' },
     { id: 'crystal', label: 'Cristal 3D' },
+    { id: 'material', label: 'Material' },
     { id: 'nuclear', label: 'Nuclear' },
     { id: 'thermodynamics', label: 'Termodinámica' },
     { id: 'radiation', label: 'Radiación' },
@@ -178,6 +180,8 @@
           <div class="tab-pane"><AtomicRadiiPanel {element} {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'crystal'}
           <div class="tab-pane"><CrystalStructurePanel {element} {elementData} loading={loadingData} /></div>
+        {:else if activeTab === 'material'}
+          <div class="tab-pane"><MaterialPropertiesPanel {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'nuclear'}
           <div class="tab-pane"><NuclearPhysicsPanel {element} {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'thermodynamics'}
@@ -218,10 +222,7 @@
             {:else}{#each domainList(CHEMISTRY_IDS) as domain}<DataDomainTable {domain} />{/each}{/if}
           </div>
         {:else if activeTab === 'context'}
-          <div class="tab-pane tab-scroll domain-list-pane">
-            {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando contexto…</p></div>
-            {:else}{#each domainList(CONTEXT_IDS) as domain}<DataDomainTable {domain} />{/each}{/if}
-          </div>
+          <div class="tab-pane"><ContextAbundancePanel {elementData} loading={loadingData} /></div>
         {:else if activeTab === 'sources'}
           <div class="tab-pane tab-scroll sources-pane compact-sources-pane">
             {#if loadingData}<div class="modal-load-state"><span></span><p>Cargando fuentes…</p></div>

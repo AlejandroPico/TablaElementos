@@ -1,1 +1,2 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,year,region
+uses,It has no significant commercial applications.,,Mendeleev · commit 580e34010f · compilación secundaria,https://periodic-table.rsc.org/element/109/meitnerium,2026-07-24T22:17:53+00:00,Dato secundario; el precio y los indicadores económicos requieren fecha y mercado para uso profesional.,,global

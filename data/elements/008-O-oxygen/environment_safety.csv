@@ -1,1 +1,4 @@
-property,value,unit,source,source_url,retrieved_at,notes
+property,value,unit,source,source_url,retrieved_at,notes,classification
+dot_hazard_class,2.2,,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Oxygen,2026-07-24T22:17:53+00:00,Identificador o clasificación; no equivale por sí solo a una evaluación toxicológica.,transporte DOT
+dot_number,1073,,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Oxygen,2026-07-24T22:17:53+00:00,Identificador o clasificación; no equivale por sí solo a una evaluación toxicológica.,transporte DOT
+rtecs_identifier,RTECSRS2060000,,Periodic Table Data Complete 1.0.1 · compilación secundaria,https://en.wikipedia.org/wiki/Oxygen,2026-07-24T22:17:53+00:00,Identificador o clasificación; no equivale por sí solo a una evaluación toxicológica.,registro de efectos tóxicos
