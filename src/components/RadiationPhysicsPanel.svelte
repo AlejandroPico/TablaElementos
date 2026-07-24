@@ -6,6 +6,7 @@
   export let loading = false;
 
   type RadiationMode = 'xray' | 'attenuation' | 'xps' | 'neutrons';
+  const modes: RadiationMode[] = ['xray', 'attenuation', 'xps', 'neutrons'];
   let mode: RadiationMode = 'xray';
 
   interface NumericRow {
@@ -13,10 +14,6 @@
     x: number;
     y: number;
     label: string;
-  }
-
-  function rows(): DataRow[] {
-    return elementData?.domains.radiation?.rows ?? [];
   }
 
   function num(value: unknown): number | null {
@@ -31,16 +28,16 @@
     return num(row.energy) ?? num(row.value);
   }
 
-  function xrayRows(): DataRow[] {
-    return rows().filter((row) => row.property === 'xray_transition_energy');
+  function xrayRows(sourceRows: DataRow[]): DataRow[] {
+    return sourceRows.filter((row) => row.property === 'xray_transition_energy');
   }
 
-  function xpsRows(): DataRow[] {
-    return rows().filter((row) => ['xps_binding_energy', 'auger_line_energy'].includes(String(row.property ?? '')));
+  function xpsRows(sourceRows: DataRow[]): DataRow[] {
+    return sourceRows.filter((row) => ['xps_binding_energy', 'auger_line_energy'].includes(String(row.property ?? '')));
   }
 
-  function attenuationRows(property: string): NumericRow[] {
-    return rows().flatMap((row) => {
+  function attenuationRows(sourceRows: DataRow[], property: string): NumericRow[] {
+    return sourceRows.flatMap((row) => {
       if (row.property !== property) return [];
       const energy = num(row.energy);
       const value = num(row.value);
@@ -49,8 +46,8 @@
     }).sort((a, b) => a.x - b.x);
   }
 
-  function neutronRows(): DataRow[] {
-    return rows().filter((row) => String(row.property ?? '').startsWith('neutron_'));
+  function neutronRows(sourceRows: DataRow[]): DataRow[] {
+    return sourceRows.filter((row) => String(row.property ?? '').startsWith('neutron_'));
   }
 
   function logPoints(values: NumericRow[], width = 720, height = 260): Array<NumericRow & { px: number; py: number }> {
@@ -91,10 +88,13 @@
     return max === min ? 50 : 4 + ((value - min) / (max - min)) * 92;
   }
 
-  function neutronAggregate(property: string): number | null {
-    const natural = neutronRows().find((row) => row.property === property && ['natural', element?.symbol, ''].includes(String(row.isotope ?? '')));
+  function neutronAggregate(sourceRows: DataRow[], property: string): number | null {
+    const natural = sourceRows.find((row) => row.property === property && String(row.isotope ?? '').toLowerCase().includes('natural'));
     if (natural) return num(natural.value);
-    const values = neutronRows().filter((row) => row.property === property).map((row) => num(row.value)).filter((value): value is number => value !== null);
+    const values = sourceRows
+      .filter((row) => row.property === property)
+      .map((row) => num(row.value))
+      .filter((value): value is number => value !== null);
     return values.length ? values.reduce((sum, value) => sum + value, 0) / values.length : null;
   }
 
@@ -105,18 +105,19 @@
     return 'Neutrones';
   }
 
-  $: xray = xrayRows();
-  $: xps = xpsRows();
-  $: attenuation = attenuationRows('mass_attenuation_coefficient');
-  $: absorption = attenuationRows('mass_energy_absorption_coefficient');
+  $: radiationRows = elementData?.domains.radiation?.rows ?? [];
+  $: xray = xrayRows(radiationRows);
+  $: xps = xpsRows(radiationRows);
+  $: attenuation = attenuationRows(radiationRows, 'mass_attenuation_coefficient');
+  $: absorption = attenuationRows(radiationRows, 'mass_energy_absorption_coefficient');
   $: attenuationPoints = logPoints(attenuation);
   $: absorptionPoints = logPoints(absorption);
-  $: neutrons = neutronRows();
+  $: neutrons = neutronRows(radiationRows);
   $: neutronMetrics = [
-    { label: 'Dispersión coherente', property: 'neutron_coherent_cross_section', value: neutronAggregate('neutron_coherent_cross_section') },
-    { label: 'Dispersión incoherente', property: 'neutron_incoherent_cross_section', value: neutronAggregate('neutron_incoherent_cross_section') },
-    { label: 'Dispersión total', property: 'neutron_total_scattering_cross_section', value: neutronAggregate('neutron_total_scattering_cross_section') },
-    { label: 'Absorción térmica', property: 'neutron_absorption_cross_section', value: neutronAggregate('neutron_absorption_cross_section') },
+    { label: 'Dispersión coherente', property: 'neutron_coherent_cross_section', value: neutronAggregate(neutrons, 'neutron_coherent_cross_section') },
+    { label: 'Dispersión incoherente', property: 'neutron_incoherent_cross_section', value: neutronAggregate(neutrons, 'neutron_incoherent_cross_section') },
+    { label: 'Dispersión total', property: 'neutron_total_scattering_cross_section', value: neutronAggregate(neutrons, 'neutron_total_scattering_cross_section') },
+    { label: 'Absorción térmica', property: 'neutron_absorption_cross_section', value: neutronAggregate(neutrons, 'neutron_absorption_cross_section') },
   ];
   $: maxNeutron = Math.max(...neutronMetrics.map((item) => item.value ?? 0), 1);
 </script>
@@ -131,12 +132,12 @@
         <h3>Laboratorio de interacción radiológica</h3>
         <small>Transiciones características de rayos X, coeficientes de atenuación, energías XPS/Auger y secciones eficaces neutrónicas.</small>
       </div>
-      <div class="radiation-symbol"><strong>{element?.symbol}</strong><span>{rows().length} registros</span></div>
+      <div class="radiation-symbol"><strong>{element?.symbol}</strong><span>{radiationRows.length} registros</span></div>
     </section>
 
     <nav class="science-mode-tabs" aria-label="Ámbitos de radiación">
-      {#each ['xray', 'attenuation', 'xps', 'neutrons'] as current}
-        <button class:active={mode === current} type="button" on:click={() => (mode = current as RadiationMode)}>{modeLabel(current as RadiationMode)}</button>
+      {#each modes as current}
+        <button class:active={mode === current} type="button" on:click={() => (mode = current)}>{modeLabel(current)}</button>
       {/each}
     </nav>
 
