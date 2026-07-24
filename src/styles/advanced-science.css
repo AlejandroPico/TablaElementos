@@ -1,0 +1,547 @@
+/* Paneles científicos avanzados: valencia, radios y cristalografía. */
+.advanced-science-pane {
+  min-height: 100%;
+  padding: 18px;
+  overflow: auto;
+  color: var(--app-ink);
+  background: var(--panel);
+}
+
+.science-hero {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  min-height: 132px;
+  padding: 18px 20px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--accent) 12%, transparent), transparent 54%),
+    var(--surface-soft);
+}
+
+.science-hero p,
+.science-hero h3,
+.science-hero small {
+  margin: 0;
+}
+
+.science-hero p {
+  color: var(--accent);
+  font-size: 0.64rem;
+  font-weight: 850;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.science-hero h3 {
+  margin-top: 4px;
+  font-size: clamp(1.28rem, 2vw, 2rem);
+  letter-spacing: -0.035em;
+}
+
+.science-hero small {
+  display: block;
+  max-width: 780px;
+  margin-top: 8px;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.science-symbol-mark {
+  min-width: 86px;
+  font-size: 3.2rem;
+  font-weight: 900;
+  line-height: 1;
+  text-align: center;
+  opacity: 0.8;
+}
+
+.science-card-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.science-card-grid article {
+  min-height: 92px;
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  padding: 13px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface-soft);
+}
+
+.science-card-grid small,
+.science-definition-grid strong,
+.crystal-data-panel dt {
+  color: var(--text-soft);
+  font-size: 0.63rem;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+
+.science-card-grid strong {
+  overflow-wrap: anywhere;
+  font-size: 0.94rem;
+  line-height: 1.3;
+}
+
+.science-visual-card {
+  margin-top: 10px;
+  padding: 16px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  background: var(--surface-soft);
+}
+
+.science-visual-card > header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.science-visual-card h3,
+.science-visual-card small {
+  margin: 0;
+}
+
+.science-visual-card > header > span {
+  color: var(--text-soft);
+  font-size: 0.67rem;
+}
+
+.electron-shell-badge {
+  position: relative;
+  width: 112px;
+  height: 112px;
+  flex: 0 0 112px;
+  display: grid;
+  place-items: center;
+}
+
+.electron-shell-badge > strong {
+  z-index: 3;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  border: 1px solid color-mix(in srgb, var(--accent) 70%, var(--line));
+  background: var(--panel-strong);
+  font-size: 1.05rem;
+}
+
+.electron-shell-badge > span {
+  position: absolute;
+  width: calc(40px + var(--shell-index) * 18px);
+  height: calc(40px + var(--shell-index) * 18px);
+  border: 1px solid color-mix(in srgb, var(--accent) 42%, var(--line));
+  border-radius: 50%;
+}
+
+.electron-shell-badge > span i {
+  position: absolute;
+  top: 50%;
+  right: -9px;
+  min-width: 18px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  transform: translateY(-50%);
+  border: 1px solid var(--line);
+  border-radius: 50%;
+  color: var(--app-ink);
+  background: var(--panel-strong);
+  font-size: 0.55rem;
+  font-style: normal;
+  font-weight: 800;
+}
+
+.ionization-chart-wrap {
+  overflow-x: auto;
+}
+
+.ionization-chart {
+  width: 100%;
+  min-width: 660px;
+  height: 260px;
+  overflow: visible;
+}
+
+.ionization-chart .chart-grid line {
+  stroke: var(--line);
+  stroke-width: 1;
+}
+
+.ionization-chart .chart-grid text,
+.ionization-chart .stage-label {
+  fill: var(--text-soft);
+  font-size: 10px;
+}
+
+.ionization-chart polyline {
+  fill: none;
+  stroke: var(--accent);
+  stroke-width: 3;
+  stroke-linecap: square;
+  stroke-linejoin: miter;
+}
+
+.ionization-chart circle {
+  fill: var(--panel-strong);
+  stroke: var(--accent);
+  stroke-width: 3;
+}
+
+.ionization-table {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 5px;
+  max-height: 170px;
+  margin-top: 8px;
+  overflow: auto;
+}
+
+.ionization-table div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  border-left: 2px solid color-mix(in srgb, var(--accent) 70%, transparent);
+  background: color-mix(in srgb, var(--panel-strong) 70%, transparent);
+}
+
+.ionization-table span {
+  color: var(--text-soft);
+  font-size: 0.62rem;
+}
+
+.ionization-table strong {
+  font-size: 0.69rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.science-empty-state {
+  min-height: 240px;
+  display: grid;
+  place-content: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 24px;
+  border: 1px dashed var(--line);
+  text-align: center;
+}
+
+.science-empty-state p {
+  max-width: 660px;
+  margin: 0;
+  color: var(--text-soft);
+  line-height: 1.5;
+}
+
+.science-method-note {
+  margin: 10px 0 0;
+  padding: 10px 12px;
+  border-left: 3px solid var(--accent);
+  color: var(--text-soft);
+  background: color-mix(in srgb, var(--accent) 5%, transparent);
+  font-size: 0.68rem;
+  line-height: 1.5;
+}
+
+.radii-workspace {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.9fr) minmax(300px, 1.1fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.radii-concentric,
+.radii-list {
+  min-height: 430px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.radii-concentric {
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+
+.radii-concentric svg {
+  width: min(100%, 430px);
+  height: auto;
+}
+
+.radius-circle {
+  fill: color-mix(in srgb, var(--accent) 4%, transparent);
+  stroke-width: 2;
+  opacity: 0.9;
+}
+
+.radius-0 { stroke: #e0a865; }
+.radius-1 { stroke: #79c5d9; }
+.radius-2 { stroke: #c58bd8; }
+.radius-3 { stroke: #8fc980; }
+.radius-4 { stroke: #d87988; }
+.radius-5 { stroke: #a6a7dc; }
+
+.radius-nucleus {
+  fill: var(--accent);
+}
+
+.radii-concentric text {
+  fill: var(--panel-strong);
+  font-size: 8px;
+  font-weight: 900;
+}
+
+.radii-list {
+  display: grid;
+  align-content: start;
+  gap: 1px;
+  padding: 10px;
+  overflow: auto;
+}
+
+.radii-list article {
+  display: grid;
+  grid-template-columns: 8px 1fr;
+  gap: 10px;
+  padding: 11px;
+  background: color-mix(in srgb, var(--panel-strong) 74%, transparent);
+}
+
+.radii-list article div {
+  display: grid;
+  gap: 3px;
+}
+
+.radii-list small,
+.radii-list span {
+  color: var(--text-soft);
+  font-size: 0.63rem;
+}
+
+.radius-swatch {
+  display: block;
+  width: 4px;
+  height: 100%;
+  background: currentColor;
+}
+
+.radius-swatch.radius-0 { color: #e0a865; }
+.radius-swatch.radius-1 { color: #79c5d9; }
+.radius-swatch.radius-2 { color: #c58bd8; }
+.radius-swatch.radius-3 { color: #8fc980; }
+.radius-swatch.radius-4 { color: #d87988; }
+.radius-swatch.radius-5 { color: #a6a7dc; }
+
+.science-definition-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.science-definition-grid article {
+  padding: 12px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.science-definition-grid p {
+  margin: 7px 0 0;
+  color: var(--text-soft);
+  font-size: 0.68rem;
+  line-height: 1.45;
+}
+
+.crystal-workspace {
+  display: grid;
+  grid-template-columns: minmax(360px, 1.15fr) minmax(280px, 0.85fr);
+  gap: 10px;
+  margin-top: 10px;
+}
+
+.crystal-viewer-shell,
+.crystal-data-panel {
+  min-height: 440px;
+  border: 1px solid var(--line);
+  background: var(--surface-soft);
+}
+
+.crystal-stage {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 440px;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  perspective: 850px;
+  cursor: grab;
+  touch-action: none;
+}
+
+.crystal-stage:active {
+  cursor: grabbing;
+}
+
+.unit-cell {
+  --size: 210px;
+  position: relative;
+  width: var(--size);
+  height: var(--size);
+  transform-style: preserve-3d;
+  transform: rotateX(var(--rx)) rotateY(var(--ry));
+}
+
+.cell-face {
+  position: absolute;
+  inset: 0;
+  border: 1px solid color-mix(in srgb, var(--accent) 74%, transparent);
+  background: color-mix(in srgb, var(--accent) 3%, transparent);
+  backface-visibility: visible;
+}
+
+.face-front { transform: translateZ(calc(var(--size) / 2)); }
+.face-back { transform: rotateY(180deg) translateZ(calc(var(--size) / 2)); }
+.face-left { transform: rotateY(-90deg) translateZ(calc(var(--size) / 2)); }
+.face-right { transform: rotateY(90deg) translateZ(calc(var(--size) / 2)); }
+.face-top { transform: rotateX(90deg) translateZ(calc(var(--size) / 2)); }
+.face-bottom { transform: rotateX(-90deg) translateZ(calc(var(--size) / 2)); }
+
+.lattice-atom {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 22px;
+  height: 22px;
+  margin: -11px;
+  border: 2px solid color-mix(in srgb, white 35%, var(--accent));
+  border-radius: 50%;
+  background: var(--accent);
+  box-shadow: 0 4px 18px rgba(0,0,0,.38);
+  transform-style: preserve-3d;
+}
+
+.atom-0 { transform: translate3d(-105px,-105px,105px); }
+.atom-1 { transform: translate3d(105px,-105px,105px); }
+.atom-2 { transform: translate3d(-105px,105px,105px); }
+.atom-3 { transform: translate3d(105px,105px,105px); }
+.atom-4 { transform: translate3d(-105px,-105px,-105px); }
+.atom-5 { transform: translate3d(105px,-105px,-105px); }
+.atom-6 { transform: translate3d(-105px,105px,-105px); }
+.atom-7 { transform: translate3d(105px,105px,-105px); }
+.atom-center { transform: translate3d(0,0,0); }
+.atom-face-0 { transform: translate3d(0,0,105px); }
+.atom-face-1 { transform: translate3d(0,0,-105px); }
+.atom-face-2 { transform: translate3d(105px,0,0); }
+.atom-face-3 { transform: translate3d(-105px,0,0); }
+.atom-face-4 { transform: translate3d(0,105px,0); }
+.atom-face-5 { transform: translate3d(0,-105px,0); }
+.atom-inner-0 { transform: translate3d(52px,52px,52px); }
+.atom-inner-1 { transform: translate3d(-52px,-52px,52px); }
+.atom-inner-2 { transform: translate3d(52px,-52px,-52px); }
+.atom-inner-3 { transform: translate3d(-52px,52px,-52px); }
+.atom-hex-0 { transform: translate3d(0,-88px,0); }
+.atom-hex-1 { transform: translate3d(76px,-44px,0); }
+.atom-hex-2 { transform: translate3d(76px,44px,0); }
+.atom-hex-3 { transform: translate3d(0,88px,0); }
+.atom-hex-4 { transform: translate3d(-76px,44px,0); }
+.atom-hex-5 { transform: translate3d(-76px,-44px,0); }
+
+.crystal-drag-hint {
+  position: absolute;
+  left: 12px;
+  bottom: 10px;
+  color: var(--text-soft);
+  font-size: 0.63rem;
+}
+
+.crystal-data-panel {
+  padding: 15px;
+  overflow: auto;
+}
+
+.crystal-data-panel h3,
+.crystal-data-panel small {
+  margin: 0;
+}
+
+.crystal-data-panel dl {
+  display: grid;
+  margin: 14px 0 0;
+}
+
+.crystal-data-panel dl div {
+  display: grid;
+  grid-template-columns: minmax(110px, 0.8fr) minmax(0, 1.2fr);
+  gap: 12px;
+  padding: 10px 0;
+  border-top: 1px solid var(--line);
+}
+
+.crystal-data-panel dd {
+  margin: 0;
+  overflow-wrap: anywhere;
+  font-size: 0.72rem;
+}
+
+.allotrope-selector {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 5px;
+  margin-top: 8px;
+}
+
+.allotrope-selector button {
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+  border: 1px solid var(--line);
+  border-radius: 0;
+  color: var(--text-soft);
+  background: var(--surface-soft);
+  text-align: left;
+}
+
+.allotrope-selector button.active {
+  color: var(--app-ink);
+  border-color: var(--accent);
+  box-shadow: inset 3px 0 0 var(--accent);
+}
+
+.allotrope-selector small {
+  font-size: 0.61rem;
+}
+
+@media (max-width: 920px) {
+  .science-card-grid,
+  .science-definition-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .radii-workspace,
+  .crystal-workspace { grid-template-columns: 1fr; }
+  .radii-concentric,
+  .radii-list,
+  .crystal-viewer-shell,
+  .crystal-data-panel { min-height: 360px; }
+}
+
+@media (max-width: 600px) {
+  .advanced-science-pane { padding: 9px; }
+  .science-hero { align-items: flex-start; padding: 14px; }
+  .science-card-grid,
+  .science-definition-grid { grid-template-columns: 1fr; }
+  .electron-shell-badge { transform: scale(.82); transform-origin: right top; }
+  .unit-cell { --size: 160px; transform: scale(.75) rotateX(var(--rx)) rotateY(var(--ry)); }
+}
