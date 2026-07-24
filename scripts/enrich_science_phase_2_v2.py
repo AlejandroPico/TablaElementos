@@ -4,7 +4,7 @@
 Este lanzador conserva el importador principal y sustituye tres puntos sensibles:
 
 - transiciones de rayos X con subcapas como K-L3 o L2-M4;
-- tabla NCNR con filas naturales e isotópicas bajo rowspan;
+- neutrones desde la tabla NCNR estable de ocho columnas;
 - fusión conservadora: una consulta vacía no borra datos ya versionados.
 """
 
@@ -16,16 +16,20 @@ import urllib.error
 import enrich_science_phase_2 as phase2
 
 
-# K-L3, L2-M4, M5-N7... después de eliminar signos y espacios.
 phase2.TRANSITION_RE = re.compile(
     r"^(?:K|L[1-3]?|M[1-5]?|N[1-7]?)(?:K|L[1-3]?|M[1-5]?|N[1-7]?)$",
     re.IGNORECASE,
 )
 
+# Columnas oficiales: isotope, conc, Coh b, Inc b, Coh xs, Inc xs,
+# Scatt xs y Abs xs. Esta variante no depende de rowspan HTML.
+SIMPLE_NEUTRON_URL = "https://ncnr.nist.gov/resources/n-lengths/list.html"
+phase2.NEUTRON_TABLE_URL = SIMPLE_NEUTRON_URL
+ISOTOPE_RE = re.compile(r"^(?:(\d+))?([A-Z][a-z]?)$")
+
 
 def _record(
     *,
-    symbol: str,
     isotope: str,
     abundance: str,
     property_id: str,
@@ -38,12 +42,12 @@ def _record(
             value,
             unit,
             "NIST NCNR Neutron Scattering Lengths and Cross Sections",
-            phase2.NEUTRON_TABLE_URL,
-            "Valor evaluado a 2200 m/s. Deben consultarse en la fuente las incertidumbres, valores complejos y excepciones resonantes.",
+            SIMPLE_NEUTRON_URL,
+            "Valor evaluado para neutrones de 2200 m/s. Los valores entre paréntesis son incertidumbres; las cantidades complejas se conservan como texto.",
         ),
         "energy": "neutrón térmico · 2200 m/s",
         "particle_or_photon": "neutrón",
-        "isotope": isotope or f"{symbol}-natural",
+        "isotope": isotope,
         "transition": "",
         "process": property_id.replace("neutron_", "").replace("_", " "),
         "abundance": abundance,
@@ -51,60 +55,44 @@ def _record(
 
 
 def parse_neutron_table(elements: list[dict[str, str]]) -> dict[str, list[dict[str, str]]]:
-    """Interpreta la tabla NCNR respetando sus celdas combinadas.
-
-    Tras retirar el símbolo y Z, las columnas son:
-    A, I(π), abundancia, bc, b+, b−, σc, σi, σs y σa.
-    Las filas naturales tienen A vacío; las isotópicas conservan A.
-    """
+    """Interpreta la lista NCNR de ocho columnas sin depender de celdas combinadas."""
 
     try:
-        html_rows = phase2.parse_html_rows(phase2.fetch(phase2.NEUTRON_TABLE_URL, timeout=90))
+        html_rows = phase2.parse_html_rows(phase2.fetch(SIMPLE_NEUTRON_URL, timeout=90))
     except (urllib.error.URLError, TimeoutError):
         return {}
 
-    atomic_number_by_symbol = {item["symbol"]: item["atomic_number"] for item in elements}
-    valid_symbols = set(atomic_number_by_symbol)
+    valid_symbols = {element["symbol"] for element in elements}
     result: dict[str, list[dict[str, str]]] = {symbol: [] for symbol in valid_symbols}
-    current_symbol = ""
 
     for original_cells in html_rows:
         cells = [phase2.clean(cell) for cell in original_cells]
-        if not cells:
+        if len(cells) < 8:
             continue
 
-        # Las filas principales comienzan con el símbolo. Las filas isotópicas
-        # heredan símbolo y Z mediante rowspan y comienzan directamente por A.
-        if cells[0] in valid_symbols:
-            current_symbol = cells.pop(0)
-        if not current_symbol:
+        isotope_text = cells[0].replace(" ", "")
+        match = ISOTOPE_RE.fullmatch(isotope_text)
+        if not match:
+            continue
+        mass_number, symbol = match.groups()
+        if symbol not in valid_symbols:
             continue
 
-        z_text = atomic_number_by_symbol[current_symbol]
-        if cells and phase2.clean(cells[0]) == phase2.clean(z_text):
-            cells.pop(0)
-
-        if not cells or phase2.clean(cells[0]).lower() in {"a", "isotope"}:
-            continue
-
-        # Los vacíos intermedios son significativos en las filas naturales.
-        cells = cells + [""] * max(0, 10 - len(cells))
-        mass_number, _spin, abundance, bc, _b_plus, _b_minus, sigma_c, sigma_i, sigma_s, sigma_a = cells[:10]
-
-        isotope = f"{current_symbol}-{mass_number}" if phase2.numeric(mass_number) is not None else f"{current_symbol}-natural"
+        isotope = f"{symbol}-{mass_number}" if mass_number else f"{symbol}-natural"
+        abundance, coherent_b, incoherent_b, coherent_xs, incoherent_xs, total_xs, absorption_xs = cells[1:8]
         fields = (
-            ("neutron_coherent_scattering_length", bc, "fm"),
-            ("neutron_coherent_cross_section", sigma_c, "barn"),
-            ("neutron_incoherent_cross_section", sigma_i, "barn"),
-            ("neutron_total_scattering_cross_section", sigma_s, "barn"),
-            ("neutron_absorption_cross_section", sigma_a, "barn"),
+            ("neutron_coherent_scattering_length", coherent_b, "fm"),
+            ("neutron_incoherent_scattering_length", incoherent_b, "fm"),
+            ("neutron_coherent_cross_section", coherent_xs, "barn"),
+            ("neutron_incoherent_cross_section", incoherent_xs, "barn"),
+            ("neutron_total_scattering_cross_section", total_xs, "barn"),
+            ("neutron_absorption_cross_section", absorption_xs, "barn"),
         )
         for property_id, value, unit in fields:
             if phase2.numeric(value) is None:
                 continue
-            result[current_symbol].append(
+            result[symbol].append(
                 _record(
-                    symbol=current_symbol,
                     isotope=isotope,
                     abundance=abundance,
                     property_id=property_id,
@@ -117,11 +105,7 @@ def parse_neutron_table(elements: list[dict[str, str]]) -> dict[str, list[dict[s
 
 
 def write_radiation(element: dict[str, str], generated: list[dict[str, str]]) -> None:
-    """Reemplaza solo los proveedores que hayan devuelto datos nuevos.
-
-    Si NIST X-Ray, NCNR o una importación XPS falla temporalmente, las filas
-    oficiales ya guardadas en la carpeta del elemento permanecen intactas.
-    """
+    """Reemplaza solo los proveedores que hayan devuelto datos nuevos."""
 
     if not generated:
         return
