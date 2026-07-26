@@ -22,8 +22,10 @@ import './styles/advanced-science.css';
 import './styles/science-phase-2.css';
 import './styles/scientific-workspaces.css';
 import './styles/unified-science.css';
+import './styles/guide-navigation-v3.css';
 import './lib/progressiveCellEnhancer';
 import './lib/zoomRenderStabilizer';
+import './lib/modalGuideEnhancer';
 import App from './app/App.svelte';
 
 const target = document.getElementById('app');
