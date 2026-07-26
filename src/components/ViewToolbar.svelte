@@ -1,7 +1,8 @@
 <script lang="ts">
-  import { createEventDispatcher } from 'svelte';
+  import { createEventDispatcher, onMount } from 'svelte';
   import ElementFilterPanelV2 from './ElementFilterPanelV2.svelte';
-  import PeriodicInfoGuideExpanded from './PeriodicInfoGuideExpanded.svelte';
+  import PeriodicInfoGuideV3 from './PeriodicInfoGuideV3.svelte';
+  import { GUIDE_OPEN_EVENT, type GuideOpenDetail } from '../lib/guideBridge';
 
   type TableMode = 'short' | 'long';
   type ThemeMode = 'auto' | 'light' | 'dark';
@@ -18,6 +19,7 @@
   export let resolvedTheme: ResolvedTheme = 'dark';
 
   let guideOpen = false;
+  let guideTopic = 'vision';
   let internalInfoOpen = false;
   let filterOpen = false;
   let activeFilterCount = 0;
@@ -43,6 +45,13 @@
     internalInfoOpen = false;
   }
 
+  function openGuide(topic = 'vision'): void {
+    filterOpen = false;
+    internalInfoOpen = false;
+    guideTopic = topic;
+    guideOpen = true;
+  }
+
   function handleInfoClick(event: MouseEvent): void {
     filterOpen = false;
     if (event.altKey) {
@@ -51,10 +60,21 @@
       return;
     }
 
-    guideOpen = !guideOpen;
-    internalInfoOpen = false;
+    if (guideOpen && guideTopic === 'vision') {
+      guideOpen = false;
+      return;
+    }
+    openGuide('vision');
   }
 
+  onMount(() => {
+    const handleGuideOpen = (event: Event): void => {
+      const detail = (event as CustomEvent<GuideOpenDetail>).detail;
+      openGuide(detail?.topic || 'vision');
+    };
+    window.addEventListener(GUIDE_OPEN_EVENT, handleGuideOpen);
+    return () => window.removeEventListener(GUIDE_OPEN_EVENT, handleGuideOpen);
+  });
 </script>
 
 <div class="view-tools" aria-label="Herramientas de la tabla">
@@ -116,8 +136,8 @@
     class:active={guideOpen || internalInfoOpen}
     class="view-tool-button"
     type="button"
-    title="Guía completa de la tabla. Alt + clic: diagnóstico interno."
-    aria-label="Abrir guía de la tabla periódica. Alt más clic abre el diagnóstico interno."
+    title="Guía científica completa. Alt + clic: diagnóstico interno."
+    aria-label="Abrir guía científica. Alt más clic abre el diagnóstico interno."
     on:click={handleInfoClick}
   >
     <svg class="info-svg" viewBox="0 0 24 24" aria-hidden="true">
@@ -172,4 +192,4 @@
   }}
 />
 
-<PeriodicInfoGuideExpanded open={guideOpen} on:close={() => (guideOpen = false)} />
+<PeriodicInfoGuideV3 open={guideOpen} topic={guideTopic} on:close={() => (guideOpen = false)} />
