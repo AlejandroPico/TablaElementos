@@ -84,14 +84,14 @@
       </header>
 
       <aside class="guide-v3-index">
-        <label class="guide-v3-search">
-          <span>Buscar en la guía</span>
+        <div class="guide-v3-search">
+          <label for="periodic-guide-search">Buscar en la guía</label>
           <div>
             <svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"></circle><path d="m15.5 15.5 5 5"></path></svg>
-            <input bind:value={query} type="search" placeholder="Valencia, isótopos, XPS…" />
+            <input id="periodic-guide-search" bind:value={query} type="search" placeholder="Valencia, isótopos, XPS…" />
             {#if query}<button type="button" aria-label="Limpiar búsqueda" on:click={clearSearch}>×</button>{/if}
           </div>
-        </label>
+        </div>
 
         <nav bind:this={guideNav} class="periodic-guide-tabs guide-v3-tabs" aria-label="Capítulos de la guía">
           {#each filteredTopics as item, index}
