@@ -7,10 +7,16 @@
   import type { ComparisonScope, ElementWithLines } from '../lib/atomicTypes';
   import { loadSpectraDataset, hydrateElements } from '../lib/dataLoader';
   import { animatePeriodicLayout } from '../lib/layoutTransitionV4';
+  import {
+    baseThemeFor,
+    migrateStoredTheme,
+    resolveAutomaticTheme,
+    type ThemeCoordinates,
+    type ThemeMode,
+    type ThemePeriod
+  } from '../lib/solarTheme';
 
   type TableMode = 'short' | 'long';
-  type ThemeMode = 'auto' | 'light' | 'dark';
-  type ResolvedTheme = 'light' | 'dark';
 
   let elements: ElementWithLines[] = [];
   let selectedSymbol = '';
@@ -25,9 +31,11 @@
   let tableMode: TableMode = 'short';
   let layoutBusy = false;
   let themeMode: ThemeMode = 'auto';
-  let resolvedTheme: ResolvedTheme = 'dark';
-  let systemTheme: MediaQueryList | null = null;
+  let resolvedTheme: ThemePeriod = 'night';
+  let themeCoordinates: ThemeCoordinates | null = null;
   let themeTimer = 0;
+  let themeInitialized = false;
+  let geolocationRequested = false;
 
   $: comparedElements = comparedSymbols
     .map((symbol) => elements.find((element) => element.symbol === symbol))
@@ -103,37 +111,80 @@
     }
   }
 
-  function resolveAutomaticTheme(): ResolvedTheme {
-    const hour = new Date().getHours();
-    return systemTheme?.matches || hour >= 20 || hour < 7 ? 'dark' : 'light';
-  }
+  function applyTheme(automaticTransition = false): void {
+    const nextTheme = themeMode === 'auto'
+      ? resolveAutomaticTheme(new Date(), themeCoordinates).period
+      : themeMode;
+    const root = document.documentElement;
+    const changed = themeInitialized && nextTheme !== resolvedTheme;
+    const mutateTheme = (): void => {
+      resolvedTheme = nextTheme;
+      root.dataset.theme = baseThemeFor(nextTheme);
+      root.dataset.themePeriod = nextTheme;
+      root.dataset.themeMode = themeMode;
+      root.dataset.themeTransition = changed ? (automaticTransition ? 'solar' : 'manual') : 'initial';
+      root.dataset.themeReady = 'true';
+    };
+    const viewTransitionDocument = document as Document & {
+      startViewTransition?: (callback: () => void) => unknown;
+    };
 
-  function applyTheme(): void {
-    resolvedTheme = themeMode === 'auto' ? resolveAutomaticTheme() : themeMode;
-    document.documentElement.dataset.theme = resolvedTheme;
-    document.documentElement.dataset.themeMode = themeMode;
+    if (changed && viewTransitionDocument.startViewTransition) {
+      root.dataset.themeTransition = automaticTransition ? 'solar' : 'manual';
+      viewTransitionDocument.startViewTransition(mutateTheme);
+    } else {
+      mutateTheme();
+    }
+    themeInitialized = true;
   }
 
   function cycleTheme(): void {
-    themeMode = themeMode === 'auto' ? 'light' : themeMode === 'light' ? 'dark' : 'auto';
+    themeMode =
+      themeMode === 'auto'
+        ? 'morning'
+        : themeMode === 'morning'
+          ? 'afternoon'
+          : themeMode === 'afternoon'
+            ? 'night'
+            : 'auto';
     try { localStorage.setItem('tabla-elementos-theme', themeMode); } catch (_) {}
     applyTheme();
+    if (themeMode === 'auto') requestThemeCoordinates();
+  }
+
+  function requestThemeCoordinates(): void {
+    if (geolocationRequested || !('geolocation' in navigator)) return;
+    geolocationRequested = true;
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        themeCoordinates = {
+          latitude: position.coords.latitude,
+          longitude: position.coords.longitude
+        };
+        if (themeMode === 'auto') applyTheme(true);
+      },
+      () => {
+        if (themeMode === 'auto') applyTheme(true);
+      },
+      { enableHighAccuracy: false, maximumAge: 21_600_000, timeout: 8_000 }
+    );
   }
 
   onMount(() => {
     try {
       const savedTheme = localStorage.getItem('tabla-elementos-theme');
-      if (savedTheme === 'auto' || savedTheme === 'light' || savedTheme === 'dark') themeMode = savedTheme;
+      themeMode = migrateStoredTheme(savedTheme);
     } catch (_) { themeMode = 'auto'; }
 
-    systemTheme = window.matchMedia('(prefers-color-scheme: dark)');
-    const refreshTheme = (): void => { if (themeMode === 'auto') applyTheme(); };
-    systemTheme.addEventListener('change', refreshTheme);
+    const refreshTheme = (): void => { if (themeMode === 'auto') applyTheme(true); };
     themeTimer = window.setInterval(refreshTheme, 60_000);
     applyTheme();
+    if (themeMode === 'auto') requestThemeCoordinates();
+
+    document.addEventListener('visibilitychange', refreshTheme);
 
     return () => {
-      systemTheme?.removeEventListener('change', refreshTheme);
+      document.removeEventListener('visibilitychange', refreshTheme);
       window.clearInterval(themeTimer);
     };
   });
@@ -143,7 +194,7 @@
 
 <svelte:head><title>Tabla elementos</title></svelte:head>
 
-<main class:with-comparator={comparedElements.length > 0} class={`app-shell theme-${resolvedTheme}`}>
+<main class:with-comparator={comparedElements.length > 0} class={`app-shell theme-${baseThemeFor(resolvedTheme)} theme-period-${resolvedTheme}`}>
   {#if loading}
     <section class="state-card"><h2>Cargando dataset local…</h2></section>
   {:else if errorMessage}

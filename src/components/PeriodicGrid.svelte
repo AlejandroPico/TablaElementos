@@ -25,7 +25,8 @@
   const MIN_ZOOM = 0.18;
   const MAX_ZOOM = 14;
   const DRAG_THRESHOLD_PX = 5;
-  const CAMERA_TAU_MS = 78;
+  const CAMERA_TAU_MS = 92;
+  const ZOOM_HUD_INTERVAL_MS = 80;
   // El zoom continuo se interpola en la cámara y el DOM se rasteriza en
   // escalones cercanos. Un cuarto de unidad mantiene el residual alrededor de
   // 1 y evita ampliar una textura de baja resolución entre escalones.
@@ -61,6 +62,9 @@
   let cameraFrame = 0;
   let lastFrameTime = 0;
   let cameraResolvers: Array<() => void> = [];
+  let lastZoomPublishTime = -Infinity;
+  let lastPublishedPercent = -1;
+  let lastPublishedLevel = '';
 
   let isPointerDown = false;
   let dragActivated = false;
@@ -139,11 +143,19 @@
     return 'Vista general';
   }
 
-  function publishZoom(): void {
+  function publishZoom(force = false, timestamp = performance.now()): void {
+    const percent = Math.round(zoom * 100);
+    const level = zoomLabel();
+    if (!force && percent === lastPublishedPercent && level === lastPublishedLevel) return;
+    if (!force && level === lastPublishedLevel && timestamp - lastZoomPublishTime < ZOOM_HUD_INTERVAL_MS) return;
+
+    lastZoomPublishTime = timestamp;
+    lastPublishedPercent = percent;
+    lastPublishedLevel = level;
     dispatch('zoomchange', {
       zoom,
-      percent: Math.round(zoom * 100),
-      level: zoomLabel()
+      percent,
+      level
     });
   }
 
@@ -229,7 +241,7 @@
       setRenderBucket(bucketFor(zoom));
       applyCamera();
       updateCommittedDetailLevel();
-      publishZoom();
+      publishZoom(true, timestamp);
       cameraFrame = 0;
       lastFrameTime = 0;
       viewportElement?.classList.remove('camera-moving');
@@ -237,7 +249,7 @@
       return;
     }
 
-    publishZoom();
+    publishZoom(false, timestamp);
     cameraFrame = requestAnimationFrame(cameraStep);
   }
 
@@ -272,7 +284,7 @@
       setRenderBucket(bucketFor(zoom));
       applyCamera();
       updateCommittedDetailLevel();
-      publishZoom();
+      publishZoom(true);
       return Promise.resolve();
     }
 

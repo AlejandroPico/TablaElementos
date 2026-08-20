@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import packageMetadata from '../../package.json';
 
   export let open = false;
 
@@ -41,7 +42,7 @@
         </div>
 
         <dl class="about-facts">
-          <div><dt>Versión</dt><dd>0.5.1</dd></div>
+          <div><dt>Versión</dt><dd>{packageMetadata.version}</dd></div>
           <div><dt>Tecnología</dt><dd>Svelte · TypeScript · D3</dd></div>
           <div><dt>Cobertura</dt><dd>118 elementos</dd></div>
           <div><dt>Datos</dt><dd>NIST · PubChem · CIAAW · IAEA</dd></div>

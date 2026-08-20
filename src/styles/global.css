@@ -590,6 +590,10 @@ code {
 }
 
 .spectrum-stage.absorption {
+  background: #d8d9d6;
+}
+
+.spectrum-stage.absorption.visible-range {
   background:
     linear-gradient(90deg, #241d66 0%, #263dbe 18%, #1384c4 32%, #14a878 46%, #d2c94b 62%, #de7b2e 76%, #a9192c 100%);
 }
@@ -601,6 +605,21 @@ code {
   border-left: 1px solid rgba(255, 255, 255, 0.24);
   border-right: 1px solid rgba(255, 255, 255, 0.24);
   background: linear-gradient(90deg, rgba(53, 38, 150, 0.18), rgba(69, 217, 143, 0.1), rgba(255, 63, 63, 0.13));
+}
+
+/* En absorción completa el continuo coloreado solo pertenece al intervalo
+   visible. UV e IR permanecen neutros y conservan la escala completa. */
+.spectrum-stage.absorption:not(.visible-range) .visible-window {
+  background:
+    linear-gradient(90deg, #241d66 0%, #263dbe 18%, #1384c4 32%, #14a878 46%, #d2c94b 62%, #de7b2e 76%, #a9192c 100%);
+}
+
+.spectrum-stage.absorption .tick {
+  background: rgba(18, 22, 28, 0.13);
+}
+
+.spectrum-stage.absorption .tick span {
+  color: rgba(18, 22, 28, 0.62);
 }
 
 .tick {

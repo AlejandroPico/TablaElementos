@@ -2,7 +2,7 @@
 
 Tabla periódica científica, interactiva y completamente estática para explorar los 118 elementos químicos mediante zoom progresivo, filtros combinables, estructura electrónica, radios diferenciados, cristalografía 3D, física nuclear, termodinámica, propiedades materiales, contexto biológico e industrial y tendencias globales.
 
-> **Versión:** `0.5.0`
+> **Versión:** `1.0.0`
 > **Tecnologías:** Svelte 5 · TypeScript · Vite · D3 · Python  
 > **Despliegue:** GitHub Pages mediante GitHub Actions  
 > **Ejecución:** sin backend y sin consultas científicas externas desde el navegador
@@ -47,7 +47,7 @@ La rueda del ratón amplía la tabla alrededor del cursor. El contenido de las c
 3. **Ficha ampliada:** configuración electrónica, electronegatividad, radio y densidad.
 4. **Inspección:** ionización, afinidad, temperaturas, categoría y posición periódica.
 
-El motor utiliza interpolación GPU, escalones de renderizado y repintado al finalizar el gesto para mantener nitidez sin desplazar la geometría de las fichas.
+El motor utiliza una cámara híbrida: interpola únicamente un factor residual pequeño en GPU y rasteriza el contenido HTML en escalones nativos de `0,25×`. La información del HUD se actualiza de forma limitada durante el movimiento para evitar recomponer la interfaz en cada fotograma. Así se conserva la nitidez del texto y se reduce la carga durante gestos rápidos sin alterar la animación entre 18 y 32 columnas.
 
 ### Navegación
 
@@ -350,18 +350,19 @@ La selección de elementos no tiene un límite impuesto por la aplicación.
 
 El botón de comparación abre inicialmente el ámbito de la pestaña activa.
 
-## Temas
+## Temas y ciclo solar
 
-- claro;
-- oscuro;
-- automático;
-- indicador dinámico del modo activo;
-- paleta científica desaturada;
-- contraste adaptado a las fichas y visualizaciones.
+- **Mañana:** paleta clara y fría para las primeras horas de luz.
+- **Tarde:** paleta clara con matiz mineral más cálido.
+- **Noche:** fondo oscuro y contraste reducido para entornos con poca luz.
+- **Automático:** utiliza la ubicación concedida al navegador para calcular la altura real del Sol, el crepúsculo civil y el mediodía solar de ese lugar.
+- Si no existe permiso de ubicación, el modo automático utiliza la hora local como reserva y nunca hereda por error el modo oscuro del sistema operativo.
+- Los cambios solares funden la interfaz completa gradualmente; no sustituyen la paleta de forma instantánea.
+- La preferencia queda guardada en el navegador. Las antiguas opciones `claro` y `oscuro` se migran a `mañana` y `noche`.
 
 ## Guía científica
 
-El icono de información abre una guía de 30 capítulos con índice lateral, explicaciones, tablas conceptuales y fuentes de ampliación.
+El icono de libro abierto abre una guía de 30 capítulos con índice lateral, explicaciones, tablas conceptuales y fuentes de ampliación. El icono de información abre la sección «Acerca del proyecto», cuya versión se obtiene directamente del manifiesto de la aplicación para evitar discrepancias.
 
 `Alt + clic` abre el diagnóstico interno de elementos, líneas, CSV, distribución, tema y filtros.
 

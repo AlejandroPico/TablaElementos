@@ -4,10 +4,9 @@
   import ElementFilterPanelV2 from './ElementFilterPanelV2.svelte';
   import PeriodicInfoGuideV3 from './PeriodicInfoGuideV3.svelte';
   import { GUIDE_OPEN_EVENT, type GuideOpenDetail } from '../lib/guideBridge';
+  import type { ThemeMode, ThemePeriod } from '../lib/solarTheme';
 
   type TableMode = 'short' | 'long';
-  type ThemeMode = 'auto' | 'light' | 'dark';
-  type ResolvedTheme = 'light' | 'dark';
 
   export let zoomPercent = 100;
   export let zoomLevel = 'Vista general';
@@ -17,7 +16,7 @@
   export let tableMode: TableMode = 'short';
   export let layoutBusy = false;
   export let themeMode: ThemeMode = 'auto';
-  export let resolvedTheme: ResolvedTheme = 'dark';
+  export let resolvedTheme: ThemePeriod = 'night';
 
   let guideOpen = false;
   let guideTopic = 'vision';
@@ -36,9 +35,10 @@
   }>();
 
   function themeLabel(): string {
-    if (themeMode === 'light') return 'Tema claro activo';
-    if (themeMode === 'dark') return 'Tema oscuro activo';
-    return `Tema automático activo · mostrando ${resolvedTheme === 'dark' ? 'oscuro' : 'claro'}`;
+    if (themeMode === 'morning') return 'Tema mañana activo';
+    if (themeMode === 'afternoon') return 'Tema tarde activo';
+    if (themeMode === 'night') return 'Tema noche activo';
+    return `Tema automático activo · mostrando ${resolvedTheme === 'morning' ? 'mañana' : resolvedTheme === 'afternoon' ? 'tarde' : 'noche'}`;
   }
 
   function handleFilterClick(): void {
@@ -111,12 +111,16 @@
       aria-label={themeLabel()}
       on:click={() => dispatch('theme')}
     >
-      {#if themeMode === 'light'}
+      {#if themeMode === 'morning'}
         <svg class="theme-svg" viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="12" cy="12" r="4.2"></circle>
-          <path d="M12 2.5v2.2M12 19.3v2.2M2.5 12h2.2M19.3 12h2.2M5.3 5.3l1.6 1.6M17.1 17.1l1.6 1.6M18.7 5.3l-1.6 1.6M6.9 17.1l-1.6 1.6"></path>
+          <path d="M4 18h16M6.5 14.5a5.5 5.5 0 0 1 11 0M12 3.5v3M4.5 8l2.1 2.1M19.5 8l-2.1 2.1"></path>
         </svg>
-      {:else if themeMode === 'dark'}
+      {:else if themeMode === 'afternoon'}
+        <svg class="theme-svg" viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="12" cy="10" r="4.2"></circle>
+          <path d="M12 2.2v2M3.8 10h2M18.2 10h2M6.2 4.2l1.5 1.5M17.8 4.2l-1.5 1.5M4 18h16"></path>
+        </svg>
+      {:else if themeMode === 'night'}
         <svg class="theme-svg" viewBox="0 0 24 24" aria-hidden="true">
           <path d="M19.2 15.2A7.7 7.7 0 0 1 8.8 4.8 8.3 8.3 0 1 0 19.2 15.2Z"></path>
         </svg>
