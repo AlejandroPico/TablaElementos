@@ -35,6 +35,27 @@
   --surface-soft: rgba(39, 55, 67, 0.045);
 }
 
+/* La tarde conserva contraste claro, pero desplaza el ambiente hacia tonos
+   minerales más cálidos. Mañana reutiliza deliberadamente la paleta clara y
+   noche la oscura para que los selectores científicos existentes sigan siendo
+   compatibles. */
+:root[data-theme-period='afternoon'] {
+  --app-bg: #eee7dc;
+  --app-bg-2: #ddd2c4;
+  --app-ink: #332f2b;
+  --panel: rgba(249, 245, 238, 0.96);
+  --panel-strong: rgba(252, 248, 242, 0.99);
+  --line: rgba(75, 61, 49, 0.17);
+  --line-strong: rgba(132, 91, 61, 0.48);
+  --text-soft: #756a60;
+  --accent: #8a654f;
+  --accent-strong: #5a3d2d;
+  --tool-bg: rgba(249, 245, 238, 0.94);
+  --tool-ink: #4b3e34;
+  --popover-bg: rgba(250, 247, 241, 0.99);
+  --surface-soft: rgba(83, 59, 42, 0.05);
+}
+
 html,
 body {
   color: var(--app-ink);
@@ -42,7 +63,21 @@ body {
     radial-gradient(circle at 15% 10%, color-mix(in srgb, var(--accent) 9%, transparent), transparent 34rem),
     radial-gradient(circle at 85% 80%, color-mix(in srgb, var(--accent) 6%, transparent), transparent 38rem),
     linear-gradient(135deg, var(--app-bg), var(--app-bg-2));
-  transition: background 240ms ease, color 180ms ease;
+  transition: background 600ms ease, color 480ms ease;
+}
+
+/* View Transitions permite fundir también gradientes, gráficas y colores de
+   categoría, que no interpolan de forma fiable mediante transition normal. */
+:root[data-theme-transition='manual']::view-transition-old(root),
+:root[data-theme-transition='manual']::view-transition-new(root) {
+  animation-duration: 650ms;
+  animation-timing-function: ease-in-out;
+}
+
+:root[data-theme-transition='solar']::view-transition-old(root),
+:root[data-theme-transition='solar']::view-transition-new(root) {
+  animation-duration: 8s;
+  animation-timing-function: ease-in-out;
 }
 
 .view-tool-button,
@@ -113,6 +148,18 @@ body {
 :root[data-theme='light'] .element-cell.actinido { background: linear-gradient(180deg, #ebdfe2, #dbcbd0); }
 :root[data-theme='light'] .element-cell.desconocido { background: linear-gradient(180deg, #e1e2e2, #d0d2d3); }
 
+:root[data-theme-period='afternoon'] .element-cell.no-metal { background: linear-gradient(180deg, #e6e1dc, #d8d0c8); }
+:root[data-theme-period='afternoon'] .element-cell.gas-noble { background: linear-gradient(180deg, #e9e0e7, #d9ccd7); }
+:root[data-theme-period='afternoon'] .element-cell.metal-alcalino { background: linear-gradient(180deg, #efd5c9, #dfbdae); }
+:root[data-theme-period='afternoon'] .element-cell.metal-alcalinoterreo { background: linear-gradient(180deg, #ebe0c5, #d9cba6); }
+:root[data-theme-period='afternoon'] .element-cell.metal-transicion { background: linear-gradient(180deg, #e1e3df, #cfd5d0); }
+:root[data-theme-period='afternoon'] .element-cell.metaloide { background: linear-gradient(180deg, #e2e3d5, #ced1bd); }
+:root[data-theme-period='afternoon'] .element-cell.halogeno { background: linear-gradient(180deg, #e7dde4, #d5c8d1); }
+:root[data-theme-period='afternoon'] .element-cell.metal-post-transicion { background: linear-gradient(180deg, #e5e1dd, #d4cdc7); }
+:root[data-theme-period='afternoon'] .element-cell.lantanido { background: linear-gradient(180deg, #e9dddD, #d9c9cb); }
+:root[data-theme-period='afternoon'] .element-cell.actinido { background: linear-gradient(180deg, #ebdcd8, #dbc7c2); }
+:root[data-theme-period='afternoon'] .element-cell.desconocido { background: linear-gradient(180deg, #e2ded9, #d1cbc5); }
+
 :root[data-theme='light'] .element-open-button strong,
 :root[data-theme='light'] .element-name,
 :root[data-theme='light'] .atomic-number,
@@ -135,4 +182,16 @@ body {
 :root[data-theme='light'] .modal-tabs button,
 :root[data-theme='light'] .segmented-control button {
   color: var(--app-ink);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root::view-transition-old(root),
+  :root::view-transition-new(root) {
+    animation-duration: 1ms !important;
+  }
+
+  html,
+  body {
+    transition: none;
+  }
 }
