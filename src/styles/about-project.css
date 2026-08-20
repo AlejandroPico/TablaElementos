@@ -1,0 +1,204 @@
+.about-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 90;
+  display: grid;
+  place-items: center;
+  padding: 18px;
+  background: rgba(3, 6, 12, 0.72);
+  backdrop-filter: blur(12px);
+}
+
+.about-dialog {
+  width: min(680px, calc(100vw - 36px));
+  max-height: calc(100vh - 36px);
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr) auto;
+  overflow: hidden;
+  border: 1px solid var(--line-strong);
+  color: var(--app-ink);
+  background: var(--panel-strong);
+  box-shadow: 0 28px 90px rgba(0, 0, 0, 0.46);
+}
+
+.about-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 20px 15px;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-header p,
+.about-author > p {
+  margin: 0 0 4px;
+  color: var(--accent);
+  font-size: 0.62rem;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.about-header h2 {
+  margin: 0;
+  font-size: 1.5rem;
+  letter-spacing: -0.045em;
+}
+
+.about-header button {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  padding: 0;
+  border: 0;
+  color: var(--text-soft);
+  background: transparent;
+}
+
+.about-header button:hover {
+  color: var(--app-ink);
+  background: var(--surface-soft);
+}
+
+.about-header svg,
+.about-links svg {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+}
+
+.about-body {
+  min-height: 0;
+  padding: 20px;
+  overflow: auto;
+}
+
+.about-introduction {
+  display: grid;
+  grid-template-columns: 74px minmax(0, 1fr);
+  gap: 17px;
+  align-items: center;
+  padding-bottom: 19px;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-mark {
+  height: 74px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line-strong);
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 10%, transparent);
+  font-size: 1.8rem;
+  font-weight: 850;
+}
+
+.about-introduction strong {
+  display: block;
+  margin-bottom: 6px;
+  font-size: 1rem;
+}
+
+.about-introduction p,
+.about-author span {
+  margin: 0;
+  color: var(--text-soft);
+  font-size: 0.76rem;
+  line-height: 1.55;
+}
+
+.about-facts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-facts div {
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr);
+  gap: 10px;
+  padding: 10px 4px;
+  border-bottom: 1px solid var(--line);
+}
+
+.about-facts div:nth-child(odd) {
+  padding-right: 14px;
+  border-right: 1px solid var(--line);
+}
+
+.about-facts div:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.about-facts dt {
+  color: var(--text-soft);
+  font-size: 0.64rem;
+}
+
+.about-facts dd {
+  margin: 0;
+  font-size: 0.68rem;
+  font-weight: 760;
+}
+
+.about-author {
+  padding-top: 18px;
+}
+
+.about-author h3 {
+  margin: 0 0 5px;
+  font-size: 1rem;
+}
+
+.about-author span {
+  display: block;
+  max-width: 560px;
+}
+
+.about-links {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  border-top: 1px solid var(--line);
+}
+
+.about-links a {
+  min-height: 46px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 18px;
+  color: var(--app-ink);
+  text-decoration: none;
+  font-size: 0.7rem;
+  font-weight: 800;
+}
+
+.about-links a:first-child {
+  border-right: 1px solid var(--line);
+}
+
+.about-links a:hover {
+  color: var(--accent-strong);
+  background: color-mix(in srgb, var(--accent) 9%, transparent);
+}
+
+@media (max-width: 560px) {
+  .about-backdrop { padding: 6px; }
+  .about-dialog { width: calc(100vw - 12px); max-height: calc(100vh - 12px); }
+  .about-header, .about-body { padding: 14px; }
+  .about-introduction { grid-template-columns: 58px minmax(0, 1fr); gap: 12px; }
+  .about-mark { height: 58px; font-size: 1.45rem; }
+  .about-facts { grid-template-columns: 1fr; }
+  .about-facts div,
+  .about-facts div:nth-child(odd),
+  .about-facts div:nth-last-child(-n + 2) { padding: 9px 2px; border-right: 0; border-bottom: 1px solid var(--line); }
+  .about-facts div:last-child { border-bottom: 0; }
+  .about-links { grid-template-columns: 1fr; }
+  .about-links a:first-child { border-right: 0; border-bottom: 1px solid var(--line); }
+}

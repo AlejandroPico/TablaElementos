@@ -5,13 +5,14 @@
   z-index: 4;
   min-width: 0;
   display: grid;
-  grid-template-columns: 34px minmax(0, 1fr) 34px;
+  grid-template-columns: 30px minmax(0, 1fr) 30px;
   border-bottom: 1px solid var(--line);
   background: var(--panel-strong);
 }
 
 .modal-tabs.master-tabs {
   min-width: 0;
+  min-height: 36px;
   display: flex !important;
   grid-template-columns: none !important;
   gap: 1px !important;
@@ -26,6 +27,8 @@
   touch-action: pan-x;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
+  cursor: grab;
+  user-select: none;
 }
 
 .modal-tabs.master-tabs::-webkit-scrollbar {
@@ -36,16 +39,28 @@
 
 .modal-tabs.master-tabs button {
   flex: 0 0 auto !important;
-  min-width: 102px !important;
-  min-height: 43px;
-  padding: 8px 12px !important;
+  min-width: 88px !important;
+  min-height: 36px;
+  padding: 6px 10px !important;
   border-right: 1px solid var(--line) !important;
   scroll-snap-align: start;
   white-space: nowrap;
+  cursor: grab;
 }
 
 .modal-tabs.master-tabs button:first-child {
-  min-width: 94px !important;
+  min-width: 82px !important;
+}
+
+.modal-tabs.master-tabs.is-drag-ready,
+.modal-tabs.master-tabs.is-dragging,
+.modal-tabs.master-tabs.is-drag-ready button,
+.modal-tabs.master-tabs.is-dragging button {
+  cursor: grabbing;
+}
+
+.modal-tabs.master-tabs.is-dragging {
+  scroll-behavior: auto;
 }
 
 .master-tabs-edge {
@@ -53,8 +68,8 @@
   z-index: 2;
   display: grid;
   place-items: center;
-  width: 34px;
-  min-width: 34px;
+  width: 30px;
+  min-width: 30px;
   padding: 0;
   border: 0;
   color: var(--text-soft);
@@ -376,18 +391,18 @@
 
 @media (max-width: 780px) {
   .master-tabs-shell {
-    grid-template-columns: 30px minmax(0, 1fr) 30px;
+    grid-template-columns: 28px minmax(0, 1fr) 28px;
   }
 
   .master-tabs-edge {
-    width: 30px;
-    min-width: 30px;
+    width: 28px;
+    min-width: 28px;
   }
 
   .modal-tabs.master-tabs button {
-    min-width: 96px !important;
-    min-height: 40px;
-    font-size: 0.7rem;
+    min-width: 84px !important;
+    min-height: 36px;
+    font-size: 0.68rem;
   }
 
   .periodic-guide.guide-v3 {

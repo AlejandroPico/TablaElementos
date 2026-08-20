@@ -363,7 +363,13 @@
 .spectrum-stage .spectral-line.selected {
   z-index: 3;
   opacity: 1 !important;
-  filter: drop-shadow(0 0 5px var(--line-color));
+  filter: none;
+}
+
+.spectrum-stage .spectral-line.selected span {
+  width: 5px;
+  outline: 1px solid color-mix(in srgb, var(--line-color) 72%, white);
+  outline-offset: 1px;
 }
 
 .spectrum-coverage-note {

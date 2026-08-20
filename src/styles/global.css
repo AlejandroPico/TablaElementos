@@ -621,8 +621,8 @@ code {
 
 .spectral-line {
   position: absolute;
-  bottom: 58px;
-  width: 16px;
+  bottom: 42px;
+  width: 12px;
   transform: translateX(-50%);
   border: 0;
   background: transparent;
@@ -631,18 +631,18 @@ code {
 
 .spectral-line span {
   display: block;
-  width: 4px;
+  width: 2px;
   height: 100%;
   margin: 0 auto;
   border-radius: 0;
   background: var(--line-color);
-  box-shadow: 0 0 12px var(--line-color), 0 0 30px var(--line-color);
+  box-shadow: none;
 }
 
 .absorption .spectral-line span {
-  width: 5px;
+  width: 3px;
   background: rgba(2, 5, 14, 0.92);
-  box-shadow: 0 0 12px rgba(0, 0, 0, 0.6);
+  box-shadow: none;
 }
 
 .spectral-line.outside-visible span {

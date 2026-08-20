@@ -26,7 +26,7 @@
   $: hasLines = plottedLines.length > 0;
   $: visibleStart = Math.max(domainMin, VISIBLE_MIN_NM);
   $: visibleEnd = Math.min(domainMax, VISIBLE_MAX_NM);
-  $: visibleWindowShown = visibleEnd > visibleStart;
+  $: visibleWindowShown = rangeMode === 'complete' && visibleEnd > visibleStart;
 
   function lineId(line: SpectralLine): string {
     return [line.species, Number(line.wavelength_nm).toFixed(6), line.transition, line.label].join('|');
@@ -36,12 +36,17 @@
     return x(wavelength);
   }
 
+  function normalizedIntensity(line: SpectralLine): number {
+    return Math.max(0, Math.min(1, line.intensity));
+  }
+
   function lineHeight(line: SpectralLine): number {
-    return 38 + line.intensity * 98;
+    // La altura representa la intensidad relativa; se reserva margen para el eje inferior.
+    return 18 + normalizedIntensity(line) * 66;
   }
 
   function lineOpacity(line: SpectralLine): number {
-    return 0.42 + line.intensity * 0.58;
+    return 0.42 + normalizedIntensity(line) * 0.58;
   }
 </script>
 
@@ -60,7 +65,7 @@
     <span>{domainMax.toLocaleString('es-ES', { maximumFractionDigits: 1 })} nm</span>
   </div>
 
-  <div class:absorption={mode === 'absorption'} class:emission={mode === 'emission'} class:empty={!hasLines} class="spectrum-stage">
+  <div class:visible-range={rangeMode === 'visible'} class:absorption={mode === 'absorption'} class:emission={mode === 'emission'} class:empty={!hasLines} class="spectrum-stage">
     {#if visibleWindowShown}
       <div
         class="visible-window"
@@ -83,12 +88,12 @@
           class="spectral-line"
           style={`
             left:${leftPosition(line.wavelength_nm)}%;
-            height:${lineHeight(line)}px;
+            height:${lineHeight(line)}%;
             opacity:${lineOpacity(line)};
             --line-color:${mode === 'emission' ? line.approximate_color : '#101522'};
           `}
           type="button"
-          title={`${line.label} · ${formatNm(line.wavelength_nm)} · ${wavelengthRegion(line.wavelength_nm)}`}
+          title={`${line.label} · ${formatNm(line.wavelength_nm)} · ${wavelengthRegion(line.wavelength_nm)} · intensidad relativa ${(normalizedIntensity(line) * 100).toFixed(0)} %`}
           aria-label={`Abrir ${line.label}, ${formatNm(line.wavelength_nm)}, en la tabla de líneas`}
           on:click={() => dispatch('select', line)}
         >

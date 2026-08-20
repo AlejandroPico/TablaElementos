@@ -1,5 +1,6 @@
 <script lang="ts">
   import { createEventDispatcher, onMount } from 'svelte';
+  import AboutProject from './AboutProject.svelte';
   import ElementFilterPanelV2 from './ElementFilterPanelV2.svelte';
   import PeriodicInfoGuideV3 from './PeriodicInfoGuideV3.svelte';
   import { GUIDE_OPEN_EVENT, type GuideOpenDetail } from '../lib/guideBridge';
@@ -21,6 +22,7 @@
   let guideOpen = false;
   let guideTopic = 'vision';
   let internalInfoOpen = false;
+  let aboutOpen = false;
   let filterOpen = false;
   let activeFilterCount = 0;
   let filterMatches = 0;
@@ -43,17 +45,20 @@
     filterOpen = !filterOpen;
     guideOpen = false;
     internalInfoOpen = false;
+    aboutOpen = false;
   }
 
   function openGuide(topic = 'vision'): void {
     filterOpen = false;
     internalInfoOpen = false;
+    aboutOpen = false;
     guideTopic = topic;
     guideOpen = true;
   }
 
-  function handleInfoClick(event: MouseEvent): void {
+  function handleGuideClick(event: MouseEvent): void {
     filterOpen = false;
+    aboutOpen = false;
     if (event.altKey) {
       internalInfoOpen = !internalInfoOpen;
       guideOpen = false;
@@ -65,6 +70,13 @@
       return;
     }
     openGuide('vision');
+  }
+
+  function handleAboutClick(): void {
+    aboutOpen = !aboutOpen;
+    filterOpen = false;
+    guideOpen = false;
+    internalInfoOpen = false;
   }
 
   onMount(() => {
@@ -138,7 +150,21 @@
     type="button"
     title="Guía científica completa. Alt + clic: diagnóstico interno."
     aria-label="Abrir guía científica. Alt más clic abre el diagnóstico interno."
-    on:click={handleInfoClick}
+    on:click={handleGuideClick}
+  >
+    <svg class="guide-svg" viewBox="0 0 24 24" aria-hidden="true">
+      <path d="M3.5 5.5c3.1-.9 5.8-.4 8.5 1.5v12c-2.7-1.9-5.4-2.4-8.5-1.5Z"></path>
+      <path d="M20.5 5.5c-3.1-.9-5.8-.4-8.5 1.5v12c2.7-1.9 5.4-2.4 8.5-1.5Z"></path>
+    </svg>
+  </button>
+
+  <button
+    class:active={aboutOpen}
+    class="view-tool-button"
+    type="button"
+    title="Acerca del proyecto"
+    aria-label="Abrir acerca del proyecto"
+    on:click={handleAboutClick}
   >
     <svg class="info-svg" viewBox="0 0 24 24" aria-hidden="true">
       <circle cx="12" cy="12" r="9"></circle>
@@ -193,3 +219,5 @@
 />
 
 <PeriodicInfoGuideV3 open={guideOpen} topic={guideTopic} on:close={() => (guideOpen = false)} />
+
+<AboutProject open={aboutOpen} on:close={() => (aboutOpen = false)} />

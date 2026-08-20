@@ -159,6 +159,11 @@ function enhanceModal(modal: HTMLElement): void {
   let scrollFrame = 0;
   let scrollDirection = 0;
   let scrollSpeed = 0;
+  let dragPointerId = -1;
+  let dragStartX = 0;
+  let dragStartScroll = 0;
+  let dragMoved = false;
+  let suppressClick = false;
 
   const stopAutoScroll = (): void => {
     scrollDirection = 0;
@@ -193,7 +198,28 @@ function enhanceModal(modal: HTMLElement): void {
   left.addEventListener('click', () => scrollPage(-1));
   right.addEventListener('click', () => scrollPage(1));
 
+  nav.addEventListener('pointerdown', (event) => {
+    if (event.pointerType !== 'mouse' || event.button !== 0 || nav.scrollWidth <= nav.clientWidth) return;
+    stopAutoScroll();
+    dragPointerId = event.pointerId;
+    dragStartX = event.clientX;
+    dragStartScroll = nav.scrollLeft;
+    dragMoved = false;
+    nav.classList.add('is-drag-ready');
+  });
+
   nav.addEventListener('pointermove', (event) => {
+    if (event.pointerId === dragPointerId) {
+      const displacement = event.clientX - dragStartX;
+      if (Math.abs(displacement) > 4) dragMoved = true;
+      if (dragMoved) {
+        if (!nav.hasPointerCapture(event.pointerId)) nav.setPointerCapture(event.pointerId);
+        event.preventDefault();
+        nav.classList.add('is-dragging');
+        nav.scrollLeft = dragStartScroll - displacement;
+      }
+      return;
+    }
     if (event.pointerType !== 'mouse') return;
     const rect = nav.getBoundingClientRect();
     const threshold = Math.min(86, rect.width * 0.16);
@@ -207,7 +233,35 @@ function enhanceModal(modal: HTMLElement): void {
       stopAutoScroll();
     }
   });
-  nav.addEventListener('pointerleave', stopAutoScroll);
+
+  const finishDrag = (event: PointerEvent): void => {
+    if (event.pointerId !== dragPointerId) return;
+    if (nav.hasPointerCapture(event.pointerId)) nav.releasePointerCapture(event.pointerId);
+    nav.classList.remove('is-drag-ready', 'is-dragging');
+    if (dragMoved) {
+      suppressClick = true;
+      window.setTimeout(() => (suppressClick = false), 120);
+    }
+    dragPointerId = -1;
+    dragMoved = false;
+    requestAnimationFrame(updateEdges);
+  };
+
+  nav.addEventListener('pointerup', finishDrag);
+  nav.addEventListener('pointercancel', finishDrag);
+  nav.addEventListener('click', (event) => {
+    if (!suppressClick) return;
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    suppressClick = false;
+  }, { capture: true });
+  nav.addEventListener('pointerleave', () => {
+    stopAutoScroll();
+    if (dragPointerId !== -1 && !dragMoved) {
+      nav.classList.remove('is-drag-ready');
+      dragPointerId = -1;
+    }
+  });
 
   nav.addEventListener('wheel', (event) => {
     const verticalGesture = Math.abs(event.deltaY) > Math.abs(event.deltaX);

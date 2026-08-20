@@ -1,7 +1,7 @@
 {
   "name": "tabla-elementos",
   "private": true,
-  "version": "0.5.0",
+  "version": "0.5.1",
   "type": "module",
   "description": "Tabla periódica científica para explorar estructura electrónica, cristales, termodinámica, núcleos, espectros y radiación por elemento.",
   "scripts": {
