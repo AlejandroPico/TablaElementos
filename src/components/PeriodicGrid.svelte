@@ -26,7 +26,10 @@
   const MAX_ZOOM = 14;
   const DRAG_THRESHOLD_PX = 5;
   const CAMERA_TAU_MS = 78;
-  const RENDER_STEP = 0.5;
+  // El zoom continuo se interpola en la cámara y el DOM se rasteriza en
+  // escalones cercanos. Un cuarto de unidad mantiene el residual alrededor de
+  // 1 y evita ampliar una textura de baja resolución entre escalones.
+  const RENDER_STEP = 0.25;
   const MAX_COLUMNS = 32;
   const MAX_ROWS = 9;
   const SHORT_COLUMN_OFFSET = 7;
@@ -153,8 +156,14 @@
     renderBucket = nextBucket;
 
     if (gridElement) {
-      gridElement.style.zoom = renderBucket.toFixed(2);
-      gridElement.style.setProperty('--zoom', renderBucket.toFixed(2));
+      const normalizedBucket = renderBucket.toFixed(2);
+
+      // Zoom y escala residual deben cambiar en el mismo fotograma. Antes un
+      // MutationObserver trasladaba este valor a transform de forma diferida:
+      // durante un instante ambas capas discrepaban y la tabla daba un salto.
+      gridElement.style.zoom = normalizedBucket;
+      gridElement.style.setProperty('--zoom', normalizedBucket);
+      gridElement.dataset.renderBucket = normalizedBucket;
     }
   }
 

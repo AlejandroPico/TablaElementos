@@ -1,19 +1,27 @@
 /*
- * Zoom nítido sin alterar la geometría del lienzo.
+ * Cámara híbrida nítida.
  *
- * PeriodicGrid sigue publicando escalones de render mediante style.zoom para
- * conservar su cálculo de cámara. Esta hoja impide que CSS zoom llegue a
- * modificar el layout y aplica el escalón como una escala centrada.
+ * El escalón entero se aplica mediante CSS zoom desde PeriodicGrid: así el
+ * navegador recalcula y rasteriza texto, bordes y fondos a su resolución real.
+ * La cámara conserva únicamente el pequeño factor residual entre escalones.
+ * No debe añadirse aquí otra escala transform: duplicaría el zoom y volvería a
+ * convertir la tabla completa en una textura ampliada.
  */
+.periodic-pan {
+  backface-visibility: visible;
+  will-change: auto;
+}
+
+.camera-moving .periodic-pan,
+.periodic-viewport.dragging .periodic-pan {
+  will-change: transform;
+}
+
 .absolute-periodic-grid {
-  --render-bucket-scale: 1;
-  zoom: 1 !important;
-  transform: scale3d(
-    var(--render-bucket-scale),
-    var(--render-bucket-scale),
-    1
-  ) !important;
-  transform-origin: center center !important;
+  transform: none !important;
+  transform-origin: initial !important;
+  image-rendering: auto;
+  text-rendering: geometricPrecision;
 }
 
 /* El movimiento 18/32 lo controla exclusivamente Web Animations. */
@@ -23,7 +31,8 @@
 }
 
 .absolute-periodic-grid > .element-slot {
-  contain: layout paint style;
+  contain: layout style;
+  backface-visibility: visible;
 }
 
 /* Mostrar nuevos datos no modifica el tamaño ni la posición exterior. */
@@ -35,29 +44,15 @@
   height: 100% !important;
 }
 
+.absolute-periodic-grid .element-cell {
+  contain: layout style;
+  backface-visibility: visible;
+}
+
 .absolute-periodic-grid .element-core,
 .absolute-periodic-grid .cell-science-grid,
 .absolute-periodic-grid .cell-fact {
   transition: opacity 130ms ease, color 130ms ease !important;
-}
-
-/*
- * El filtro casi neutro reproduce el repintado que el navegador efectúa al
- * pasar el ratón por una ficha. Solo permanece durante dos fotogramas y no
- * modifica perceptiblemente el color.
- */
-.periodic-pan.zoom-raster-refresh {
-  will-change: auto;
-}
-
-.absolute-periodic-grid.zoom-raster-refresh .element-open-button,
-.absolute-periodic-grid.zoom-raster-refresh .series-placeholder {
-  filter: brightness(1.00001);
-}
-
-.absolute-periodic-grid.zoom-raster-refresh .element-cell {
-  outline: 1px solid rgba(255, 255, 255, 0.0001);
-  outline-offset: -1px;
 }
 
 @media (prefers-reduced-motion: reduce) {

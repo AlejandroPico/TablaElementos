@@ -25,7 +25,6 @@ import './styles/unified-science.css';
 import './styles/guide-navigation-v3.css';
 import './styles/about-project.css';
 import './lib/progressiveCellEnhancer';
-import './lib/zoomRenderStabilizer';
 import './lib/modalGuideEnhancer';
 import App from './app/App.svelte';
 
