@@ -656,13 +656,15 @@ export const GUIDE_TOPICS: GuideTopic[] = [
     id: 'navigation', section: 'Uso de la aplicación', label: '41 · Navegación táctil y zoom', title: 'Moverse por la tabla y por las fichas',
     summary: 'Rueda, arrastre, gestos, pestañas y encuadre.',
     paragraphs: [
-      'La rueda amplía alrededor del cursor y el arrastre desplaza la tabla. El porcentaje restablece el encuadre y el botón 18/32 alterna las dos disposiciones.',
+      'La rueda amplía alrededor del cursor. En pantallas táctiles, un dedo desplaza la tabla y el pellizco de dos dedos amplía alrededor del centro del gesto.',
+      'El porcentaje restablece el encuadre, el botón 18/32 alterna las dos disposiciones y un cambio de orientación vuelve a encajar y centrar la tabla.',
       'La barra de pestañas se desplaza horizontalmente con gesto táctil, rueda, trackpad o flechas laterales. Al acercar el puntero a un borde, la lista avanza automáticamente.',
       'Al abrir una ficha se realiza un pequeño desplazamiento de demostración para indicar que hay más pestañas fuera del área visible.'
     ],
     rows: [
       { term: 'Rueda', description: 'Zoom continuo anclado al cursor.' },
       { term: 'Arrastre', description: 'Desplazamiento de la tabla.' },
+      { term: 'Pellizco', description: 'Zoom táctil de dos dedos anclado al gesto.' },
       { term: 'Swipe', description: 'Desplazamiento táctil horizontal de pestañas.' },
       { term: 'Bordes', description: 'Autoavance mientras el puntero permanece cerca.' },
       { term: '18/32', description: 'Alternancia de disposición periódica.' }

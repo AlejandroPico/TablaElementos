@@ -18,6 +18,13 @@
     y: number;
   }
 
+  interface PointerPosition {
+    x: number;
+    y: number;
+  }
+
+  type GestureMode = 'idle' | 'pan' | 'pinch';
+
   export let elements: ElementWithLines[] = [];
   export let selectedSymbol = '';
   export let layoutMode: PublicLayout = 'short';
@@ -68,13 +75,21 @@
 
   let isPointerDown = false;
   let dragActivated = false;
-  let activePointerId = -1;
+  let gestureMode: GestureMode = 'idle';
+  const activePointers = new Map<number, PointerPosition>();
   let dragStartX = 0;
   let dragStartY = 0;
   let dragOriginX = 0;
   let dragOriginY = 0;
+  let pinchStartDistance = 1;
+  let pinchStartCenterX = 0;
+  let pinchStartCenterY = 0;
+  let pinchStartZoom = 1;
+  let pinchStartOffsetX = 0;
+  let pinchStartOffsetY = 0;
   let pressedSymbol = '';
   let suppressClickUntil = 0;
+  let viewportFitTimer = 0;
 
   $: zoomClass =
     committedZoom >= 7.5
@@ -316,24 +331,98 @@
     return target.closest<HTMLElement>('[data-element-symbol]')?.dataset.elementSymbol ?? '';
   }
 
+  function pointerPair(): [PointerPosition, PointerPosition] | null {
+    const pointers = Array.from(activePointers.values());
+    return pointers.length >= 2 ? [pointers[0], pointers[1]] : null;
+  }
+
+  function beginPinch(): void {
+    const pair = pointerPair();
+    if (!pair) return;
+
+    const [first, second] = pair;
+    const rect = viewportElement.getBoundingClientRect();
+    pinchStartDistance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+    pinchStartCenterX = (first.x + second.x) / 2 - rect.left - rect.width / 2;
+    pinchStartCenterY = (first.y + second.y) / 2 - rect.top - rect.height / 2;
+    pinchStartZoom = zoom;
+    pinchStartOffsetX = offsetX;
+    pinchStartOffsetY = offsetY;
+    gestureMode = 'pinch';
+    dragActivated = true;
+    pressedSymbol = '';
+    viewportElement.classList.add('dragging');
+  }
+
+  function applyGestureCamera(nextZoom: number, nextX: number, nextY: number): void {
+    zoom = clamp(nextZoom, MIN_ZOOM, MAX_ZOOM);
+    targetZoom = zoom;
+    offsetX = nextX;
+    offsetY = nextY;
+    targetOffsetX = nextX;
+    targetOffsetY = nextY;
+
+    const nextBucket = bucketFor(zoom);
+    if (Math.abs(nextBucket - renderBucket) >= 0.001) {
+      setRenderBucket(nextBucket);
+      updateCommittedDetailLevel();
+    }
+
+    applyCamera();
+    publishZoom();
+  }
+
   function startDrag(event: PointerEvent): void {
     if (layoutAnimating) return;
     if (event.pointerType === 'mouse' && event.button !== 0) return;
+    if (activePointers.has(event.pointerId) || activePointers.size >= 2) return;
 
     event.preventDefault();
-    stopCamera();
+    if (activePointers.size === 0) {
+      stopCamera();
+      targetZoom = zoom;
+      targetOffsetX = offsetX;
+      targetOffsetY = offsetY;
+      gestureMode = 'pan';
+      dragActivated = false;
+      dragStartX = event.clientX;
+      dragStartY = event.clientY;
+      dragOriginX = offsetX;
+      dragOriginY = offsetY;
+      pressedSymbol = symbolFromTarget(event.target);
+    }
+
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
     isPointerDown = true;
-    dragActivated = false;
-    activePointerId = event.pointerId;
-    dragStartX = event.clientX;
-    dragStartY = event.clientY;
-    dragOriginX = offsetX;
-    dragOriginY = offsetY;
-    pressedSymbol = symbolFromTarget(event.target);
+    viewportElement.setPointerCapture(event.pointerId);
+
+    if (activePointers.size === 2) beginPinch();
   }
 
   function dragCanvas(event: PointerEvent): void {
-    if (!isPointerDown || event.pointerId !== activePointerId) return;
+    if (!isPointerDown || !activePointers.has(event.pointerId)) return;
+    activePointers.set(event.pointerId, { x: event.clientX, y: event.clientY });
+
+    if (gestureMode === 'pinch') {
+      const pair = pointerPair();
+      if (!pair) return;
+
+      event.preventDefault();
+      const [first, second] = pair;
+      const rect = viewportElement.getBoundingClientRect();
+      const distance = Math.max(1, Math.hypot(second.x - first.x, second.y - first.y));
+      const centerX = (first.x + second.x) / 2 - rect.left - rect.width / 2;
+      const centerY = (first.y + second.y) / 2 - rect.top - rect.height / 2;
+      const nextZoom = clamp(pinchStartZoom * (distance / pinchStartDistance), MIN_ZOOM, MAX_ZOOM);
+      const ratio = nextZoom / pinchStartZoom;
+
+      applyGestureCamera(
+        nextZoom,
+        centerX - (pinchStartCenterX - pinchStartOffsetX) * ratio,
+        centerY - (pinchStartCenterY - pinchStartOffsetY) * ratio
+      );
+      return;
+    }
 
     const deltaX = event.clientX - dragStartX;
     const deltaY = event.clientY - dragStartY;
@@ -343,20 +432,16 @@
     if (!dragActivated) {
       dragActivated = true;
       viewportElement.classList.add('dragging');
-      viewportElement.setPointerCapture(event.pointerId);
     }
 
     event.preventDefault();
-    offsetX = dragOriginX + deltaX;
-    offsetY = dragOriginY + deltaY;
-    targetOffsetX = offsetX;
-    targetOffsetY = offsetY;
-    applyCamera();
+    applyGestureCamera(zoom, dragOriginX + deltaX, dragOriginY + deltaY);
   }
 
   function finishDrag(event: PointerEvent): void {
-    if (!isPointerDown || event.pointerId !== activePointerId) return;
+    if (!isPointerDown || !activePointers.has(event.pointerId)) return;
 
+    const wasPinch = gestureMode === 'pinch';
     const wasDrag = dragActivated;
     const symbol = pressedSymbol;
 
@@ -364,13 +449,30 @@
       viewportElement.releasePointerCapture(event.pointerId);
     }
 
+    activePointers.delete(event.pointerId);
+
+    if (wasPinch && activePointers.size === 1) {
+      const remaining = Array.from(activePointers.values())[0];
+      gestureMode = 'pan';
+      dragActivated = true;
+      dragStartX = remaining.x;
+      dragStartY = remaining.y;
+      dragOriginX = offsetX;
+      dragOriginY = offsetY;
+      updateCommittedDetailLevel();
+      publishZoom(true);
+      return;
+    }
+
     viewportElement.classList.remove('dragging');
     isPointerDown = false;
     dragActivated = false;
-    activePointerId = -1;
+    gestureMode = 'idle';
     pressedSymbol = '';
+    updateCommittedDetailLevel();
+    publishZoom(true);
 
-    if (wasDrag) {
+    if (wasPinch || wasDrag) {
       suppressClickUntil = performance.now() + 500;
       return;
     }
@@ -382,18 +484,33 @@
   }
 
   function cancelDrag(event: PointerEvent): void {
-    if (event.pointerId !== activePointerId) return;
+    if (!activePointers.has(event.pointerId)) return;
     suppressClickUntil = performance.now() + 500;
 
     if (viewportElement.hasPointerCapture(event.pointerId)) {
       viewportElement.releasePointerCapture(event.pointerId);
     }
 
+    activePointers.delete(event.pointerId);
+
+    if (activePointers.size === 1) {
+      const remaining = Array.from(activePointers.values())[0];
+      gestureMode = 'pan';
+      dragActivated = true;
+      dragStartX = remaining.x;
+      dragStartY = remaining.y;
+      dragOriginX = offsetX;
+      dragOriginY = offsetY;
+      return;
+    }
+
     viewportElement.classList.remove('dragging');
     isPointerDown = false;
     dragActivated = false;
-    activePointerId = -1;
+    gestureMode = 'idle';
     pressedSymbol = '';
+    updateCommittedDetailLevel();
+    publishZoom(true);
   }
 
   function openFromKeyboard(event: MouseEvent, symbol: string): void {
@@ -449,8 +566,8 @@
     return { column, row: kind === 'lanthanide' ? 6 : 7 };
   }
 
-  function positionTransform(position: GridPosition): string {
-    const step = cellSizePx + gapPx;
+  function positionTransform(position: GridPosition, measuredCellSize: number, measuredGap: number): string {
+    const step = measuredCellSize + measuredGap;
     const x = (position.column - 1) * step;
     const y = (position.row - 1) * step;
     return `translate3d(${x.toFixed(2)}px, ${y.toFixed(2)}px, 0)`;
@@ -493,10 +610,14 @@
     const bounds = stageBounds(stage);
     const logicalWidth = bounds.columns * cellSizePx + (bounds.columns - 1) * gapPx;
     const logicalHeight = bounds.rows * cellSizePx + (bounds.rows - 1) * gapPx;
-    const availableWidth = Math.max(240, viewportElement.clientWidth - 56);
-    const availableHeight = Math.max(220, viewportElement.clientHeight - 56);
+    const viewportWidth = viewportElement.clientWidth;
+    const viewportHeight = viewportElement.clientHeight;
+    const horizontalInset = clamp(viewportWidth * 0.02, 8, 28);
+    const verticalInset = clamp(viewportHeight * 0.02, 8, 28);
+    const availableWidth = Math.max(1, viewportWidth - horizontalInset * 2);
+    const availableHeight = Math.max(1, viewportHeight - verticalInset * 2);
     const nextZoom = clamp(
-      Math.min(availableWidth / logicalWidth, availableHeight / logicalHeight, 1) * 0.97,
+      Math.min(availableWidth / logicalWidth, availableHeight / logicalHeight, 1) * 0.995,
       MIN_ZOOM,
       1
     );
@@ -608,18 +729,28 @@
     if (measuredGap >= 0) gapPx = measuredGap;
   }
 
+  function scheduleViewportFit(delay = 120): void {
+    window.clearTimeout(viewportFitTimer);
+    viewportFitTimer = window.setTimeout(() => {
+      if (isPointerDown || layoutAnimating) return;
+      measureGeometry();
+      void tick().then(() => fitToViewport(false, visualLayout));
+    }, delay);
+  }
+
   onMount(() => {
     measureGeometry();
     setRenderBucket(1);
     updateCommittedDetailLevel();
 
     const observer = new ResizeObserver(() => {
-      measureGeometry();
-      if (!isPointerDown && !layoutAnimating) {
-        void tick().then(() => fitToViewport(false, visualLayout));
-      }
+      scheduleViewportFit();
     });
     observer.observe(viewportElement);
+
+    const handleOrientationChange = (): void => scheduleViewportFit(240);
+    window.addEventListener('orientationchange', handleOrientationChange);
+    window.visualViewport?.addEventListener('resize', handleOrientationChange);
 
     requestAnimationFrame(() => {
       measureGeometry();
@@ -628,6 +759,9 @@
 
     return () => {
       observer.disconnect();
+      window.clearTimeout(viewportFitTimer);
+      window.removeEventListener('orientationchange', handleOrientationChange);
+      window.visualViewport?.removeEventListener('resize', handleOrientationChange);
       stopCamera();
     };
   });
@@ -638,7 +772,7 @@
   class={`periodic-viewport ${zoomClass}`}
   class:layout-animating={layoutAnimating}
   role="application"
-  aria-label="Tabla periódica interactiva. Arrastra para desplazarte y usa la rueda para ampliar."
+  aria-label="Tabla periódica interactiva. Arrastra para desplazarte, pellizca con dos dedos o usa la rueda para ampliar."
   on:wheel={handleWheel}
   on:pointerdown={startDrag}
   on:pointermove={dragCanvas}
@@ -661,7 +795,7 @@
     >
       <div
         class="series-slot"
-        style={`transform:${positionTransform(placeholderPosition('lanthanide'))};--layout-delay:40ms;--layout-duration:${layoutAnimating ? 690 : 0}ms;opacity:${visualLayout === 'long' ? 0 : 1};`}
+        style={`transform:${positionTransform(placeholderPosition('lanthanide'), cellSizePx, gapPx)};--layout-delay:40ms;--layout-duration:${layoutAnimating ? 690 : 0}ms;opacity:${visualLayout === 'long' ? 0 : 1};`}
       >
         <button
           class="series-placeholder lanthanide-placeholder"
@@ -682,7 +816,7 @@
 
       <div
         class="series-slot"
-        style={`transform:${positionTransform(placeholderPosition('actinide'))};--layout-delay:65ms;--layout-duration:${layoutAnimating ? 690 : 0}ms;opacity:${visualLayout === 'long' ? 0 : 1};`}
+        style={`transform:${positionTransform(placeholderPosition('actinide'), cellSizePx, gapPx)};--layout-delay:65ms;--layout-duration:${layoutAnimating ? 690 : 0}ms;opacity:${visualLayout === 'long' ? 0 : 1};`}
       >
         <button
           class="series-placeholder actinide-placeholder"
@@ -705,7 +839,7 @@
         {@const position = positionFor(element)}
         <div
           class="element-slot"
-          style={`transform:${positionTransform(position)};--layout-delay:${layoutDelay(element)}ms;--layout-duration:${layoutDuration(element)}ms;`}
+          style={`transform:${positionTransform(position, cellSizePx, gapPx)};--layout-delay:${layoutDelay(element)}ms;--layout-duration:${layoutDuration(element)}ms;`}
         >
           <article
             class={`element-cell ${categoryClass(element.category)}`}

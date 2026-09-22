@@ -2,7 +2,7 @@
 
 Tabla periódica científica, interactiva y completamente estática para explorar los 118 elementos químicos mediante zoom progresivo, filtros combinables, estructura electrónica, radios diferenciados, cristalografía 3D, física nuclear, termodinámica, propiedades materiales, contexto biológico e industrial y tendencias globales.
 
-> **Versión:** `1.0.0`
+> **Versión:** `1.1.0`
 > **Tecnologías:** Svelte 5 · TypeScript · Vite · D3 · Python  
 > **Despliegue:** GitHub Pages mediante GitHub Actions  
 > **Ejecución:** sin backend y sin consultas científicas externas desde el navegador
@@ -52,11 +52,21 @@ El motor utiliza una cámara híbrida: interpola únicamente un factor residual 
 ### Navegación
 
 - Rueda: ampliar o reducir.
-- Arrastre: desplazar el escenario.
-- Clic limpio: abrir la ficha del elemento.
+- Arrastre con ratón o un dedo: desplazar el escenario.
+- Pellizco de dos dedos: ampliar o reducir alrededor del centro del gesto.
+- Clic o toque limpio: abrir la ficha del elemento.
 - Doble clic sobre el fondo: restablecer el encuadre.
 - Clic sobre el porcentaje: restablecer y encajar.
 - Cambio animado entre tabla corta y larga.
+- Reencuadre y centrado automáticos al cambiar la orientación del dispositivo.
+
+En pantallas estrechas la geometría se recalcula con el tamaño real de las casillas, de modo que la separación visual se conserva compacta y la tabla utiliza toda la anchura disponible tanto en vertical como en horizontal.
+
+### Aplicación instalable
+
+TablaElementos es una PWA instalable en Android y en navegadores de escritorio compatibles. El manifiesto, los iconos adaptativos y el *service worker* permiten abrirla en una ventana independiente, sin la interfaz del navegador, y reutilizar localmente los recursos y datos ya visitados.
+
+En Android, abre la demostración en Chrome y elige **Instalar aplicación** en el menú del navegador.
 
 ## Filtros científicos
 

@@ -227,8 +227,8 @@
     {
       id: 'navegacion', label: '17 · Navegación y zoom', title: 'Exploración progresiva',
       paragraphs: [
-        'La rueda amplía tomando como ancla el cursor. Arrastrar desplaza la tabla incluso si el gesto comienza sobre una casilla. Un clic limpio abre la ficha.',
-        'El porcentaje de zoom sirve también para restablecer y encajar. El botón 18/32 alterna entre tabla corta y larga.'
+        'La rueda amplía tomando como ancla el cursor. Arrastrar desplaza la tabla incluso si el gesto comienza sobre una casilla. En móvil, el pellizco de dos dedos amplía alrededor del gesto. Un toque limpio abre la ficha.',
+        'El porcentaje de zoom sirve también para restablecer y encajar. El botón 18/32 alterna entre tabla corta y larga. Al girar el dispositivo, la tabla vuelve a medirse, encajarse y centrarse.'
       ],
       rows: [
         { term: 'General', description: 'Z, símbolo y nombre.' },

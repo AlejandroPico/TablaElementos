@@ -26,6 +26,7 @@ import './styles/guide-navigation-v3.css';
 import './styles/about-project.css';
 import './lib/progressiveCellEnhancer';
 import './lib/modalGuideEnhancer';
+import './lib/pwa';
 import App from './app/App.svelte';
 
 const target = document.getElementById('app');
